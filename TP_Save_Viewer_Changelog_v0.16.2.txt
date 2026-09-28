@@ -1,0 +1,38 @@
+TP Save Viewer — Changelog
+
+v0.16.1 Stable
+
+Changed
+- Removed the Timeline column from Development Projects.
+- Reorganized the Development Projects table to use the freed horizontal space more effectively.
+- Split Chassis and Next-Year Chassis into separate project filters.
+- Improved handling of next-year chassis rows so ongoing and completed future chassis projects are grouped separately from current-season chassis development.
+- Replaced the unclear future-chassis 1+1 result shorthand with clearer next-season labeling.
+
+Fixed
+- Standardized next-year chassis performance-change display so completed designs use the stored future-chassis comparison data when available.
+- Adjusted Development Projects sorting so it no longer depends on the removed Timeline column.
+
+
+v0.16.2 Stable
+
+Added
+- Added Engine as a selectable project type in Development Projects.
+- Engine-development rows can now show:
+  - current engine -> next engine
+  - development focus
+  - progress
+  - estimated completion
+  - projected power gain
+  - projected reliability gain
+  - projected efficiency gain
+  - projected mass change
+
+Fixed
+- Corrected Supplier Performance data for Fuel, Gearbox, Suspension, Brakes and ECU.
+- Supplier tables now use the actual supplier pace_rating and reliability_rating instead of instantiated-part pace_bonus / reliability_bonus fields, which were generally zero.
+- Renamed the supplier performance columns from Pace Offset / Reliability Offset to Pace Rating / Reliability Rating.
+- Corrected Relative mode so it normalizes the actual supplier ratings.
+- Updated supplier detail views to use the corrected rating source.
+
+
