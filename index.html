@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Team Principal — Save Analyzer v0.16.5 Stable</title>
+<title>Team Principal — Save Analyzer v0.16.5 Current Working</title>
 
 <style>
 :root{
@@ -3757,6 +3757,31 @@ font-family:inherit;
   color:#aeb8c2;
 }
 
+
+/* Current working build — championship gap beside points total */
+.wiki-standings-table .points-head{
+  text-align:center!important;
+}
+.wiki-standings-table .stand-points{
+  text-align:left!important;
+}
+.wiki-standings-table .stand-points-with-gap{
+  white-space:nowrap!important;
+  padding-left:10px!important;
+  padding-right:8px!important;
+}
+.wiki-standings-table .stand-points-with-gap strong{
+  display:inline-block;
+  min-width:22px;
+  text-align:left;
+}
+.wiki-standings-table .stand-points-gap{
+  color:#8f99a3;
+  font-size:10px;
+  font-weight:800;
+  margin-left:3px;
+}
+
 </style>
 
 </head>
@@ -3772,7 +3797,7 @@ font-family:inherit;
   </div>
   <div class="top-meta">
     <span class="version-pill">LOCAL BROWSER TOOL</span>
-    <span>v0.16.5 STABLE</span>
+    <span>v0.16.5 CURRENT WORKING</span>
   </div>
 </header>
 <div class="app-accent-line"></div>
@@ -3782,7 +3807,7 @@ font-family:inherit;
     <div>
       <h1>Save Analysis</h1>
       <div class="sub">Development, parts, performance, personnel, race results, standings and finances from a Team Principal career save.</div>
-      <div class="landing-version">Version 0.16.5 Stable</div>
+      <div class="landing-version">Current working build · based on v0.16.5 Stable</div>
     </div>
     <div class="hero-badge">Local Processing <span class="hero-privacy">· Your file stays in this browser</span></div>
   </div>
@@ -10442,14 +10467,16 @@ function renderCalendarAndStandings(){
       <th class="points-head">Pts</th>
     </tr></thead><tbody>`;
 
+    const leaderPoints=rows.length?rows[0].points:0;
     html+=rows.map((r,i)=>{
       const color=state.teams?.[r.team]?teamColor(state.teams[r.team]):'#777';
+      const behind=Math.max(0,leaderPoints-r.points);
       return `<tr style="--team-color:${color}">
         <td class="stand-pos">${i+1}</td>
         <td class="stand-name">${esc(r.driver)}</td>
         <td class="stand-team"><span class="swatch" style="display:inline-block;background:${color};margin-right:7px"></span>${esc(r.team)}</td>
         ${races.map(rc=>driverRaceCell(r.driver,rc)).join('')}
-        <td class="stand-points"><strong>${r.points}</strong></td>
+        <td class="stand-points stand-points-with-gap"><strong>${r.points}</strong>${i===0?'':` <span class="stand-points-gap">(-${behind})</span>`}</td>
       </tr>`;
     }).join('');
 
@@ -11062,14 +11089,16 @@ function renderJuniorDriverStandings(series,races){
     <th class="points-head">Pts</th>
   </tr></thead><tbody>`;
 
+  const leaderPoints=rows.length?rows[0].points:0;
   html+=rows.map((r,i)=>{
     const color=juniorTeamUiColor(r.team);
+    const behind=Math.max(0,leaderPoints-r.points);
     return `<tr style="--team-color:${color}">
       <td class="stand-pos">${i+1}</td>
       <td class="stand-name">${esc(r.driver)}</td>
       <td class="stand-team"><span class="swatch" style="display:inline-block;background:${color};margin-right:7px"></span>${esc(r.team)}</td>
       ${races.map(rc=>juniorDriverRaceCell(r.driver,rc)).join('')}
-      <td class="stand-points"><strong>${r.points}</strong></td>
+      <td class="stand-points stand-points-with-gap"><strong>${r.points}</strong>${i===0?'':` <span class="stand-points-gap">(-${behind})</span>`}</td>
     </tr>`;
   }).join('');
   html+='</tbody>';
