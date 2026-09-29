@@ -1,0 +1,144 @@
+TP Save Viewer — Changelog
+v0.16.5 Stable
+Date: 2026-09-29
+
+BASELINE
+v0.16.2 Stable is the starting point for this combined changelog.
+Changes below begin with v0.16.3.
+
+============================================================
+v0.16.3 STABLE
+============================================================
+
+VERSION DISPLAY
+- Added a discrete "VERSION 0.16.3 STABLE" indicator on the initial upload screen.
+- Kept the existing version reference in the top application bar.
+
+============================================================
+v0.16.4 STABLE
+============================================================
+
+SUPPLIER PERFORMANCE DISPLAY
+- Added colour-coding to absolute supplier values using the same performance bands already used by Relative mode.
+- Applied the absolute-value colour treatment across:
+  - Engine
+  - Tyres
+  - Fuel
+  - Gearbox
+  - Suspension
+  - Brakes
+  - ECU
+- Corrected Engine Mass comparison/ranking so lower mass is treated as better.
+
+============================================================
+v0.16.5 STABLE
+============================================================
+
+ELECTRONICS
+- Added the top-level ELECTRONICS view (remains view-only).
+- Added All Teams and individual-team views.
+- Added driver-aid display for:
+  - Active Suspension
+  - Active Aero
+  - Traction Control
+  - ABS
+  - TPMS
+- Added ERS development display for:
+  - Capacity
+  - Deployment
+  - Recovery
+  - Output
+  - Reliability
+- Driver aids use segmented 5-level bars.
+- ERS development areas use segmented 10-level bars.
+- Completed levels are shown in blue. The next level under development is highlighted.
+- Active Eletronics projects show stored progress and staff allocation.
+- Paused Eletronics projects with stored progress are visibly identified.
+- Individual-team Electronics view to follow the Headquarters card style.
+- Latest stored ERS design statistics are shown where available.
+
+SUPPLIER CONTRACTS
+- Selecting Engine / Tyres / Fuel / Gearbox / Suspension / Brakes / ECU no longer removes the other contract columns.
+- All supplier-category columns remain visible.
+- When select a category, unrelated categories fade while remaining visible and clickable.
+- ALL restores the complete grid at normal opacity.
+- Reduced supplier-contract bubble width from 200px to 155px.
+- Reduced team-column width and bubble padding/height slightly to reduce clipping and horizontal overflow.
+
+DEVELOPMENT PROJECTS — SUMMARY
+- Removed the SELECTED PARTS column.
+- Moved DETAILED GAINS directly after COMPLETED and ONGOING.
+- Compressed the YTD development-spend and Ongoing Budget Chosen columns.
+- Increased Summary-table font size.
+- Centered headers and values across all Summary columns.
+
+STANDINGS / JUNIOR SERIES
+- Removed the standalone Junior Series top-level tab.
+- Integrated junior-series standings into the main STANDINGS tab.
+- Added a Series selector to STANDINGS.
+- Formula 1 is the default selection.
+- Junior categories can be selected from the same STANDINGS view.
+- Junior driver and team standings reuse the existing junior championship data.
+- Moved the Junior Contracts series selector beside the Junior Contracts title/disclaimer.
+- Removed the visible SERIES label from Junior Contracts, leaving only the dropdown.
+- Fixed the Junior Contracts header layout so the disclaimer no longer collapses into a narrow column.
+- Reduced the Junior Contracts series dropdown to a compact fixed width.
+- Short junior calendars now keep fixed round-column widths instead of stretching across the page.
+- Extra space remains empty on the right when fewer rounds are present.
+- Increased championship position-number font size.
+- Increased driver name and team name font size.
+- Increased text size inside race-position boxes.
+- Selected the darker Wikipedia-style result palette for the current stable build:
+  - 1st: #D1D19D
+  - 2nd: #B7B7B7
+  - 3rd: #D1B782
+  - Points finish: #B7D1B7
+  - Classified / non-points: #AAAAD1
+  - Retired: #C4AACD
+
+PERFORMANCE
+- Locked Performance matrix column geometry.
+- Switching between ABSOLUTE and RELATIVE no longer changes column widths.
+
+HEADQUARTERS
+- Enlarged Staff / Effect / Upkeep / Degradation information in individual-team view.
+- Moved this facility metadata into the unused horizontal space to the right of the segmented level bar.
+- Kept Headquarters view-only behavior.
+
+TOP NAVIGATION
+- Added a dedicated monochrome icon to every top-level tab.
+- Collapsed navigation now shows icon-only tabs.
+- Hovering a specific tab expands only that tab.
+- Other tabs remain collapsed while one tab is hovered.
+- Added smooth width/fade/slide animation when a tab opens and closes.
+- Keyboard focus uses the same individual-tab expansion behavior.
+- Added a left-side + control to pin/unpin all tab names.
+- The + rotates when the full navigation is pinned open.
+- Active-tab highlighting remains visible in collapsed mode.
+
+RESULTS
+- Race-result columns now use compact fixed widths.
+- The result panel no longer stretches information across the full page width.
+- Moved Driver Standings After Race to the right of the selected race result.
+- Moved Constructor Standings After Race below the driver standings in the same right-side area.
+- Added responsive fallback for narrower screens.
+- Removed the redundant summary line containing:
+  - Week / track
+  - Winner
+  - Pole
+  - Fastest lap
+- Replaced the visible race dropdown with clickable race buttons.
+- Race buttons are arranged horizontally.
+- Each button uses the same two-line style as the Standings header:
+  - R1 / R2 / R3... on the first line
+  - race abbreviation on the second line
+- Active round is highlighted with the viewer accent.
+- Hover tooltip/accessibility label retains the stored week and full track name.
+
+
+============================================================
+GITHUB PAGES
+============================================================
+
+- v0.16.5 Stable is also supplied as index.html for direct GitHub Pages deployment.
+- index.html is an exact copy of TP_Save_Viewer_v0.16.5_Stable.html.
