@@ -10,6 +10,12 @@ STANDINGS
 - Final presentation places the gap directly beside the points total in the PTS column, e.g. 44 (-6).
 - Applied to Formula 1 and junior-series driver standings.
 
+RESULTS TAB — POST-RACE STANDINGS LAYOUT FIX
+- Fixed Driver Standings After Race and Constructor Standings After Race being horizontally cut/clipped.
+- Replaced rigid pixel column widths in both post-race standings tables with responsive percentage widths.
+- Added border-box sizing to standings cells so padding is included inside each assigned column width.
+- Adjusted the side-by-side/stacking breakpoint from 1560px to 1620px so the layout stacks before either column becomes cramped.
+
 PROJECTS
 - Corrected old names for tabsstill showing.
 - Added external engine-supplier development projects stored in engine_manager.external.

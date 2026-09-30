@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Team Principal — Save Analyzer v0.18 Stable</title>
+<title>Team Principal — Save Analyzer v0.18.1 Stable</title>
 
 <style>
 :root{
@@ -3572,7 +3572,7 @@ font-family:inherit;
 /* Current working build — compact Results + post-race standings */
 .results-main-layout{
   display:grid;
-  grid-template-columns:980px 500px;
+  grid-template-columns:980px 560px;
   gap:12px;
   align-items:start;
   justify-content:start;
@@ -3614,32 +3614,45 @@ font-family:inherit;
   display:flex!important;
   flex-direction:column!important;
   gap:10px!important;
-  width:500px;
-  min-width:500px;
+  width:560px;
+  min-width:560px;
+}
+.results-main-layout .post-race-scroll{
+  width:100%;
+  overflow-x:hidden;
 }
 .results-main-layout .post-race-table{
   width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
   table-layout:fixed!important;
 }
+.results-main-layout .post-race-table th,
+.results-main-layout .post-race-table td{
+  box-sizing:border-box;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
 .results-main-layout #postRaceDriverStandings th:nth-child(1),
-.results-main-layout #postRaceDriverStandings td:nth-child(1){width:42px!important}
+.results-main-layout #postRaceDriverStandings td:nth-child(1){width:8%!important}
 .results-main-layout #postRaceDriverStandings th:nth-child(2),
-.results-main-layout #postRaceDriverStandings td:nth-child(2){width:58px!important}
+.results-main-layout #postRaceDriverStandings td:nth-child(2){width:10%!important}
 .results-main-layout #postRaceDriverStandings th:nth-child(3),
-.results-main-layout #postRaceDriverStandings td:nth-child(3){width:155px!important}
+.results-main-layout #postRaceDriverStandings td:nth-child(3){width:34%!important}
 .results-main-layout #postRaceDriverStandings th:nth-child(4),
-.results-main-layout #postRaceDriverStandings td:nth-child(4){width:185px!important}
+.results-main-layout #postRaceDriverStandings td:nth-child(4){width:36%!important}
 .results-main-layout #postRaceDriverStandings th:nth-child(5),
-.results-main-layout #postRaceDriverStandings td:nth-child(5){width:54px!important}
+.results-main-layout #postRaceDriverStandings td:nth-child(5){width:12%!important}
 
 .results-main-layout #postRaceTeamStandings th:nth-child(1),
-.results-main-layout #postRaceTeamStandings td:nth-child(1){width:46px!important}
+.results-main-layout #postRaceTeamStandings td:nth-child(1){width:10%!important}
 .results-main-layout #postRaceTeamStandings th:nth-child(2),
-.results-main-layout #postRaceTeamStandings td:nth-child(2){width:60px!important}
+.results-main-layout #postRaceTeamStandings td:nth-child(2){width:12%!important}
 .results-main-layout #postRaceTeamStandings th:nth-child(3),
-.results-main-layout #postRaceTeamStandings td:nth-child(3){width:310px!important}
+.results-main-layout #postRaceTeamStandings td:nth-child(3){width:62%!important}
 .results-main-layout #postRaceTeamStandings th:nth-child(4),
-.results-main-layout #postRaceTeamStandings td:nth-child(4){width:70px!important}
+.results-main-layout #postRaceTeamStandings td:nth-child(4){width:16%!important}
 
 .results-main-layout .post-race-table th,
 .results-main-layout .post-race-table td{
@@ -3660,7 +3673,7 @@ font-family:inherit;
 }
 
 /* Stack only when the viewport can no longer comfortably fit both columns. */
-@media(max-width:1560px){
+@media(max-width:1620px){
   .results-main-layout{
     grid-template-columns:minmax(0,980px);
   }
@@ -3910,7 +3923,7 @@ font-family:inherit;
   </div>
   <div class="top-meta">
     <span class="version-pill">LOCAL BROWSER TOOL</span>
-    <span>v0.18 STABLE</span>
+    <span>v0.18.1 STABLE</span>
   </div>
 </header>
 <div class="app-accent-line"></div>
@@ -3920,7 +3933,7 @@ font-family:inherit;
     <div>
       <h1>Save Analysis</h1>
       <div class="sub">Development, parts, performance, personnel, race results, standings and finances from a Team Principal career save.</div>
-      <div class="landing-version">Stable release · v0.18</div>
+      <div class="landing-version">Stable release · v0.18.1</div>
     </div>
     <div class="hero-badge">Local Processing <span class="hero-privacy">· Your file stays in this browser</span></div>
   </div>
