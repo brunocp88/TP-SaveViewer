@@ -1,0 +1,57 @@
+TP Save Viewer — v0.19 Stable
+Base: v0.18.1 Stable
+Release date: 2026-09-30
+
+SUMMARY
+v0.19 promotes the current working build to stable and consolidates the UI and supplier-contract refinements made since v0.18.1.
+
+NAVIGATION
+- Increased collapsed tab width from 40px to 52px.
+- Increased tab height from 37px to 43px.
+- Increased tab icon size from 17px to 21px.
+- Increased horizontal padding around tab icons.
+- Increased expanded/hover tab minimum width from 118px to 130px.
+- Enlarged the tab-menu toggle to match the taller navigation bar.
+- Updated touch-device collapsed tab width to 52px.
+
+DRIVERS — GENERATED DRIVER AGE TOOL
+- Added a numeric minimum-age selector beside the button. Default remains 16.
+- The batch action now changes generated drivers younger than the selected age to that selected age.
+- The confirmation dialog remains mandatory and shows the selected age plus the exact number of affected generated drivers.
+- Repositioned "Set minimum age" button.
+
+PROJECTS
+- Reorganized the Projects filters into two dedicated rows:
+  - Part Type on the top row.
+  - Team selector on the row below.
+- Removed the Projects search bar and its search-filter logic.
+- Selecting Engine now forces the view to All teams. Team selection is disabled while Engine is selected.
+- Engine view automatically shows team engine projects plus external-supplier engine projects.
+- Switching away from Engine re-enables team selection.
+- Consolidated cumulative development-gain information in the Summary view.
+- Moved Cumulative gains directly beside Detailed gains near the center of the Summary table.
+- Increased Projects typography.
+
+
+SUPPLIERS TAB
+- Replaced the visible Part Type dropdown with horizontal selector buttons.
+- Added selector buttons for:
+  - Engine
+  - Tyres
+  - Fuel
+  - Gearbox
+  - Suspension
+  - Brakes
+  - ECU
+- Reorganized the Supplier Performance header into two rows:
+  - Top row: title and supplier/status metadata.
+  - Bottom-left: Part Type selector buttons and Active Only.
+  - Bottom-right: Relative, Absolute, and Export CSV.
+- Added responsive stacking for narrower screens.
+
+SUPPLIER CONTRACTS — ACTIVE STATE
+- Made supplier active-state parsing explicit.
+- Numeric active values are interpreted as boolean-like values:
+  - 1.0 (and any non-zero numeric value) = active / true
+  - 0.0 = inactive / false
+
