@@ -1,0 +1,44 @@
+TP Save Viewer — v0.18 Stable
+Released from: v0.17 Stable
+Release date: 2026-09-29
+
+SUMMARY
+v0.18 consolidates the working changes made after v0.16.5 and v0.17, focused on standings readability, Projects/engine-development visibility, selector usability, driver information, and safe batch editing of generated-driver ages.
+
+STANDINGS
+- Added championship gap-to-leader information for driver standings.
+- Final presentation places the gap directly beside the points total in the PTS column, e.g. 44 (-6).
+- Applied to Formula 1 and junior-series driver standings.
+
+PROJECTS
+- Corrected old names for tabsstill showing.
+- Added external engine-supplier development projects stored in engine_manager.external.
+- The Summary view remains team-only.
+- No engine-development calculations or save-editing logic were changed.
+
+SELECTORS AND NAVIGATION
+- Replaced several navigation/filter dropdowns with horizontal selector rails.(Projects, Headquarters, Electronics, Fitted Parts, Standings, and Junior Contracts)
+- Team markers use the chosen Version A design: primary-colour circular fill with a thin secondary-colour outline.
+- Selector rails scroll horizontally when space is limited.
+- Reordered tabs so Electronics appears immediately after Headquarters.
+
+DRIVERS — GENERATED DRIVER AGE TOOL
+- Added a Generated drivers only filter on the Drivers tab.
+- Added a batch action to edit generated-driver age to 16.
+- Only drivers identified by generated-driver IDs are eligible for this batch edit. Generated drivers already aged 16 or older are left unchanged.
+- Added a confirmation dialog before applying it.
+- The batch edit uses the existing mutation/history system, marks the save as edited, and can be undone through Editor History.
+- No driver ratings, contracts, teams, career history, or other driver fields are changed by the age tool.
+
+DRIVERS — JUNIOR-SERIES INFORMATION
+- Drivers with no current F1 contract now display their current junior-series team and series in the Team / role column.
+  Example: Fortec Motorsport · F3000
+- Drivers with neither an F1 contract nor a junior-series assignment continue to show FREE AGENT.
+- Driver search now also matches junior-series team and series names.
+- Team-column sorting falls back from F1 team to junior team, then FREE AGENT.
+- The Contracted only filter continues to mean CURRENTLY CONTRACTED IN F1 ONLY.
+
+UI PREFERENCE PERSISTENCE
+- Browser UI-preference persistence is disabled through UI_PREFS_ENABLED=false.
+- The existing localStorage implementation remains in the codebase for possible later reactivation.
+
