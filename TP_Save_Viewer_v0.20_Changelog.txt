@@ -1,0 +1,105 @@
+TP SAVE VIEWER — v0.20 STABLE
+Released: 2026-10-01
+Previous stable: v0.19
+
+COMPLETE CHANGELOG — v0.19 → v0.20
+
+============================================================
+MAINTENANCE
+============================================================
+
+- Cleaned up dead and duplicate code paths while preserving existing viewer behavior.
+- Added a pre-download change-review modal so save edits can be reviewed before the modified JSON is downloaded.
+
+============================================================
+DRIVER CONTRACTS / RETIREMENT
+============================================================
+
+- Added explicit support for driver `retiring` and `retired` states in the Contracts UI.
+- Added Current Contract editor switches for:
+  - Retiring
+  - Retired
+- Added a Drivers-tab filter: “Show retired drivers”.
+- Existing driver status display continues to distinguish Active / Retiring / Retired / Deceased / Injured states.
+
+============================================================
+DRIVER NEGOTIATIONS
+============================================================
+
+- Driver negotiations remain grouped alphabetically by driver.
+- Multiple negotiations for the same driver are now ordered by status priority:
+  1. Completed
+  2. Final Offer
+  3. Talks Open
+  4. Approaching
+  5. Failed
+  6. Cancelled
+
+============================================================
+STAFF CONTRACTS / CONTRACT UI
+============================================================
+
+- Increased font sizes for improved readability.
+- Refined contract-area typography and spacing.
+- Fixed Supplier Contracts CURRENT / NEXT SEASON controls to a stable horizontal position so the selector no longer shifts when the title changes.
+
+============================================================
+JUNIOR CONTRACTS / F1 ACADEMY
+============================================================
+
+- Added an ACADEMY selector alongside the junior-series selectors.
+- Academy mode reads stored F1 academy signings from each team's save data.
+- Academy contracts expose stored information including:
+  - Academy team
+  - Start season
+  - Contract term
+  - Final covered season
+  - Annual cost
+  - Retainer
+- Stored future junior placements are shown when present, including:
+  - Target series
+  - Junior team
+  - Target season
+  - Seat type
+  - Placement cost
+  - Applied-season state
+- Current junior assignments are shown directly in the Academy table.
+
+- Normal CART / LMS / F3000 / F3 / FBMW / EUFORD views keep their existing seat-bubble layout and editing behavior.
+
+============================================================
+PERFORMANCE TAB
+============================================================
+
+- Renamed DEVELOPED to CURRENT.
+- Added POTENTIAL as a Performance source mode.
+- CURRENT remains the default source mode.
+- POTENTIAL reads the team's stored `chassis_profile.potential` values.
+- Preserved the same primary performance-stat columns across POTENTIAL, CURRENT and FITTED where data exists.
+- Reinforced fixed Performance table column widths so switching source mode does not resize/reflow the matrix.
+
+============================================================
+SUPPLIER PERFORMANCE
+============================================================
+
+- Supplier Performance now defaults to ABSOLUTE instead of RELATIVE.
+
+============================================================
+DEVELOPMENT PROGRESS / SEASON TREND
+============================================================
+
+- Removed the viewer-derived “Overall Car Performance” metric from Development Progress.
+- Renamed “Race Performance Report” to “SEASON TREND”. It is now the default Development Progress metric.
+- SEASON TREND uses the game's stored race `performance_snapshot` values rather than the viewer-derived Overall formula.
+- The SEASON TREND x-axis now uses true chronological race labels:
+  Rd1, Rd2, Rd3, ...
+- Hovering a race marker shows exact stored `performance_snapshot` value
+- Other Development Progress metrics — Base Pace, Slow, Medium, High, Straight, Acceleration, Braking, etc. — retain their existing week-based reconstruction and display behavior.
+
+============================================================
+WAREHOUSE
+============================================================
+
+- Removed the Search Inventory search bar from the Warehouse tab.
+
+
