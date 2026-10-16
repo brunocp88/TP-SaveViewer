@@ -5515,6 +5515,7 @@ input.cbar-val:focus{outline:none;border-color:var(--accent)}
 .swatch{width:12px;height:12px}
 .selector-team-mark{width:12px!important;height:12px!important;flex:0 0 12px!important;border:1px solid rgba(255,255,255,.28)!important;box-shadow:none!important}
 .week-tip-swatch{width:12px;height:12px;border-radius:50%;box-shadow:none;border:1px solid rgba(255,255,255,.28)}
+#finCmpTable{table-layout:fixed;width:100%;min-width:1280px}#finCmpTable th,#finCmpTable td{white-space:normal}#finCmpTable th:first-child,#finCmpTable td:first-child{width:130px}#finCmpTable td:first-child{white-space:nowrap}.fin-box:has(#finCmpTable){overflow-x:auto}.fin-bal-edit{margin-left:6px;vertical-align:middle}
 </style>
 
 </head>
@@ -19021,11 +19022,11 @@ window.addEventListener('beforeunload',e=>{
 });
 
 /* ===== Finances tab ===== */
-const FIN_G=[['Aero development',['Aerodynamic Development'],'#3987e5'],['Chassis development',['Chassis Development'],'#d95926'],['Part manufacture',['Car Construction'],'#2cc4d9'],['Engine supply',['Engine Supply','Engine Supplier Support'],'#c98500'],['Parts supply',['Parts Supply'],'#e6e04a'],['Tyre supply',['Tyre Supply'],'#6fd0a0'],['Race weekends',['Race Costs'],'#d55181'],['Testing',['Car Testing'],'#b5895a'],['Salaries',['Driver Salaries','Staff Salaries','Academy Signing'],'#2f9a2f'],['Upkeep',['Facility Maintenance'],'#9085e9'],['HQ upgrades',['HQ Construction'],'#c57bd0'],['Other',[,'Technology Research','Shareholder Div. Expense','Loan Payments'],'#8e98a8']];
+const FIN_G=[['Aero development',['Aerodynamic Development'],'#3987e5'],['Chassis development',['Chassis Development'],'#d95926'],['Parts',['Car Construction'],'#2cc4d9'],['Engine supply',['Engine Supply','Engine Supplier Support'],'#c98500'],['Parts supply',['Parts Supply'],'#e6e04a'],['Tyre supply',['Tyre Supply'],'#6fd0a0'],['Race weekends',['Race Costs'],'#d55181'],['Testing',['Car Testing'],'#b5895a'],['Salaries',['Driver Salaries','Staff Salaries','Academy Signing'],'#2f9a2f'],['Upkeep',['Facility Maintenance'],'#9085e9'],['HQ upgrades',['HQ Construction'],'#c57bd0'],['Other',[,'Technology Research','Shareholder Div. Expense','Loan Payments'],'#8e98a8']];
 const FIN_DEV=[['Aero development','Aerodynamic Development','#3987e5'],['Chassis development','Chassis Development','#d95926'],['Technology research','Technology Research','#8e98a8']];
 let finCum=false,finCmp='Overall',finSort={col:'total',dir:-1};const finHidden=new Set();
 const finTeam=$('finTeam');
-const finF=v=>(Math.abs(v)<0.005?'0.00':v.toFixed(2)),finM=v=>(v<0?'−':'')+Math.abs(v).toFixed(1);
+const finF=v=>(Math.abs(v)<0.005?'$0.00M':(v<0?'−':'')+'$'+Math.abs(v).toFixed(2)+'M'),finM=v=>(v<0?'−':'')+'$'+Math.abs(v).toFixed(1)+'M';
 const finSumObj=o=>Object.values(o||{}).reduce((a,b)=>a+(+b||0),0);
 const finCumul=a=>{let x=0;return a.map(v=>x+=v)};
 const FIN_KNOWN=new Set(FIN_G.filter(g=>g[0]!=='Other').flatMap(g=>g[1]));
@@ -19105,7 +19106,7 @@ function finHqRows(t,w){
   const p=[t?.hq_construction_project,t?.last_hq_construction].find(x=>x&&x.building&&(near(x.weekly_cost_m,paid)||near(x.deposit_m,paid)));
   if(!p)return '';
   const b=HQ_FACILITIES.find(x=>x.key===p.building)?.label||humanToken(p.building);
-  return `<tr class="mut"><td colspan="2" style="padding-left:14px;white-space:normal">${esc(b)} · L${+p.from_level} → L${+p.to_level} · ${finF(+p.total_cost_m||0)} M over ${+p.duration_weeks||'?'} weeks${p.status==='completed'?' · finished':''}</td></tr>`;
+  return `<tr class="mut"><td colspan="2" style="padding-left:14px;white-space:normal">${esc(b)} · L${+p.from_level} → L${+p.to_level} · ${finF(+p.total_cost_m||0)} over ${+p.duration_weeks||'?'} weeks${p.status==='completed'?' · finished':''}</td></tr>`;
 }
 function finProjRows(list,ytd){
   if(!list.length&&!(ytd>0.05))return '';
@@ -19177,7 +19178,7 @@ function renderFinancials(){
   // estimate table: Type | Per week | YTD | Week 52
   const ex={},inc={};W.forEach(w=>{for(const q in w.expense_items||{})ex[q]=(ex[q]||0)+(+w.expense_items[q]||0);for(const q in w.income_items||{})inc[q]=(inc[q]||0)+(+w.income_items[q]||0)});
   const TT0=FIN_G.reduce((a,g)=>a+finItemsOf(g,ex).reduce((b,q)=>b+(ex[q]||0),0),0),IT0=Object.values(inc).reduce((a,b)=>a+b,0);let SB=TT0;
-  const fm=x=>finF(x)+' M';
+  const fm=x=>finF(x);
   const row=(cls,l,v,proj=v*k)=>`<tr class="${cls}"><td>${l}</td><td class="num">${fm(v/n)}</td><td class="num">${fm(v)}</td><td class="num">${proj==null?'—':fm(proj)}</td><td class="num">${SB>0?(v/SB*100).toFixed(1)+'%':'—'}</td></tr>`;
   let h='<thead><tr><th>Type</th><th class="num">Per week</th><th class="num">YTD</th><th class="num">Week 52'+(done?'':' (est.)')+'</th><th class="num">Share</th></tr></thead><tbody>',T=0,IT=0;
   FIN_G.forEach(g=>{const it=finItemsOf(g,ex),v=it.reduce((a,q)=>a+(ex[q]||0),0);T+=v;h+=row('grp',finSw(g[2])+g[0],v);if(it.length>1)it.forEach(q=>{if(ex[q])h+=row('it',q,ex[q])})});
@@ -19194,7 +19195,7 @@ function finRenderSponsors(t){
     if(Number.isFinite(+d.payout_multiplier))notes.push('×'+(+d.payout_multiplier).toFixed(2));
     if(Number.isFinite(+d.stake_pct)&&+d.stake_pct>0)notes.push(`${+(d.stake_pct*100).toFixed(2)}% stake`);
     if(Number.isFinite(+d.prestige_bonus)&&+d.prestige_bonus)notes.push(`+${+d.prestige_bonus} prestige`);
-    return `<tr${next?' class="mut"':''}><td>${slot}</td><td><strong>${esc(d.name||'—')}</strong></td><td class="num">${finF(+d.amount_m||0)} M</td><td class="num">${yr(d.start_season)}–${yr(d.expires_season)}</td><td>${esc(notes.join(' · '))}</td></tr>`;
+    return `<tr${next?' class="mut"':''}><td>${slot}</td><td><strong>${esc(d.name||'—')}</strong></td><td class="num">${finF(+d.amount_m||0)}</td><td class="num">${yr(d.start_season)}–${yr(d.expires_season)}</td><td>${esc(notes.join(' · '))}</td></tr>`;
   };
   const cur=t?.sponsors||{},pend=t?.pending_sponsors||{};
   let h='<thead><tr><th>Slot</th><th>Sponsor</th><th class="num">Amount</th><th class="num">Term</th><th>Notes</th></tr></thead><tbody>';
@@ -19207,6 +19208,23 @@ function finRenderSponsors(t){
   el.innerHTML=h+'</tbody>';
 }
 const FIN_CMP=['Overall',...FIN_G.map(g=>g[0]),'Income','Bank balance'];
+function openFinBalanceEditor(names){
+  const bal0=n=>Math.round(Number(state.teams[n]?.balance_m)||0);
+  openFormEditor({
+    eyebrow:'Finances',title:'Team balances',sub:'Current bank balance of every team',cls:'ed-mid',
+    render:()=>`<table class="grid-edit-table ed-team-top"><tbody>${names.map(n=>`<tr><th scope="row">${finSw(finCol(n))}${esc(teamLabel(n))}</th><td>${edStepper('bal_'+n,bal0(n),{step:1,dp:0,label:teamLabel(n)+' balance'})}</td><td class="ed-maxcol">$M</td></tr>`).join('')}</tbody></table>`,
+    wire:body=>edWireSteppers(body),
+    onApply:async body=>{
+      const ch=names.filter(n=>edStepChanged(body,'bal_'+n));
+      if(!ch.length)return null;
+      return ()=>{
+        const parts=[];
+        for(const n of ch){const v=edStepValue(body,'bal_'+n);state.raw.teams[n].balance_m=v;parts.push(`${teamLabel(n)} ${bal0(n)} → ${v}`);}
+        return `Balance: ${parts.join(', ')}`;
+      };
+    }
+  });
+}
 function renderFinancialsAll(body){
   const names=Object.keys(state.teams).filter(n=>finWeeks(n).length);
   if(!names.length){$('finTitle').textContent='Finances — all teams';$('finMeta').textContent='No finance history stored yet.';body.innerHTML='';return}
@@ -19216,19 +19234,20 @@ function renderFinancialsAll(body){
   const S={};names.forEach(n=>S[n]=ser(n));const wk=finWeeks(names[0]).map(w=>w.week),all=Object.values(S).flat();
   body.innerHTML=`<div class="fin-cmp-controls" id="finCmpRow">${FIN_CMP.map(c=>`<button class="perf-mode-btn tp-control-btn tp-control-action ${c===finCmp?'active':''}" type="button" data-cmp="${esc(c)}">${esc(c)}</button>`).join('')}</div>
   <div class="fin-grid"><div class="fin-box wide"><div class="fin-box-title">${finCmp==='Bank balance'?'Bank balance':finCmp==='Income'?'Income to date':(finCmp==='Overall'?'All spending':finCmp)+' to date'}</div><div class="fin-box-meta">One line per team in its colours. Hover a week to rank every team.</div><div class="fin-legend" id="finCmpLg"></div><div id="finCmp"></div></div>
-  <div class="fin-box wide"><div class="fin-box-title">YTD by type · $M</div><div class="fin-box-meta">Spending per team and type, and total income, so far this season, in $M. Click a column header to sort; click again to reverse.</div><div class="table-scroll"><table class="parts fin-table" id="finCmpTable"></table></div></div></div>`;
+  <div class="fin-box wide"><div class="fin-box-title">YTD by type</div><div class="fin-box-meta">Spending per team and type, and total income, so far this season. Click a column header to sort; click again to reverse.</div><div class="table-scroll"><table class="parts fin-table" id="finCmpTable"></table></div></div></div>`;
   body.querySelectorAll('[data-cmp]').forEach(b=>b.onclick=()=>{finCmp=b.dataset.cmp;renderFinancials()});
   const DASH=finDashes(names);
   $('finCmpLg').innerHTML=names.map(n=>`<span>${DASH[n]?`<svg viewBox="0 0 18 8" style="width:18px!important;height:8px!important;min-width:0!important;max-width:18px!important;display:inline-block;vertical-align:middle;margin-right:4px"><line x1="0" y1="4" x2="18" y2="4" stroke="${finCol(n)}" stroke-width="2" stroke-dasharray="${DASH[n]}"/></svg>`:`<i style="background:${finCol(n)}"></i>`}${esc(teamLabel(n))} ${finM(S[n][S[n].length-1])}</span>`).join('');
   const fr=finFrame($('finCmp'),1200,320,Math.min(0,...all),Math.max(...all)*1.05,wk);names.forEach(n=>finLine(fr,S[n],finCol(n),2,.9,DASH[n]));const c=finCursor(fr);
   finHover(fr,(e,i)=>{finMove(c,fr,i);const r=names.map(n=>[n,S[n][i]]).sort((a,b)=>b[1]-a[1]);finShow(e,`<div class="fin-tip-t">Week ${wk[i]} · ${finCmp==='Bank balance'?'balance':'to date'}</div><table>${r.map(([n,v],j)=>`<tr><td>${j+1}. ${finSw(finCol(n))}${esc(teamLabel(n))}</td><td>${finF(v)}</td></tr>`).join('')}</table>`)});
-  const rows=names.map(n=>{const W=finWeeks(n);const g=FIN_G.map((_,gi)=>W.reduce((a,w)=>a+finGS(w,gi),0));return[n,g,g.reduce((a,b)=>a+b,0),+W[W.length-1].balance_m,W.reduce((a,w)=>a+(+w.income_m||finSumObj(w.income_items)),0)]});
+  const rows=names.map(n=>{const W=finWeeks(n);const g=FIN_G.map((_,gi)=>W.reduce((a,w)=>a+finGS(w,gi),0));return[n,g,g.reduce((a,b)=>a+b,0),(finSel()===Number(state.raw.season_no)&&Number.isFinite(+state.teams[n]?.balance_m)?+state.teams[n].balance_m:+W[W.length-1].balance_m),W.reduce((a,w)=>a+(+w.income_m||finSumObj(w.income_items)),0)]});
   const noRace=!names.some(n=>finWeeks(n).some(w=>w.expense_items&&'Race Costs' in w.expense_items));
   const drawTable=()=>{
     const k=finSort.col,val=r=>k==='team'?teamLabel(r[0]):k==='total'?r[2]:k==='bal'?r[3]:k==='inc'?r[4]:r[1][+k];
     const sorted=rows.slice().sort((x,y)=>{const a=val(x),b=val(y);return(typeof a==='string'?a.localeCompare(b):a-b)*finSort.dir});
     const th=(key,inner,cls='num')=>`<th class="${cls} sortable${finSort.col===key?' active-sort':''}" data-fin-sort="${key}">${inner}${finSort.col===key?`<span class="sort-arrow">${finSort.dir<0?'▼':'▲'}</span>`:''}</th>`;
-    $('finCmpTable').innerHTML=`<thead><tr>${th('team','Team','')}${FIN_G.map((g,i)=>th(String(i),finSw(g[2])+({'Aero development':'Aero dev','Chassis development':'Chassis dev'}[g[0]]||g[0]))).join('')}${th('total','Total')}${th('inc','Income')}${th('bal','Balance')}</tr></thead><tbody>${sorted.map(([n,g,tt,b,inc])=>`<tr><td><span class="swatch swatch-color swatch-gap swatch-raised" style="--swatch-color:${teamColor(state.teams[n]||{})}"></span><strong>${esc(teamLabel(n))}</strong></td>${g.map((v,gi)=>`<td class="num">${FIN_G[gi][0]==='Race weekends'&&noRace?'–':finF(v)}</td>`).join('')}<td class="num"><strong>${finF(tt)}</strong></td><td class="num">${finF(inc)}</td><td class="num">${finF(b)}</td></tr>`).join('')}</tbody>`;
+    $('finCmpTable').innerHTML=`<thead><tr>${th('team','Team','')}${FIN_G.map((g,i)=>th(String(i),finSw(g[2])+({'Aero development':'Aero dev','Chassis development':'Chassis dev'}[g[0]]||g[0]))).join('')}${th('total','Total')}${th('inc','Income')}${th('bal','Balance'+(finSel()===Number(state.raw.season_no)?' <button type="button" class="supplier-edit-btn fin-bal-edit" data-fin-bal-edit>Edit</button>':''))}</tr></thead><tbody>${sorted.map(([n,g,tt,b,inc])=>`<tr><td><span class="swatch swatch-color swatch-gap swatch-raised" style="--swatch-color:${teamColor(state.teams[n]||{})}"></span><strong>${esc(teamLabel(n))}</strong></td>${g.map((v,gi)=>`<td class="num">${FIN_G[gi][0]==='Race weekends'&&noRace?'–':finF(v)}</td>`).join('')}<td class="num"><strong>${finF(tt)}</strong></td><td class="num">${finF(inc)}</td><td class="num">${finF(b)}</td></tr>`).join('')}</tbody>`;
+    $('finCmpTable').querySelector('[data-fin-bal-edit]')?.addEventListener('click',e=>{e.stopPropagation();openFinBalanceEditor(names)});
     $('finCmpTable').querySelectorAll('[data-fin-sort]').forEach(h=>h.onclick=()=>{const c=h.dataset.finSort;finSort=finSort.col===c?{col:c,dir:-finSort.dir}:{col:c,dir:c==='team'?1:-1};drawTable()});
   };
   drawTable();
