@@ -1,0 +1,52 @@
+TP Save Lab v0.54: what was added since v0.35 (condensed)
+
+
+
+Finances (new tab, view only)
+------------------------------
+
+- Weekly income and spending per team and type from the save's finance history; per-team and all-teams views; Per week / YTD / Week 52 (estimate).
+- Spending by group, like Aero development, Chassis development, Part manufacture, Engine supply, Race weekends, Testing, Salaries, Facilities, Other.
+- Development and Spending-by-type tooltips name the active Aero and Chassis projects (phase, spent of budget).
+- YTD by type ($M): centred, team markers, sortable by any column, with an Income column.
+- Income/expenses chart: per week a stacked income bar by type beside one bar of total spending, Weekly or Cumulative.
+
+Regulations (new tab)
+------------------------------
+
+- Regulations for current and next season, grouped by area, with the latest ballot (result and every team's vote).
+- Keep or overule regulation votes.
+- How rules change: Voting / Scripted.
+- Next season row: set any rule for next season, or Keep current.
+
+Editors and Creation
+------------------------------
+
+- Create team: active or inactive. Choose finances, initial car stats (with presets), set HQ levels, engine deals, and generate the car on activation.
+- Edit inactive teams, including car performance, finances and HQ levels, and first possible active season.
+- Edit number of entries per team (1, 2 oe 3 cars, depending on regulation), including for active teams.
+- Force team join: activates one of the save's inactive teams, keeping its data and deals.
+- Create event: Team join, Engine supplier join, Engine regulation change, Calendar swap, Major investors, Team rebrand, Factory takeover, Investor takeover. Events can be edited (chance) or deleted.
+- Change player team: takes control of another active team.
+- Driver editor: attributes, age, pay driver, talent, nationality, up to 2 traits.
+- Create driver: full driver record, created as a free agent.
+- Add drivers to an Academy, or remove them.
+- Electronics edit per team: driver aids 0 to 5, ERS areas 0 to 10.
+
+Suppliers
+------------------------------
+
+- Performance: edit performance for engines, make suppliers active or departing, tyres and parts. Parts suppliers show the stored offset and the gap to the best.
+
+Drivers, Staff and Juniors
+------------------------------
+
+- Junior seats and F1 contracts can overlap, same driver can hold a Main seat and a junior seat; Save Health lists them as warnings only, no download block.
+- Juniors: driver list and seat cards show overall (potential) with age underneath; sort by Name, Overall or Age; Added filters and tick boxes for U18, U21 and U23.
+- Driver, staff and supplier contract lists are sorted by overall rating and by last season's standings.
+
+
+General
+------------------------------
+
+- Overall UI improvements and typography changes.
