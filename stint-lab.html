@@ -304,7 +304,7 @@ a.tool-card.blue:hover,a.tool-card.blue:focus-visible{box-shadow:inset 3px 0 0 #
           <li>Grip = grip_base x (1 - grip_loss x wear) for lateral and longitudinal separately, never below half of grip_base. Past wear_cliff_onset_pct, wear counts wear_cliff_mult times faster. As in the game's tyre_model.py, during a race the tyre effect of the first lap in each wear_quantum step (default 0.02 = 2% of tyre life) is reused until wear reaches the next step, so lap times fall in small steps for every compound; a compound without a cliff also rounds wear to the nearest step. Fuel still changes every lap.</li>
           <li>Fuel is mass only, as in the game's realistic_physics.py: acceleration x [1 + (800/total - 1) x 0.5], clamped 0.70-1.25; corner speed x [1 + (sqrt(800/total) - 1) x 0.5], clamped 0.84-1.08. Braking ignores mass.</li>
           <li>Lap time = corner share / (corner speed x sqrt(lateral grip)) + accelerating share / sqrt(acceleration) + braking share / sqrt(longitudinal grip). The shares and the grip-to-speed link are estimates, not game code.</li>
-          <li>Fuel per lap = FUEL_PER_LAP_CONSTANT x length x fuel_consumption x a factor measured in game (75.3 kg for 29.2 laps at the Hungaroring with constant 130, average engine).</li>
+          <li>Fuel per lap = FUEL_PER_LAP_CONSTANT x fuel_consumption x length / race distance, where race distance = race laps (50 x lap_modifier) x length. Engine fuel efficiency is not included.</li>
           <li>Each plan is a sequence of dry compounds, one per stint, in any order. With "Optimal split" the stint lengths are searched exhaustively for the fastest legal race; "Equal stints" splits the laps evenly, as earlier versions did. A plan needs as many different dry compounds as the model's mandatory_compound_count.</li>
           <li> With refuelling each stint starts with its own fuel and pays refuel time at the stop; without it the car starts with the fuel for the whole race, whatever the tank size, and stops are for tyres only. Traffic and track position are not modelled, so multi-stop gains are best case.</li>
         </ul>
@@ -324,7 +324,6 @@ const BUILTIN=[
   {name:"Vanilla 0.99.5",mandatory:2,wearQuantum:0.02,defaultCompound:"medium",startProb:{soft:0.35,medium:0.4,hard:0.2,intermediate:0.04,wet:0.01},compounds:{soft:comp([1.0175,1.0165,0.036,0.06,0.1,35,2.0,2.0]),medium:comp([1.01,1.01,0.025,0.055,0.085,45,1.85,1.85]),hard:comp([1.002,1.002,0.018,0.05,0.075,65,1.6,1.6])}}
 ];
 const AVG={name:"No track file loaded: using default track values",laps:60,len:5,twm:1,tfc:1,pit:20,base:85,shC:40,shA:45,shB:15};
-const KG_PER_UNIT_KM=(75.3/29.2)/(130*4.381*1.04);
 let sets=BUILTIN.map(s=>structuredClone(s)),active=0,trackLabel=AVG.name;
 const ORDER=["soft","medium","hard"];
 const dryNames=s=>ORDER.filter(c=>s.compounds[c]);
@@ -509,7 +508,8 @@ const accelMult=t=>clamp(1+(800/t-1)*0.5,0.70,1.25);
 const cornerMult=t=>clamp(1+(Math.sqrt(800/t)-1)*0.5,0.84,1.08);
 function S(){
   const len=+$("tlen").value,tfc=+$("tfc").value,laps=+$("laps").value;
-  const fpl=(+$("fpc").value)*KG_PER_UNIT_KM*len*tfc;
+  // Fuel per lap = FUEL_PER_LAP_CONSTANT x fuel_consumption x length / race distance (race laps x length).
+  const fpl=laps>0&&len>0?(+$("fpc").value)*tfc*len/(laps*len):0;
   $("fplOut").textContent=`= ${fpl.toFixed(2)} kg per lap, ${(fpl*laps).toFixed(0)} kg per race (average engine)`;
   const dryKg=+$("chassis").value+ +$("engine").value,tankKg=+$("tank").value,startKg=dryKg+($("refuel").checked?tankKg:fpl*laps),pc=x=>(x>=1?"+":"")+((x-1)*100).toFixed(1)+"%";
   $("massOut").innerHTML=`Empty, ${dryKg} kg: acceleration ${pc(accelMult(dryKg))}, corner speed ${pc(cornerMult(dryKg))}<br>${$("refuel").checked?"Full tank":"Race start, full race fuel"}, ${startKg.toFixed(0)} kg: acceleration ${pc(accelMult(startKg))}, corner speed ${pc(cornerMult(startKg))}`;
