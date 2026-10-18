@@ -1,0 +1,722 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stint Lab</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Visual style shared with TP Save Lab: dark pit-wall panels, F1 sector green Stint Lab accent, condensed uppercase labels. */
+:root{
+  --bg:#050607; --shell:#08090b; --panel:#0f1114; --panel2:#13161a; --panel3:#0b0d10; --field:#090b0e;
+  --ink:#f4f4f5; --muted:#8b9098; --label:#777e88; --line:#24282e; --line2:#31363d; --grid:#20242a; --chip:#0a0c0f;
+  --soft:#ef3b33; --med:#e6b84d; --hard:#d7dbe0; --good:#36c98f; --mid:#e6b84d; --bad:#ef6461; --accent:#00c94a; --accent2:#2ee070;
+  --body:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  color-scheme:dark;
+}
+/* The Save Lab is dark only; both theme hooks keep the same palette. */
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){color-scheme:dark}}
+:root[data-theme="dark"]{color-scheme:dark}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;background:radial-gradient(circle at 50% -250px,rgba(0,201,74,.08),transparent 520px),var(--bg);
+  color:var(--ink);font-family:var(--body);font-size:13px;line-height:1.45;padding-bottom:40px}
+button,input,select{font:inherit}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:56px;padding:7px max(16px,env(safe-area-inset-left,0px));
+  background:var(--shell);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+.brand{display:flex;align-items:center;gap:11px;min-width:0}
+.brand-mark{width:40px;height:40px;border-radius:5px;background:var(--accent);display:grid;place-items:center;font-size:14px;
+  font-weight:950;font-style:italic;letter-spacing:-2px;color:#fff;box-shadow:inset 0 -6px 12px rgba(0,0,0,.18);flex:none}
+.brand-copy{min-width:0}
+.brand-title{font-size:17px;line-height:1.05;letter-spacing:.07em;font-weight:900;text-transform:uppercase;white-space:nowrap}
+.brand-sub{font-size:9.5px;line-height:1.15;letter-spacing:.08em;margin-top:4px;color:var(--muted);text-transform:uppercase}
+.accent-line{height:2px;background:linear-gradient(90deg,var(--accent),var(--accent) 33%,transparent 33%);opacity:.95}
+.wrap{max-width:1360px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:12px}
+.hero{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:end;padding:18px 0 4px}
+.hero h1{font-size:29px;line-height:1.03;margin:0;font-weight:900;letter-spacing:-.035em}
+.hero .sub{margin:8px 0 0;color:var(--muted);font-size:14px;line-height:1.45;max-width:980px}
+.hero-badge{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#fff;background:var(--accent);padding:6px 8px;border-radius:3px;font-weight:900;white-space:nowrap}
+.hero-badge span{opacity:.76;font-weight:700}
+@media (max-width:900px){.hero{grid-template-columns:minmax(0,1fr)}.hero-badge{justify-self:start;white-space:normal}}
+h2{font-size:15px;font-weight:900;text-transform:uppercase;letter-spacing:.035em;margin:0 0 6px}
+h2 span{color:var(--muted);font-weight:700}
+h2 #raceTitle{color:inherit;font-weight:inherit}
+p{margin:0;max-width:80ch}
+.grid{display:grid;grid-template-columns:minmax(0,460px) minmax(0,1fr);gap:12px;align-items:start}
+@media (max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:5px;padding:14px;min-width:0}
+.col{display:flex;flex-direction:column;gap:12px;min-width:0}
+.fields{display:flex;flex-direction:column;gap:7px}
+label.f{display:grid;grid-template-columns:1fr 130px;gap:8px;align-items:center;font-size:12px;color:#c7cbd1}
+input[type=number],input[type=text],select{font-family:var(--mono);font-size:12px;background:var(--field);color:var(--ink);border:1px solid var(--line2);border-radius:3px;padding:6px 7px;width:100%;outline:none;font-variant-numeric:tabular-nums}
+input[type=number]:focus,select:focus{border-color:#626975;box-shadow:0 0 0 2px rgba(0,201,74,.18)}
+input:focus-visible,select:focus-visible,button:focus-visible,.drop:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+input[type=checkbox]{accent-color:var(--accent);margin:0}
+.sect{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:900;margin-top:8px}
+.sect span{color:var(--ink)}
+/* On/off buttons (Tyre cliff, Refuelling allowed): a hidden checkbox inside a button-styled label; on = accent like the default compound buttons, with a check mark. */
+.chk{display:inline-flex;gap:6px;align-items:center;width:max-content;cursor:pointer;user-select:none;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;border:1px solid var(--line2);background:var(--chip);color:#c7cbd1;border-radius:3px;padding:5px 10px 5px 8px}
+.chk:hover{border-color:#41464d;background:#111419;color:#fff}
+.chk input{position:absolute;opacity:0;width:0;height:0;margin:0;pointer-events:none}
+.chk .ck{width:12px;text-align:center;color:var(--accent2);font-size:12px;line-height:1}
+.chk .ck::before{content:"\2713";visibility:hidden}
+.chk:has(input:checked){background:#15181d;color:#fff;border-color:var(--accent);box-shadow:inset 0 -2px 0 var(--accent)}
+.chk:has(input:checked) .ck::before{visibility:visible}
+.chk:has(input:focus-visible){outline:2px solid var(--accent2);outline-offset:2px}
+table.cmp td .chk{font-family:var(--body);margin:4px 0 2px}
+input:disabled{opacity:.4}
+.note{font-size:11px;color:var(--muted);line-height:1.55}
+.note li{margin-bottom:5px}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:-1px;border:1px solid rgba(255,255,255,.28)}
+button{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;border:1px solid var(--line2);background:var(--chip);color:#c7cbd1;border-radius:3px;padding:7px 10px;cursor:pointer}
+button:hover{border-color:#41464d;background:#111419;color:#fff}
+button:disabled{opacity:.4;cursor:default}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+button.primary:hover{background:var(--accent2)}
+.btnrow{display:flex;flex-wrap:wrap;gap:6px}
+.drop{border:1.5px dashed #3a3f47;border-radius:5px;padding:14px 12px;text-align:center;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);cursor:pointer;background:var(--panel3)}
+.drop:hover{border-color:#626975;color:#c7cbd1}
+.drop.need{border-color:var(--accent);color:#fff;background:#0b170f}
+.trackline.none{color:var(--mid)}
+.drop.over{border-color:var(--accent);color:#fff;background:#0b170f}
+.sets{display:flex;flex-direction:column;gap:5px}
+.setrow{display:grid;grid-template-columns:auto 1fr auto auto;gap:8px;align-items:center;padding:6px 8px;border:1px solid var(--line);border-radius:3px;font-size:12px;background:var(--chip);color:#c7cbd1}
+.setrow.active{border-color:var(--line2);background:#15181d;color:#fff;box-shadow:inset 3px 0 0 var(--accent)}
+.setrow .sw{width:12px;height:12px;border-radius:50%}
+.setrow .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;font-weight:600}
+.setrow button{padding:4px 8px;font-size:9.5px}
+.tablewrap{overflow-x:auto}
+table.cmp{width:100%;border-collapse:collapse;font-size:11px;table-layout:fixed}
+table.cmp col.k{width:166px}
+table.cmp th,table.cmp td{padding:3px 3px;text-align:left}
+table.cmp th{font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--label);font-weight:900}
+table.cmp td:first-child{font-family:var(--mono);font-size:10.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+table.cmp input{min-width:0;padding:5px 4px 5px 6px;font-size:11px}
+table.res{border-collapse:collapse;width:100%;font-size:12px;font-variant-numeric:tabular-nums}
+table.res th,table.res td{padding:8px 10px;border-bottom:1px solid #1d2127;text-align:right;white-space:nowrap}
+table.res th:first-child,table.res td:first-child{text-align:left}
+table.res th{color:#7d848e;font-size:9px;text-transform:uppercase;letter-spacing:.07em;background:#0d0f12;font-weight:900}
+table.res td:first-child{font-weight:600;color:#c7cbd1}
+table.res td.best{font-weight:800;color:#fff}
+table.res td.illegal{color:#5c626b;text-decoration:line-through}
+.seq{font-family:var(--mono);font-size:10px;color:var(--muted);font-weight:400}
+table.res td.illegal .seq{text-decoration:line-through;color:#4a5058}
+table.res tr.grp td{text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:900;padding-top:14px;background:transparent}
+table.res tr.foot td{font-size:11px;color:var(--muted);font-weight:400}
+.chart{position:relative;height:300px;background:var(--panel3);border:1px solid #1c2026;border-radius:3px;padding:6px}
+.trackline{font-family:var(--mono);font-size:11px;color:#c7cbd1;padding:7px 9px;border-left:3px solid var(--accent);background:#0b170f;border-radius:0 3px 3px 0}
+.toast{font-size:11px;color:var(--good);min-height:1.1em}
+.toast.err{color:var(--bad)}
+details.panel>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px}
+details.panel>summary::-webkit-details-marker{display:none}
+details.panel>summary h2{margin:0}
+details.panel>summary::after{content:"\25BE";color:var(--muted);font-size:13px;transition:transform .15s}
+details.panel:not([open])>summary::after{transform:rotate(-90deg)}
+details.panel[open]>summary{margin-bottom:10px;padding-bottom:9px;border-bottom:1px solid var(--line)}
+@media (prefers-reduced-motion:reduce){details.panel>summary::after{transition:none}}
+input.ro{background:transparent;border-color:transparent;color:#c7cbd1;pointer-events:none;text-align:right;padding-right:8px}
+input.ro{-moz-appearance:textfield;appearance:textfield}
+input.ro::-webkit-outer-spin-button,input.ro::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+#cmpTable input:disabled{opacity:.35}
+.f2{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;font-size:12px;color:#c7cbd1}
+table.race button{width:100%;padding:5px 4px;font-size:10px;display:flex;align-items:center;justify-content:center;gap:5px}
+.phead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.viewsw{display:flex;gap:4px;flex:none}.viewsw button{padding:5px 9px;font-size:10px}
+.viewsw button.on{background:#15181d;color:#fff;border-color:var(--accent);box-shadow:inset 0 -2px 0 var(--accent)}
+.chart[hidden]{display:none}
+table.race button.on{background:#15181d;color:#fff;border-color:var(--accent);box-shadow:inset 0 -2px 0 var(--accent)}
+
+input.bad{border-color:var(--bad)!important;animation:badflash .6s}
+@keyframes badflash{0%{box-shadow:0 0 0 3px rgba(239,100,97,.45)}100%{box-shadow:none}}
+textarea{width:100%;font-family:var(--mono);font-size:11px;background:var(--field);color:var(--ink);border:1px solid var(--line2);border-radius:3px;min-height:120px}
+.stints{margin-top:10px;display:flex;flex-direction:column;gap:0;font-variant-numeric:tabular-nums}
+.st-row{display:grid;grid-template-columns:22px 92px minmax(0,1fr) 76px;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid #1d2127}
+.st-row:last-of-type{border-bottom:0}
+.st-rank{font-size:11px;color:var(--label);font-weight:800;text-align:right}
+.st-name{font-family:var(--mono);font-size:12px;color:#e7eaee;font-weight:500;white-space:nowrap}
+.st-track{position:relative;height:30px}
+.st-seg{position:absolute;top:2px;height:16px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:800;overflow:hidden;white-space:nowrap}
+.st-seg.soft{background:var(--soft);color:#fff}.st-seg.medium{background:var(--med);color:#14171b}.st-seg.hard{background:var(--hard);color:#14171b}
+.st-pit{position:absolute;top:20px;transform:translateX(-50%);font-size:9.5px;color:var(--muted);font-weight:700}
+.st-gap{text-align:right;font-size:12px;font-weight:700;color:#c7cbd1}
+.st-gap.best{color:#fff}
+.st-row.illegal{opacity:.45}.st-row.illegal .st-seg{background:transparent!important;border:1px dashed currentColor;color:var(--muted)!important}
+.st-axis{display:grid;grid-template-columns:22px 92px minmax(0,1fr) 76px;gap:10px;margin-top:2px}
+.st-axis .ticks{position:relative;height:16px;border-top:1px solid #31363d}
+.st-axis .ticks span{position:absolute;top:3px;transform:translateX(-50%);font-size:9.5px;color:var(--muted)}
+.st-axis .lbl{grid-column:3;text-align:center;font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:900}
+.st-legend{display:flex;gap:14px;margin-top:8px;font-size:11px;color:#c7cbd1}
+.st-legend i{display:inline-block;width:18px;height:8px;border-radius:2px;margin-right:6px;vertical-align:0}
+.cmpwide{margin-top:12px}
+table.res td.mc{text-align:left;min-width:190px;padding:8px 12px;vertical-align:middle}
+.mh{display:flex;align-items:center;gap:6px;margin-bottom:5px}
+.mn{font-family:var(--mono);font-size:11px;color:#c7cbd1}
+.mg{margin-left:auto;font-weight:700;color:#c7cbd1}
+td.best .mg{color:#fff;font-weight:800}
+.tag{font-size:8.5px;font-weight:900;letter-spacing:.08em;color:var(--bad);border:1px solid var(--bad);border-radius:3px;padding:1px 4px}
+.mb{position:relative;height:15px}
+.mbs{position:absolute;top:0;height:15px;border-radius:2px;font-size:9.5px;font-weight:800;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.mbs.soft{background:var(--soft);color:#fff}.mbs.medium{background:var(--med);color:#14171b}.mbs.hard{background:var(--hard);color:#14171b}
+table.res td.mc.illegal{text-decoration:none}
+td.illegal .mb,td.illegal .mg,td.illegal .mn{opacity:.4}
+td.illegal .mg{text-decoration:line-through}
+/* Links to the other Lab tools */
+.landing-tools{margin-top:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:760px){.landing-tools{grid-template-columns:minmax(0,1fr)}}
+.landing-tools-label{grid-column:1/-1;font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:#777e88;font-weight:900;margin-bottom:-4px}
+.tool-card{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:14px 16px;border:1px solid #24282e;border-radius:10px;
+  background:linear-gradient(180deg,#111419,#0b0e12);color:#f4f4f5;text-align:left;text-decoration:none}
+a.tool-card:hover,a.tool-card:focus-visible{border-color:#626975;outline:none;box-shadow:inset 3px 0 0 #e10600}
+.tool-icon{width:42px;height:42px;border-radius:50%;background:#e10600;display:grid;place-items:center;box-shadow:0 0 0 6px rgba(225,6,0,.12)}
+.tool-title{display:block;font-size:16px;font-weight:900;text-transform:uppercase;letter-spacing:.06em}
+.tool-sub{display:block;font-size:12px;color:#8b9098;margin-top:3px;line-height:1.4}
+.tool-go{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:#fff;background:#e10600;border-radius:3px;padding:8px 11px;white-space:nowrap}
+.tool-card.blue .tool-icon,.tool-card.blue .tool-go{background:#2f6fe0}.tool-card.blue .tool-icon{box-shadow:0 0 0 6px rgba(47,111,224,.14)}
+a.tool-card.blue:hover,a.tool-card.blue:focus-visible{box-shadow:inset 3px 0 0 #2f6fe0}
+.tool-card.soon{opacity:.55}
+.tool-card.soon .tool-icon{background:#2a2e35;box-shadow:none}.tool-card.soon .tool-go{background:#20242a;color:#8b9098}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-mark">TP</div>
+    <div class="brand-copy">
+      <div class="brand-title">TP Stint Lab</div>
+      <div class="brand-sub">Team Principal strategy tool</div>
+    </div>
+  </div>
+</header>
+<div class="accent-line"></div>
+<div class="wrap">
+  <header class="hero">
+    <div>
+      <h1>Simulate · Compare · Decide</h1>
+      <p class="sub">Race strategy simulator for Team Principal tyre models. Upload tyremodel.json files and a track file, edit any value, and compare 1, 2 and 3 stop strategies, single compound or mixed, with the best stint split for each, accounting for fuel weight, refuelling and pit losses.</p>
+    </div>
+    <div class="hero-badge">Local processing <span>· your files stay in this browser</span></div>
+  </header>
+
+  <div class="landing-tools">
+    <div class="landing-tools-label">Other Lab tools</div>
+      <a class="tool-card" href="https://brunocp88.github.io/TP-SaveViewer/">
+        <span class="tool-icon"><svg style="min-width:0;width:22px;height:22px;display:block" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg></span>
+        <span><span class="tool-title">TP Save Lab</span><span class="tool-sub">Analyze, compare and edit your Team Principal career save.</span></span>
+        <span class="tool-go">Open →</span>
+      </a>
+      <a class="tool-card blue" href="https://brunocp88.github.io/TP-SaveViewer/finance-lab.html">
+        <span class="tool-icon"><svg style="min-width:0;width:22px;height:22px;display:block" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="6" cy="6.2" rx="3.8" ry="1.3"/><path d="M2.2 6.2v7c0 .7 1.5 1.3 3.3 1.3M2.2 9.4c0 .7 1.5 1.3 3.3 1.3"/><ellipse cx="18" cy="4.6" rx="3.8" ry="1.3"/><path d="M21.8 4.6v7c0 .7-1.5 1.3-3.3 1.3M21.8 7.8c0 .7-1.5 1.3-3.3 1.3"/><ellipse cx="12" cy="10" rx="4.8" ry="1.7"/><path d="M7.2 10v9c0 .9 2.1 1.7 4.8 1.7s4.8-.8 4.8-1.7v-9M7.2 13c0 .9 2.1 1.7 4.8 1.7s4.8-.8 4.8-1.7M7.2 16c0 .9 2.1 1.7 4.8 1.7s4.8-.8 4.8-1.7"/></svg></span>
+        <span><span class="tool-title">TP Finance Lab</span><span class="tool-sub">Rebalance every money value in a data pack: load constants.py and the JSON files, scale each finance category with sliders, download the edited files.</span></span>
+        <span class="tool-go">Open →</span>
+      </a>
+  </div>
+
+  <div class="grid">
+    <div class="col">
+      <details class="panel fields" open>
+        <summary><h2>Tyre models</h2></summary>
+        <div class="drop" id="dropTyre" tabindex="0" role="button">Drop tyremodel.json files here, or click to choose</div>
+        <input type="file" id="fileTyre" accept=".json,application/json" multiple hidden>
+        <div class="sets" id="sets"></div>
+        <div class="toast" id="tyreMsg"></div>
+        <div class="sect">Editing: <span id="editName"></span></div>
+        <div class="tablewrap"><table class="cmp" id="cmpTable"></table></div>
+        <div class="sect">Race settings in the file</div>
+        <div class="tablewrap"><table class="cmp race" id="raceTable"><colgroup id="raceCols"></colgroup><tbody>
+          <tr><td>mandatory_compound_count</td><td><input type="number" id="mand" min="1" max="3" step="1" aria-label="mandatory_compound_count"></td></tr>
+          <tr><td>wear_quantum</td><td><input type="number" id="wq" min="0" step="0.01" data-dec="3" aria-label="wear_quantum"></td></tr>
+          <tr id="defComp"></tr>
+          <tr id="startProb"></tr>
+        </tbody></table></div>
+        <div class="note" id="spTotal"></div>
+        <div class="btnrow"><button id="dupSet">Duplicate</button><button id="dlJson" class="primary">Download tyremodel.json</button></div>
+        <div class="toast" id="copyMsg"></div>
+      </details>
+
+      <details class="panel fields" open>
+        <summary><h2>Track</h2></summary>
+        <div class="drop need" id="dropTrack" tabindex="0" role="button">Track file required: drop a track .json here, or click to choose</div>
+        <input type="file" id="fileTrack" accept=".json,application/json" hidden>
+        <div class="trackline" id="trackName"></div>
+        <div class="toast" id="trackMsg"></div>
+        <label class="f"><span>Race laps</span><input type="number" id="laps" step="1"></label>
+        <label class="f"><span>Length (km)</span><input type="number" data-dec="2" id="tlen" step="0.01"></label>
+        <label class="f"><span>tyre_wear_mult</span><input type="number" data-dec="2" id="twm" step="0.01"></label>
+        <label class="f"><span>fuel_consumption</span><input type="number" data-dec="2" id="tfc" step="0.01"></label>
+        <label class="f"><span>Pit lane loss (s)</span><input type="number" data-dec="1" id="pit" step="0.1"></label>
+        <div class="sect">Derived from the track file and game code</div>
+        <label class="f"><span>Lap time at 800 kg, grip 1.00 (s)</span><input type="number" data-dec="1" id="base" step="0.5" readonly tabindex="-1" class="ro"></label>
+        <label class="f"><span>Share of lap in corners (%)</span><input type="number" id="shC" step="1" readonly tabindex="-1" class="ro"></label>
+        <label class="f"><span>Share accelerating (%)</span><input type="number" id="shA" step="1" readonly tabindex="-1" class="ro"></label>
+        <label class="f"><span>Share braking (%)</span><input type="number" id="shB" step="1" readonly tabindex="-1" class="ro"></label>
+        <button id="avgTrack">Reset to default track values</button>
+      </details>
+
+      <details class="panel fields" open>
+        <summary><h2>Car, fuel and pits</h2></summary>
+        <label class="f"><span>Dry chassis (kg)</span><input type="number" id="chassis" step="5"></label>
+        <label class="f"><span>Engine (kg)</span><input type="number" id="engine" step="5"></label>
+        <label class="f"><span>Tank size (kg)</span><input type="number" id="tank" step="10"></label>
+        <div class="note" id="massOut"></div>
+        <label class="f"><span>FUEL_PER_LAP_CONSTANT</span><input type="number" id="fpc" step="5"></label>
+        <div class="note" id="fplOut"></div>
+        <label class="chk"><input type="checkbox" id="refuel"><span class="ck"></span><span>Refuelling allowed</span></label>
+        <label class="f"><span>Refuel time per 10 kg (s), game value</span><input type="number" data-dec="1" id="ref" step="0.1" readonly tabindex="-1" class="ro"></label>
+        <label class="f"><span>AI pits at wear</span><input type="number" data-dec="2" id="th" step="0.05"></label>
+        <label class="f"><span>tyre_profile wear multiplier</span><input type="number" data-dec="2" id="prof" step="0.1"></label>
+        <label class="f"><span>Stint lengths</span><select id="split"><option value="opt">Optimal split</option><option value="eq">Equal stints</option></select></label>
+      </details>
+    </div>
+
+    <div class="col">
+      <div class="panel">
+        <h2>Top strategies: <span id="activeName2"></span></h2>
+        <p class="note">The 12 fastest plans. Each stint is drawn in its compound colour with its length in laps; numbers under the bar are the pit-stop laps. The fastest plan shows its total race time, the others their gap to it.</p>
+        <div class="stints" id="stintChart"></div>
+      </div>
+      <div class="panel">
+        <h2>Tyre loss over one stint</h2>
+        <p class="note">Time lost to wear only, against each model's new hard tyre, on an empty car. Lines are coloured by compound. Dots mark where the AI pits. Solid lines are the model you are editing; other loaded models are dashed.</p>
+        <div class="chart"><canvas id="cTyre"></canvas></div>
+      </div>
+      <div class="panel">
+        <div class="phead"><h2><span id="raceTitle">Race time</span> through the race: <span id="activeName3"></span></h2>
+          <div class="viewsw" id="raceView"><button type="button" data-v="cum" class="on">Race time</button><button type="button" data-v="lap">Lap times</button></div></div>
+        <p class="note" id="noteLap" hidden>The fastest legal 1, 2 and 3 stop plans. Fuel burn makes every stint faster; wear makes it slower.</p>
+        <p class="note" id="noteCum">The same plans as a running race time, against an even pace that would finish with the fastest plan's total. Pit stops show as steps up; the end of each line is its gap at the flag.</p>
+        <div class="chart" id="boxLap" hidden><canvas id="cRace"></canvas></div>
+        <div class="chart" id="boxCum"><canvas id="cCum"></canvas></div>
+      </div>
+    </div>
+  </div>
+  <div class="panel cmpwide">
+        <h2>Strategy comparison</h2>
+        <p class="note">Each loaded tyre model side by side. A cell shows the gap to that model's fastest legal plan (that plan shows its total race time) and the stints in compound colours with their laps. Every soft, medium and hard order is tried for 1, 2 and 3 stops. Faded cells break a limit, tagged WEAR (a stint wears past the AI pit threshold), TANK (with refuelling, a stint needs more fuel than the tank holds) or the number of compounds the model requires.</p>
+        <div class="tablewrap" style="margin-top:10px"><table class="res" id="matrix"></table></div>
+      </div>
+      <details class="panel note">
+        <summary><h2>How the simulator calculates</h2></summary>
+        <ul>
+          <li>Wear per lap = wear_rate_base x track tyre_wear_mult x tyre_profile multiplier. Supplier durability and driver tyre management also scale wear in the game; here they are neutral.</li>
+          <li>Grip = grip_base x (1 - grip_loss x wear) for lateral and longitudinal separately, never below half of grip_base. Past wear_cliff_onset_pct, wear counts wear_cliff_mult times faster. As in the game's tyre_model.py, during a race the tyre effect of the first lap in each wear_quantum step (default 0.02 = 2% of tyre life) is reused until wear reaches the next step, so lap times fall in small steps for every compound; a compound without a cliff also rounds wear to the nearest step. Fuel still changes every lap.</li>
+          <li>Fuel is mass only, as in the game's realistic_physics.py: acceleration x [1 + (800/total - 1) x 0.5], clamped 0.70-1.25; corner speed x [1 + (sqrt(800/total) - 1) x 0.5], clamped 0.84-1.08. Braking ignores mass.</li>
+          <li>Lap time = corner share / (corner speed x sqrt(lateral grip)) + accelerating share / sqrt(acceleration) + braking share / sqrt(longitudinal grip). The shares and the grip-to-speed link are estimates, not game code.</li>
+          <li>Fuel per lap = FUEL_PER_LAP_CONSTANT x length x fuel_consumption x a factor measured in game (75.3 kg for 29.2 laps at the Hungaroring with constant 130, average engine).</li>
+          <li>Each plan is a sequence of dry compounds, one per stint, in any order. With "Optimal split" the stint lengths are searched exhaustively for the fastest legal race; "Equal stints" splits the laps evenly, as earlier versions did. A plan needs as many different dry compounds as the model's mandatory_compound_count.</li>
+          <li> With refuelling each stint starts with its own fuel and pays refuel time at the stop; without it the car starts with the fuel for the whole race, whatever the tank size, and stops are for tyres only. Traffic and track position are not modelled, so multi-stop gains are best case.</li>
+        </ul>
+      </details>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+const FIELDS=["lat_grip_base","long_grip_base","wear_rate_base","wear_grip_loss_lat","wear_grip_loss_long","wear_cliff_onset_pct","wear_cliff_mult_lat","wear_cliff_mult_long"];
+const STEPS=[0.001,0.001,0.001,0.001,0.001,1,0.05,0.05];
+const DEFCLIFF={soft:[35,2.0,2.0],medium:[45,1.85,1.85],hard:[65,1.6,1.6]};
+const SET_COLORS=["#d6332b","#2f6fd6","#1f8a4c","#9a4fd0","#d97a00","#0e8f91"];
+const comp=(a)=>Object.fromEntries(FIELDS.map((f,i)=>[f,a[i]??null]));
+const BUILTIN=[
+  {name:"Vanilla 0.99.5",mandatory:2,wearQuantum:0.02,defaultCompound:"medium",startProb:{soft:0.35,medium:0.4,hard:0.2,intermediate:0.04,wet:0.01},compounds:{soft:comp([1.0175,1.0165,0.036,0.06,0.1,35,2.0,2.0]),medium:comp([1.01,1.01,0.025,0.055,0.085,45,1.85,1.85]),hard:comp([1.002,1.002,0.018,0.05,0.075,65,1.6,1.6])}}
+];
+const AVG={name:"No track file loaded: using default track values",laps:60,len:5,twm:1,tfc:1,pit:20,base:85,shC:40,shA:45,shB:15};
+const KG_PER_UNIT_KM=(75.3/29.2)/(130*4.381*1.04);
+let sets=BUILTIN.map(s=>structuredClone(s)),active=0,trackLabel=AVG.name;
+const ORDER=["soft","medium","hard"];
+const dryNames=s=>ORDER.filter(c=>s.compounds[c]);
+
+function setTrack(t){
+  $("laps").value=t.laps;$("tlen").value=t.len;$("twm").value=t.twm;$("tfc").value=t.tfc;$("pit").value=t.pit;
+  $("base").value=t.base;$("shC").value=t.shC;$("shA").value=t.shA;$("shB").value=t.shB;trackLabel=t.name;
+  $("trackName").textContent=t.name;
+  fmtDec();const none=t===AVG;$("trackName").classList.toggle("none",none);$("dropTrack").classList.toggle("need",none);
+}
+// Show fixed decimals (5.00, 1.00, 20.0) on inputs that declare data-dec.
+// Total race time as h:mm:ss.s (or m:ss.s under an hour).
+const raceTime=t=>{const h=Math.floor(t/3600),m=Math.floor(t%3600/60),sec=(t%60).toFixed(1).padStart(4,"0");return h?`${h}:${String(m).padStart(2,"0")}:${sec}`:`${m}:${sec}`};
+function fmtDec(){document.querySelectorAll("input[data-dec]").forEach(el=>{if(el.value!=="")el.value=(+el.value).toFixed(+el.dataset.dec)});document.querySelectorAll("input[type=number]:not([data-c])").forEach(el=>el.dataset.last=el.value)}
+document.addEventListener("change",e=>{const el=e.target;if(el.dataset&&el.dataset.dec&&el.value!=="")el.value=(+el.value).toFixed(+el.dataset.dec)});
+function defaults(){
+  setTrack(AVG);
+  $("chassis").value=600;$("engine").value=115;$("fpc").value=140;$("refuel").checked=true;$("ref").value=1.5;$("tank").value=120;$("th").value=0.75;$("prof").value=1.0;
+}
+
+/* ---------- uploads ---------- */
+function wireDrop(zone,input,handler){
+  zone.addEventListener("click",()=>input.click());
+  zone.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();input.click()}});
+  zone.addEventListener("dragover",e=>{e.preventDefault();zone.classList.add("over")});
+  zone.addEventListener("dragleave",()=>zone.classList.remove("over"));
+  zone.addEventListener("drop",e=>{e.preventDefault();zone.classList.remove("over");handler([...e.dataTransfer.files])});
+  input.addEventListener("change",()=>{handler([...input.files]);input.value=""});
+}
+const readText=f=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsText(f)});
+function msg(el,t,err){el.textContent=t;el.classList.toggle("err",!!err)}
+// Game defaults when a compound leaves these out (tyre_model.py).
+const GAME_DEFAULTS={wear_grip_loss_lat:0.15,wear_grip_loss_long:0.18};
+async function addTyreFiles(files){
+  let added=0,errs=[];
+  for(const f of files){
+    try{
+      const j=JSON.parse(await readText(f));
+      const cs=j.compounds||j;const out={};
+      for(const c of ORDER){if(cs[c]&&(cs[c].category??"dry")==="dry")out[c]=Object.fromEntries(FIELDS.map(k=>[k,cs[c][k]??GAME_DEFAULTS[k]??null]))}
+      if(!Object.keys(out).length)throw new Error("no soft, medium or hard compound found");
+      sets.push({name:f.name.replace(/\.json$/i,""),mandatory:j.mandatory_compound_count??1,wearQuantum:j.wear_quantum??null,defaultCompound:j.default_compound??null,startProb:{...(j.start_probabilities||{})},compounds:out,raw:j});added++;
+      if(sets.length>SET_COLORS.length)sets.shift();
+    }catch(e){errs.push(f.name+": "+e.message)}
+  }
+  if(added){active=sets.length-1}
+  msg($("tyreMsg"),errs.length?errs.join("; "):`Added ${added} tyre model${added>1?"s":""}.`,errs.length>0);
+  renderSets();renderTable();update();
+}
+async function addTrackFile(files){
+  const f=files[0];if(!f)return;
+  try{
+    const j=JSON.parse(await readText(f));
+    if(!j.length_km||!Array.isArray(j.micro_sectors))throw new Error("needs length_km and micro_sectors");
+    const L=j.length_km*1000;let ct=0,st=0;
+    for(const m of j.micro_sectors){const d=L*m.length_pct/100;if(m.type==="straight")st+=d/(270/3.6);else ct+=d/(m.target_speed_kmh/3.6)}
+    const corner=Math.round(100*ct/(ct+st));
+    setTrack({name:j.name?j.name+" ("+f.name+")":f.name,laps:j.lap_modifier?Math.round(50*j.lap_modifier):Math.ceil(305/j.length_km),len:+j.length_km.toFixed(3),twm:j.tyre_wear_mult??1,tfc:j.fuel_consumption??1,
+      pit:j.pit_lane_loss_s??AVG.pit,base:Math.round((ct+st)*1.11),shC:corner,shA:Math.max(0,85-corner),shB:15});
+    msg($("trackMsg"),(j.lap_modifier?"Loaded. Race laps = 50 x lap_modifier":"Loaded. No lap_modifier, so laps are set for a 305 km race")+"; corner share and lap time estimated from micro-sectors.");
+  }catch(e){msg($("trackMsg"),f.name+": "+e.message,true)}
+  update();
+}
+
+/* ---------- sets + editor ---------- */
+function renderSets(){
+  $("sets").innerHTML=sets.map((s,i)=>`<div class="setrow ${i===active?"active":""}" data-i="${i}">
+    <span class="sw" style="background:${SET_COLORS[i]}"></span><span class="nm" title="${s.name}">${s.name}</span>
+    <button data-act="edit" data-i="${i}">${i===active?"Editing":"Edit"}</button>
+    <button data-act="del" data-i="${i}" ${sets.length<2?"disabled":""} aria-label="Remove ${s.name}">Remove</button></div>`).join("");
+  $("editName").textContent=sets[active].name;$("mand").value=sets[active].mandatory||1;$("wq").value=(+(sets[active].wearQuantum??0.02)).toFixed(3);$("wq").dataset.last=$("wq").value;renderRace();$("activeName2").textContent=sets[active].name;$("activeName3").textContent=sets[active].name;
+}
+$("sets").addEventListener("click",e=>{
+  const b=e.target.closest("button");if(!b)return;const i=+b.dataset.i;
+  if(b.dataset.act==="edit")active=i;
+  if(b.dataset.act==="del"&&sets.length>1){sets.splice(i,1);if(active>=sets.length)active=sets.length-1;else if(active>i)active--}
+  renderSets();renderTable();update();
+});
+const CLIFF=["wear_cliff_onset_pct","wear_cliff_mult_lat","wear_cliff_mult_long"];
+const hasCliff=s=>dryNames(s).some(c=>s.compounds[c].wear_cliff_onset_pct!=null);
+// Cliff values kept aside when a cliff is removed, so it comes back as it was; vanilla values if there is nothing to restore.
+const stashCliff=(s,c)=>{const o=s.compounds[c];if(o.wear_cliff_onset_pct!=null||o.wear_cliff_mult_lat!=null){(s.cliffStash=s.cliffStash||{})[c]=CLIFF.map(f=>o[f])}};
+const restoreCliff=(s,c,onset)=>{const o=s.compounds[c],st=s.cliffStash?.[c]||DEFCLIFF[c]||[65,1.6,1.6];
+  o.wear_cliff_onset_pct=onset??st[0];if(o.wear_cliff_mult_lat==null)o.wear_cliff_mult_lat=st[1];if(o.wear_cliff_mult_long==null)o.wear_cliff_mult_long=st[2]};
+const clearCliff=(s,c)=>{stashCliff(s,c);for(const f of CLIFF)s.compounds[c][f]=null};
+function renderTable(){
+  const s=sets[active],cs=dryNames(s);
+  $("cmpTable").innerHTML=`<colgroup><col class="k">${cs.map(()=>"<col>").join("")}</colgroup>`+"<thead><tr><th></th>"+cs.map(c=>`<th><span class="dot" style="background:var(--${c==="medium"?"med":c})"></span>${c[0].toUpperCase()+c.slice(1)}</th>`).join("")+"</tr></thead><tbody>"+
+    FIELDS.map((f,i)=>(f==="wear_cliff_onset_pct"?`<tr><td colspan="${cs.length+1}"><label class="chk"><input type="checkbox" id="cliffOn" ${hasCliff(s)?"checked":""}><span class="ck"></span><span>Tyre cliff</span></label></td></tr>`:"")+`<tr><td>${f}</td>`+cs.map(c=>`<td><input type="number" step="${STEPS[i]}" min="0" ${f==="wear_cliff_onset_pct"?'max="100"':""} data-c="${c}" data-f="${f}" value="${s.compounds[c][f]??""}" ${OPTIONAL.has(f)&&!hasCliff(s)?"disabled":""} placeholder="none" aria-label="${c} ${f}"></td>`).join("")+"</tr>").join("")+"</tbody>";
+}
+// Value guards: no negatives, no invalid numbers. Grip and wear fields are required; cliff fields may be "none".
+const OPTIONAL=new Set(["wear_cliff_onset_pct","wear_cliff_mult_lat","wear_cliff_mult_long"]);
+const POSITIVE=new Set(["lat_grip_base","long_grip_base","wear_rate_base"]); // 0 here breaks the lap-time maths
+const flash=t=>{t.classList.remove("bad");void t.offsetWidth;t.classList.add("bad")};
+$("cmpTable").addEventListener("input",e=>{
+  const t=e.target;if(!t.dataset.c)return;
+  const c=t.dataset.c,f=t.dataset.f,prev=sets[active].compounds[c][f],stepped=!e.inputType;
+  if(t.validity.badInput){flash(t);if(stepped)t.value=prev??"";return}
+  let v=t.value===""?null:+t.value;
+  if(f==="wear_cliff_onset_pct"){
+    // Counts down from none: none -> 100 -> 99 ... ; 0 means none (the line is left out of the file).
+    if(prev==null&&v!=null&&stepped)v=100;
+    if(v===0)v=null;
+    if(v!=null)v=Math.min(100,Math.round(v));
+    t.value=v??"";
+    const s=sets[active];
+    // The table is redrawn; keep the cursor in the onset box, at the end of the number, so typing and arrows carry on.
+    const refocus=()=>{const el=document.querySelector(`#cmpTable input[data-c=${c}][data-f=wear_cliff_onset_pct]`),x=el.value;el.focus();el.value="";el.value=x};
+    if(v==null&&prev!=null){clearCliff(s,c);renderTable();update();refocus();return}
+    if(v!=null&&prev==null){restoreCliff(s,c,v);renderTable();update();refocus();return}
+  }
+  if(v!=null&&(!isFinite(v)||v<0||t.value.trim().startsWith("-"))){flash(t);t.value=prev??"";return}
+  if((v==null&&!OPTIONAL.has(f))||(v===0&&POSITIVE.has(f)))return; // empty or 0 while typing (e.g. "0.04"); checked on leaving the box
+  sets[active].compounds[c][f]=v;update();
+});
+$("cmpTable").addEventListener("change",e=>{
+  const t=e.target;if(!t.dataset.c)return;
+  const v=sets[active].compounds[t.dataset.c][t.dataset.f];
+  if(t.validity.badInput||(t.value===""&&!OPTIONAL.has(t.dataset.f))||(+t.value===0&&t.value!==""&&POSITIVE.has(t.dataset.f))){flash(t);t.value=v??""}
+});
+// default_compound and start_probabilities: file settings for the game; the simulation does not use them.
+function renderRace(){
+  const s=sets[active],cs=dryNames(s);
+  // Same columns as the compound table above, so each value sits under its compound.
+  $("raceCols").innerHTML=`<col class="k">${cs.map(()=>"<col>").join("")}`;
+  $("defComp").innerHTML="<td>default_compound</td>"+cs.map(c=>`<td><button type="button" data-dc="${c}" class="${s.defaultCompound===c?"on":""}"><span class="dot" style="background:var(--${c==="medium"?"med":c})"></span>${cap(c)}</button></td>`).join("");
+  $("startProb").innerHTML="<td>start_probabilities</td>"+cs.map(c=>`<td><input type="number" min="0" max="1" step="0.05" data-sp="${c}" value="${(s.startProb?.[c]??0).toFixed(2)}" data-last="${(s.startProb?.[c]??0).toFixed(2)}" aria-label="${c} start probability"></td>`).join("");
+  spTotal();
+}
+function spTotal(){const sp=sets[active].startProb||{},dry=dryNames(sets[active]).reduce((a,c)=>a+(+sp[c]||0),0),other=(+sp.intermediate||0)+(+sp.wet||0);
+  const t=dry+other;$("spTotal").innerHTML=`Dry ${dry.toFixed(2)} + intermediate and wet ${other.toFixed(2)} = <b style="color:${Math.abs(t-1)<0.005?"var(--good)":"var(--bad)"}">${t.toFixed(2)}</b>`}
+$("defComp").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;sets[active].defaultCompound=b.dataset.dc;renderRace()});
+$("startProb").addEventListener("input",e=>{const t=e.target;if(!t.dataset.sp)return;const v=+t.value;
+  if(t.value===""||!isFinite(v)||v<0||v>1)return;(sets[active].startProb=sets[active].startProb||{})[t.dataset.sp]=v;spTotal()});
+$("startProb").addEventListener("change",e=>{const t=e.target;if(!t.dataset.sp)return;t.value=(+(sets[active].startProb?.[t.dataset.sp]??0)).toFixed(2)});
+// wear_quantum: lowest 0.001 as in the game; smaller values are refused.
+// Arrows move in 0.01 steps (0.01, 0.02 ...); the down arrow from 0.010 stops at the game minimum 0.001.
+$("wq").addEventListener("input",e=>{if(!e.inputType&&+$("wq").value<0.001)$("wq").value="0.001";const v=+$("wq").value;if($("wq").value!==""&&v>=0.001){sets[active].wearQuantum=v;update()}});
+$("wq").addEventListener("change",()=>{const t=$("wq");if(t.value!==""&&+t.value<0.001){flash(t);t.value=(+(sets[active].wearQuantum??0.02)).toFixed(3);t.dataset.last=t.value}});
+$("mand").addEventListener("input",()=>{const v=Math.round(+$("mand").value);if(v>=1)sets[active].mandatory=Math.min(3,v)});
+$("split").addEventListener("change",update);
+// The Tyre cliff tick is redrawn with the table, so its handler sits on the table.
+$("cmpTable").addEventListener("change",e=>{if(e.target.id!=="cliffOn")return;const s=sets[active];
+  for(const c of dryNames(s)){if($("cliffOn").checked)restoreCliff(s,c);else clearCliff(s,c)}
+  renderTable();update()});
+$("dupSet").addEventListener("click",()=>{
+  const c=structuredClone(sets[active]);c.name=c.name+" (copy)";sets.push(c);if(sets.length>SET_COLORS.length)sets.shift();
+  active=sets.length-1;renderSets();renderTable();update();
+});
+// Full tyremodel.json: the uploaded file with the edited dry-compound values written back.
+// A value set to none removes that line; everything else in the file (wet tyres, temperatures, wetness states) is kept.
+function exportModel(s){
+  const j=structuredClone(s.raw||{mandatory_compound_count:s.mandatory||1,compounds:{}});
+  const cs=s.raw&&!s.raw.compounds?j:(j.compounds=j.compounds||{});
+  if("mandatory_compound_count" in j||!s.raw)j.mandatory_compound_count=s.mandatory||1;
+  if(s.wearQuantum!=null)j.wear_quantum=s.wearQuantum;
+  if(s.defaultCompound)j.default_compound=s.defaultCompound;
+  if(s.startProb&&Object.keys(s.startProb).length){j.start_probabilities=j.start_probabilities||{};
+    for(const c of dryNames(s))if(s.startProb[c]!=null)j.start_probabilities[c]=s.startProb[c];
+    if(!s.raw)for(const k of ["intermediate","wet"])if(s.startProb[k]!=null)j.start_probabilities[k]=s.startProb[k]}
+  for(const c of dryNames(s)){const o=cs[c]=cs[c]||{category:"dry"};
+    for(const f of FIELDS){const v=s.compounds[c][f];if(v==null)delete o[f];else o[f]=v}}
+  return j;
+}
+$("dlJson").addEventListener("click",()=>{
+  const s=sets[active],txt=JSON.stringify(exportModel(s),null,2)+"\n";
+  const done=()=>msg($("copyMsg"),s.raw?"Downloaded. Every other part of the uploaded file is unchanged.":"Downloaded. Built-in model: the file holds only the dry compounds; start from an uploaded tyremodel.json to keep wet tyres and temperatures.");
+  // Inside claude.ai the viewer saves through the downloads capability; on a plain web page (GitHub) a normal download link is used.
+  if(window.claude?.use){
+    if(!dlCap){msg($("copyMsg"),"Download is not available in this view.");return}
+    dlCap.save({filename:"tyremodel.json",data:txt}).then(done,e=>{if(e?.code!=="declined")msg($("copyMsg"),"Download failed: "+(e?.message||e?.code||"unknown error"))});
+    return;
+  }
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type:"application/json"}));a.download="tyremodel.json";
+  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000);done();
+});
+let dlCap=null;if(window.claude?.use)window.claude.use("downloads").then(d=>{dlCap=d}).catch(()=>{});
+
+/* ---------- physics ---------- */
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const accelMult=t=>clamp(1+(800/t-1)*0.5,0.70,1.25);
+const cornerMult=t=>clamp(1+(Math.sqrt(800/t)-1)*0.5,0.84,1.08);
+function S(){
+  const len=+$("tlen").value,tfc=+$("tfc").value,laps=+$("laps").value;
+  const fpl=(+$("fpc").value)*KG_PER_UNIT_KM*len*tfc;
+  $("fplOut").textContent=`= ${fpl.toFixed(2)} kg per lap, ${(fpl*laps).toFixed(0)} kg per race (average engine)`;
+  const dryKg=+$("chassis").value+ +$("engine").value,tankKg=+$("tank").value,startKg=dryKg+($("refuel").checked?tankKg:fpl*laps),pc=x=>(x>=1?"+":"")+((x-1)*100).toFixed(1)+"%";
+  $("massOut").innerHTML=`Empty, ${dryKg} kg: acceleration ${pc(accelMult(dryKg))}, corner speed ${pc(cornerMult(dryKg))}<br>${$("refuel").checked?"Full tank":"Race start, full race fuel"}, ${startKg.toFixed(0)} kg: acceleration ${pc(accelMult(startKg))}, corner speed ${pc(cornerMult(startKg))}`;
+  $("tank").disabled=!$("refuel").checked; // without refuelling the tank size is ignored
+  return {laps,fpl,base:+$("base").value,shC:+$("shC").value/100,shA:+$("shA").value/100,shB:+$("shB").value/100,
+    dry:+$("chassis").value+ +$("engine").value,refuel:$("refuel").checked,ref:+$("ref").value/10,tank:+$("tank").value,pit:+$("pit").value,
+    th:+$("th").value,optimal:$("split").value==="opt",wm:(+$("twm").value||1)*(+$("prof").value||1)};
+}
+// q = the model's wear_quantum (game tyre_model.py: default 0.02, lowest 0.001).
+function prep(cname,c,P,q){
+  let on=c.wear_cliff_onset_pct,ml=c.wear_cliff_mult_lat,mg=c.wear_cliff_mult_long;
+  return {...c,rate:(c.wear_rate_base||0)*P.wm,on,ml:ml??1,mg:mg??ml??1,q:Math.max(0.001,q??0.02)};
+}
+// Game race_manager: the tyre result of the first lap in each wear_quantum step is reused until wear reaches the next step (all compounds).
+// Game wear_grip_factors: without a cliff, wear is also rounded to the nearest step; with a cliff the exact wear is used plus the cliff extra. Wear factor never below 0.5.
+function grips(c,n){
+  const step=Math.floor(Math.min(n*c.rate,1)/c.q+1e-9),n0=c.rate>0?Math.max(0,Math.ceil(step*c.q/c.rate-1e-9)):0;
+  let w=Math.min(n0*c.rate,1);
+  if(c.on==null)w=Math.round(w/c.q)*c.q;
+  const eff=m=>(c.on!=null&&w>c.on/100)?c.on/100+(w-c.on/100)*m:w;
+  const f=(loss,m)=>Math.max(0.5,1-loss*eff(m));
+  return [c.lat_grip_base*f(c.wear_grip_loss_lat,c.ml),c.long_grip_base*f(c.wear_grip_loss_long,c.mg)];
+}
+function lapTime(c,n,fuel,P){
+  const [gl,gg]=grips(c,n),tot=P.dry+fuel;
+  return P.base*(P.shC/(cornerMult(tot)*Math.sqrt(gl))+P.shA/Math.sqrt(accelMult(tot))+P.shB/Math.sqrt(gg));
+}
+const CODE={soft:"S",medium:"M",hard:"H"};
+const seqName=seq=>seq.map(c=>CODE[c]).join("-");
+const equalSplit=(laps,K)=>Array.from({length:K},(_,i)=>Math.floor(laps/K)+(i<laps%K?1:0));
+// Time a race for a compound sequence and stint lengths L. cs maps compound name to prep() output.
+function evalSplit(cs,seq,L,P){
+  let t=0,ok=true,why=new Set(),laps=[],cum=[],done=0;const total=P.laps*P.fpl;
+  L.forEach((sl,si)=>{
+    const c=cs[seq[si]];
+    if(sl<1){ok=false;why.add("empty stint")}
+    if(sl*c.rate>P.th+1e-9){ok=false;why.add("wear")}
+    const f=P.refuel?sl*P.fpl:total-done*P.fpl;
+    if(P.refuel&&f>P.tank+1e-9){ok=false;why.add("tank")} // without refuelling the car starts with the race fuel, whatever the tank size
+    const stop=si>0?P.pit+(P.refuel?P.ref*f:0):0;t+=stop;
+    for(let i=0;i<sl;i++){const lt=lapTime(c,i,f-i*P.fpl-P.fpl/2,P);t+=lt;laps.push(lt);cum.push(t)}
+    done+=sl;
+  });
+  return {t,ok,why:[...why],laps,cum,L};
+}
+// Legal stint costs for one compound: run(start,len) = driving time, stop(len) = pit cost before the stint. Infinity past wear or tank.
+function stintCosts(c,P){
+  const N=P.laps,total=N*P.fpl,maxLen=Math.min(N,Math.floor((P.th+1e-9)/c.rate));
+  if(P.refuel){
+    const arr=new Float64Array(N+1).fill(Infinity);
+    for(let len=1;len<=maxLen;len++){const f=len*P.fpl;if(f>P.tank+1e-9)break;let s=0;for(let i=0;i<len;i++)s+=lapTime(c,i,f-i*P.fpl-P.fpl/2,P);arr[len]=s}
+    return {run:(d,len)=>arr[len],stop:len=>P.pit+P.ref*len*P.fpl};
+  }
+  const W=N+1,tab=new Float64Array(W*W).fill(Infinity);
+  for(let d=0;d<N;d++){const f0=total-d*P.fpl;let s=0;for(let len=1;len<=Math.min(maxLen,N-d);len++){const i=len-1;s+=lapTime(c,i,f0-i*P.fpl-P.fpl/2,P);tab[d*W+len]=s}}
+  return {run:(d,len)=>tab[d*W+len],stop:()=>P.pit};
+}
+// Every compound sequence for 1-3 stops. Optimal mode finds the fastest legal stint split by dynamic programming over laps completed.
+function runSet(s,P){
+  const N=P.laps,names=dryNames(s),cs={},costs={},out=[];
+  for(const cn of names){cs[cn]=prep(cn,s.compounds[cn],P,s.wearQuantum);if(P.optimal)costs[cn]=stintCosts(cs[cn],P)}
+  const finish=(seq,L)=>{
+    const r=evalSplit(cs,seq,L,P),distinct=new Set(seq).size,need=Math.min(s.mandatory||1,names.length);
+    if(distinct<need){r.ok=false;r.why.push(`needs ${need} compounds`)}
+    return {seq,N:seq.length-1,name:seqName(seq),mixed:distinct>1,...r};
+  };
+  if(!P.optimal){
+    const rec=(seq)=>{if(seq.length>=2)out.push(finish(seq,equalSplit(N,seq.length)));if(seq.length<4)for(const cn of names)rec([...seq,cn])};
+    rec([]);
+  }else{
+    const start=new Float64Array(N+1).fill(Infinity);start[0]=0;
+    let layer=[{seq:[],dp:start,prev:null,parent:null}];
+    for(let k=0;k<4;k++){
+      const next=[];
+      for(const node of layer)for(const cn of names){
+        const cost=costs[cn],dp=new Float64Array(N+1).fill(Infinity),prev=new Int32Array(N+1).fill(-1);
+        for(let d=0;d<N;d++){const b=node.dp[d];if(b===Infinity)continue;
+          for(let len=1;d+len<=N;len++){const c=cost.run(d,len);if(c===Infinity)break;
+            const v=b+c+(k?cost.stop(len):0);if(v<dp[d+len]){dp[d+len]=v;prev[d+len]=d}}}
+        const nn={seq:[...node.seq,cn],dp,prev,parent:node};next.push(nn);
+        if(k>=1){
+          let L;
+          if(dp[N]<Infinity){L=[];let d=N;for(let n=nn;n.parent;n=n.parent){const p=n.prev[d];L.unshift(d-p);d=p}}
+          else L=equalSplit(N,nn.seq.length);
+          out.push(finish(nn.seq,L));
+        }
+      }
+      layer=next;
+    }
+  }
+  const legal=out.filter(o=>o.ok);const best=Math.min(...(legal.length?legal:out).map(o=>o.t));
+  out.forEach(o=>o.gap=o.t-best);return out;
+}
+// Ranked list without mirror-image duplicates (with refuelling S-H 24/38 and H-S 38/24 take the same time).
+function ranked(R){
+  const seen=new Set(),res=[];
+  for(const o of [...R].sort((a,b)=>(b.ok-a.ok)||(a.t-b.t))){
+    const key=o.seq.map((c,i)=>c+o.L[i]).sort().join()+"|"+o.t.toFixed(4);
+    if(seen.has(key))continue;seen.add(key);res.push(o);
+  }
+  return res;
+}
+
+/* ---------- render ---------- */
+let charts={};
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const cap=s=>s[0].toUpperCase()+s.slice(1);
+function opts(xt,yt){
+  const ink=css("--muted"),line=css("--grid"),f={family:"Inter",size:11};
+  const ttl=t=>({display:!!t,text:t,color:css("--label"),font:{family:"Inter",size:10,weight:"800"}});
+  return {responsive:true,maintainAspectRatio:false,animation:false,
+    plugins:{legend:{labels:{color:ink,font:f,boxWidth:14}},
+      tooltip:{backgroundColor:"#050607",borderColor:"#3a3f47",borderWidth:1,titleColor:"#fff",bodyColor:"#c7cbd1",titleFont:{family:"Inter",size:11,weight:"800"},bodyFont:f,padding:9,cornerRadius:4}},
+    scales:{x:{title:ttl(xt?xt.toUpperCase():""),ticks:{color:ink,font:f},grid:{color:line},border:{color:"#555b64"}},
+            y:{title:ttl(yt?yt.toUpperCase():""),ticks:{color:ink,font:f},grid:{color:line},border:{color:"#555b64"}}}};
+}
+// Lap times / Race time switch: one panel, two charts.
+$("raceView").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;const cum=b.dataset.v==="cum";
+  for(const x of $("raceView").children)x.classList.toggle("on",x===b);
+  $("raceTitle").textContent=cum?"Race time":"Lap times";$("noteLap").hidden=cum;$("noteCum").hidden=!cum;$("boxLap").hidden=cum;$("boxCum").hidden=!cum;
+  charts[cum?"c":"r"]?.resize()});
+function draw(key,el,type,data,o){if(charts[key]){charts[key].data=data;charts[key].options=o;charts[key].update()}else charts[key]=new Chart($(el),{type,data,options:o})}
+const fmt=x=>(x>=0?"+":"")+x.toFixed(1);
+function update(){
+  const P=S();
+  const results=sets.map(s=>runSet(s,P));
+  // matrix: best plan per stop count, then single-compound plans
+  const ccol=c=>`var(--${c==="medium"?"med":c})`;
+  const TAG=w=>w==="wear"?"WEAR":w==="tank"?"TANK":w==="empty stint"?"EMPTY":w.replace(/needs (\d) compounds/,"$1 COMPOUNDS");
+  const mini=o=>{let at=0;return `<div class="mb">${o.seq.map((c,i)=>{const l=o.L[i],x=at;at+=l;return `<span class="mbs ${c}" style="left:calc(${(100*x/P.laps).toFixed(3)}% + ${i?1:0}px);width:calc(${(100*l/P.laps).toFixed(3)}% - ${i?2:0}px)">${l}</span>`}).join("")}</div>`};
+  const cell=(o,showSeq)=>{if(!o)return"<td class='mc'>-</td>";
+    const top=o.ok&&Math.abs(o.gap)<1e-6,cls=!o.ok?"illegal":(top?"best":"");
+    return `<td class="mc ${cls}" title="${o.name}: ${o.L.join(" / ")} laps${o.ok?"":"; breaks "+o.why.join(", ")}"><div class="mh"><span class="mn">${showSeq?o.name:""}</span>${o.ok?"":o.why.map(w=>`<span class="tag">${TAG(w)}</span>`).join("")}<span class="mg">${top?raceTime(o.t):fmt(o.gap)+" s"}</span></div>${mini(o)}</td>`};
+  const bestOf=(r,N)=>{const c=r.filter(o=>o.N===N);return c.filter(o=>o.ok).sort((a,b)=>a.t-b.t)[0]||c.sort((a,b)=>a.t-b.t)[0]};
+  const keys=[];for(const c of ORDER)for(const N of [1,2,3])if(results.some(r=>r.find(o=>o.name===seqName(Array(N+1).fill(c)))))keys.push([c,N]);
+  const ncol=sets.length+1;
+  $("matrix").innerHTML="<tr><th>Strategy</th>"+sets.map((s,i)=>`<th><span class="dot" style="background:${SET_COLORS[i]}"></span>${s.name}</th>`).join("")+"</tr>"+
+    `<tr class="grp"><td colspan="${ncol}">Best plan, any compounds</td></tr>`+
+    [1,2,3].map(N=>`<tr><td>Best ${N}-stop</td>`+results.map(r=>cell(bestOf(r,N),true)).join("")+"</tr>").join("")+
+    `<tr class="grp"><td colspan="${ncol}">One compound throughout</td></tr>`+
+    keys.map(([c,N])=>`<tr><td><span class="dot" style="background:${ccol(c)}"></span>${cap(c)} ${N}-stop</td>`+
+      results.map(r=>cell(r.find(x=>x.name===seqName(Array(N+1).fill(c))),false)).join("")+"</tr>").join("")+
+    "<tr class='foot'><td>Compounds required</td>"+sets.map(s=>`<td>${s.mandatory||1}</td>`).join("")+"</tr>"+
+    "<tr class='foot'><td>Longest stint before AI pits</td>"+sets.map(s=>`<td>${dryNames(s).map(cn=>cn[0].toUpperCase()+Math.floor(P.th/prep(cn,s.compounds[cn],P).rate)).join(" ")}</td>`).join("")+"</tr>";
+  // top strategies for active
+  const R=results[active],bad=css("--bad"),TOP=ranked(R).slice(0,12);
+  const major=o=>{const m={};o.seq.forEach((c,i)=>m[c]=(m[c]||0)+o.L[i]);return Object.entries(m).sort((a,b)=>b[1]-a[1])[0][0]};
+  // stint chart: one row per plan, a segment per stint in its compound colour
+  const N=P.laps,pct=x=>(100*x/N).toFixed(3)+"%",step=N>40?10:5;
+  $("stintChart").innerHTML=TOP.map((o,ri)=>{
+    let at=0;const segs=o.seq.map((c,i)=>{const l=o.L[i],x0=at;at+=l;
+      return `<div class="st-seg ${c}" style="left:calc(${pct(x0)} + ${i?1:0}px);width:calc(${pct(l)} - ${i?2:0}px)" title="${cap(c)}: ${l} laps (laps ${x0+1}-${at})">${l}</div>`+(i<o.seq.length-1?`<span class="st-pit" style="left:${pct(at)}">${at}</span>`:"")}).join("");
+    const top=o.ok&&Math.abs(o.gap)<1e-6;
+    return `<div class="st-row ${o.ok?"":"illegal"}" title="${o.ok?"":"Breaks "+o.why.join(", ")}"><span class="st-rank">${ri+1}</span><span class="st-name">${o.name}</span><div class="st-track">${segs}</div><span class="st-gap ${top?"best":""}">${top?raceTime(o.t):fmt(o.gap)+" s"}</span></div>`}).join("")+
+    `<div class="st-axis"><span></span><span></span><div class="ticks">${Array.from({length:Math.floor(N/step)+1},(_,k)=>`<span style="left:${pct(k*step)}">${k*step}</span>`).join("")}</div><span></span><div class="lbl">Lap</div></div>`+
+    `<div class="st-legend"><span><i style="background:var(--soft)"></i>Soft</span><span><i style="background:var(--med)"></i>Medium</span><span><i style="background:var(--hard)"></i>Hard</span></div>`;
+  // tyre loss overlay
+  const maxL=Math.min(80,Math.max(...sets.flatMap(s=>dryNames(s).map(cn=>Math.floor(P.th/prep(cn,s.compounds[cn],P).rate))))+5);
+  const xs=[...Array(maxL+1).keys()];const ds=[];
+  sets.forEach((s,i)=>{
+    const href=s.compounds.hard?prep("hard",s.compounds.hard,P,s.wearQuantum):prep(dryNames(s)[0],s.compounds[dryNames(s)[0]],P,s.wearQuantum);
+    const r0=lapTime(href,0,0,P);
+    dryNames(s).forEach(cn=>{const c=prep(cn,s.compounds[cn],P,s.wearQuantum);const stint=Math.floor(P.th/c.rate);
+      ds.push({label:`${s.name}: ${cn}`,data:xs.map(n=>+(lapTime(c,n,0,P)-r0).toFixed(3)),borderColor:css("--"+(cn==="medium"?"med":cn)),backgroundColor:css("--"+(cn==="medium"?"med":cn)),
+        borderDash:i===active?[]:[[7,4],[2,3],[10,3,2,3],[4,4],[1,4]][(i-(i>active?1:0))%5],borderWidth:i===active?2.5:1.3,
+        pointRadius:xs.map(n=>n===stint?5:0),tension:0});
+    });
+  });
+  const o2=opts("laps on the tyre","seconds slower than new hard");
+  o2.plugins.legend.labels={...o2.plugins.legend.labels,color:"#c7cbd1",usePointStyle:true,pointStyle:"line",pointStyleWidth:34,padding:14,
+    generateLabels:ch=>ch.data.datasets.map((d,i)=>({text:d.label,strokeStyle:d.borderColor,fillStyle:d.borderColor,lineWidth:2.5,lineDash:d.borderDash,pointStyle:"line",fontColor:"#c7cbd1",hidden:!ch.isDatasetVisible(i),datasetIndex:i}))};
+  draw("t","cTyre","line",{labels:xs,datasets:ds},o2);
+  // race trace for active: fastest legal plan per stop count
+  const STOPCOL=["#2f6fd6","#d97a00","#9a4fd0"];
+  const best=[1,2,3].map(N=>R.filter(o=>o.N===N&&o.ok).sort((a,b)=>a.t-b.t)[0]).filter(Boolean);
+  const o3=opts("lap","lap time (s)");o3.elements={point:{radius:0}};
+  draw("r","cRace","line",{labels:[...Array(P.laps).keys()].map(i=>i+1),datasets:best.map(o=>({label:`${o.N}-stop ${o.name} (${o.L.join("/")})`,data:o.laps,
+    borderColor:STOPCOL[o.N-1],backgroundColor:STOPCOL[o.N-1],borderWidth:2,tension:0}))},o3);
+  // race time: running total against an even pace that finishes with the fastest plan's total
+  if(best.length){const pace=Math.min(...best.map(o=>o.t))/P.laps,o4=opts("lap","seconds vs even pace (+ = behind)");o4.elements={point:{radius:0}};
+    o4.plugins.tooltip.callbacks={label:x=>`${x.dataset.label}: ${raceTime(best[x.datasetIndex].cum[x.dataIndex])} (${x.parsed.y>=0?"+":""}${x.parsed.y.toFixed(1)} s)`};
+    draw("c","cCum","line",{labels:[...Array(P.laps).keys()].map(i=>i+1),datasets:best.map(o=>({label:`${o.N}-stop ${o.name} (${raceTime(o.t)})`,data:o.cum.map((v,i)=>+(v-pace*(i+1)).toFixed(2)),
+      borderColor:STOPCOL[o.N-1],backgroundColor:STOPCOL[o.N-1],borderWidth:2,tension:0,stepped:false}))},o4)}
+}
+
+wireDrop($("dropTyre"),$("fileTyre"),addTyreFiles);
+wireDrop($("dropTrack"),$("fileTrack"),addTrackFile);
+$("avgTrack").addEventListener("click",()=>{setTrack(AVG);msg($("trackMsg"),"");update()});
+document.querySelectorAll("input[type=number]:not([data-c])").forEach(el=>{el.min=el.min||"0";el.dataset.last=el.value});
+// Guard runs in the capture phase so a rejected value never reaches the simulation.
+// Value guard: an invalid entry is ignored while typing (no partial revert) and the last good value comes back when the field is left.
+const badVal=t=>t.validity.badInput||(t.value!==""&&(+t.value<0||!isFinite(+t.value)||t.value.trim().startsWith("-")||(t.max!==""&&+t.value>+t.max)));
+document.addEventListener("focusin",e=>{const t=e.target;if(t.type==="number"&&!t.dataset.c)t.dataset.last=t.value},true);
+document.addEventListener("input",e=>{
+  const t=e.target;if(t.type!=="number"||t.dataset.c)return;
+  if(badVal(t)){flash(t);t.dataset.bad="1";e.stopImmediatePropagation();return}
+  delete t.dataset.bad;if(t.value==="")e.stopImmediatePropagation();
+},true);
+document.addEventListener("change",e=>{const t=e.target;if(t.type!=="number"||t.dataset.c)return;
+  if(t.value===""||t.dataset.bad||badVal(t)){delete t.dataset.bad;flash(t);t.value=t.dataset.last;t.dispatchEvent(new Event("input",{bubbles:true}));update()}
+  else t.dataset.last=t.value},true);
+document.querySelectorAll("input:not([data-c]):not([type=file])").forEach(el=>el.addEventListener("input",update));
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>{Object.values(charts).forEach(c=>c.destroy());charts={};update()});
+defaults();fmtDec();renderSets();renderTable();update();
+</script>
+
+
+
+</body>
+</html>

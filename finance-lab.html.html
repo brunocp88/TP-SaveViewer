@@ -1,0 +1,872 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TP Finance Lab</title>
+<style>
+:root{
+  --bg:#050607;--panel:#0f1114;--panel2:#13161a;--panel3:#0b0d10;
+  --text:#f4f4f5;--muted:#8b9098;--border:#24282e;--border2:#31363d;
+  --accent:#2f6fe0;--accent2:#4a86f2;--accent-soft:#0e1a33;--accent-light:#7ea6ff;
+  --good:#36c98f;--mid:#e6b84d;--bad:#ef6461;--fixed:#a99be0;
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;background:radial-gradient(circle at 50% -250px,rgba(47,111,224,.08),transparent 520px),var(--bg);color:var(--text);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;font-size:13px}
+button,input{font:inherit}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:8px 14px;background:#08090b;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:20}
+.brand{display:flex;align-items:center;gap:11px;min-width:0}
+.brand-mark{width:40px;height:40px;border-radius:5px;background:var(--accent);display:grid;place-items:center;font-weight:950;font-style:italic;letter-spacing:-2px;color:#fff;font-size:14px;box-shadow:inset 0 -6px 12px rgba(0,0,0,.18)}
+.brand-title{font-weight:900;text-transform:uppercase;font-size:17px;letter-spacing:.06em;white-space:nowrap}
+.brand-sub{color:var(--muted);text-transform:uppercase;font-size:10.5px;letter-spacing:.09em}
+.version-pill{border:1px solid var(--border2);border-radius:3px;background:#0f1114;color:var(--muted);font-size:10.5px;font-weight:700;padding:4px 7px}
+.app-accent-line{height:2px;background:linear-gradient(90deg,var(--accent),var(--accent) 33%,transparent 33%)}
+.wrap{padding:0 16px 40px;max-width:1500px;margin:0 auto}
+.hero{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:end;padding:18px 0 14px}
+.hero h1{font-size:29px;line-height:1.03;margin:0;font-weight:900;letter-spacing:-.035em}
+.hero .sub{margin:8px 0 0;color:var(--muted);font-size:14px;line-height:1.45}
+.hero-badge{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#fff;background:var(--accent);padding:6px 8px;border-radius:3px;font-weight:900;white-space:nowrap}
+.hero-badge span{font-weight:700;opacity:.85}
+/* upload */
+.dropzone{border:2px dashed var(--border2);border-radius:8px;min-height:300px;display:grid;place-items:center;text-align:center;cursor:pointer;background:radial-gradient(circle at 50% 40%,rgba(47,111,224,.06),transparent 60%),#0c0e11;padding:30px}
+.dropzone:hover{border-color:#4a4f57}
+.drop-icon{width:72px;height:72px;border-radius:50%;background:var(--accent);display:grid;place-items:center;margin:0 auto 18px;font-size:32px;font-weight:900;box-shadow:0 0 40px rgba(47,111,224,.35)}
+.drop-title{font-size:34px;font-weight:900;letter-spacing:.04em;text-transform:uppercase}
+.drop-sub{color:#cfd3d8;font-size:15px;margin-top:8px}
+.drop-or{color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.12em;margin-top:10px}
+.drop-files{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;max-width:760px;margin:18px auto 0}
+.fchip{font-size:11px;padding:3px 7px;border:1px solid var(--border2);border-radius:3px;color:#aeb3ba;background:#0a0c0f;white-space:nowrap}
+.fchip.ok{border-color:#1f5f45;color:var(--good)}
+.fchip.chg{border-color:#6b5a26;color:var(--mid)}
+.fchip.miss{opacity:.45}
+/* loaded bars */
+.bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--panel);border:1px solid var(--border);border-radius:5px;padding:9px 12px;margin-bottom:8px}
+.bar-label{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:#777e88;font-weight:900}
+.bar strong{font-size:13px}
+.bar .files{display:flex;flex-wrap:wrap;gap:5px;flex:1}
+.edit-bar{border-color:#1d3a6e;background:#0a1222}
+.edit-bar .grow{flex:1;min-width:0;color:#d9dcdf}
+.btn{appearance:none;border:1px solid var(--border2);background:#0a0c0f;color:#c7cbd1;border-radius:3px;padding:6px 10px;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;white-space:nowrap}
+.btn:hover{border-color:#4a4f57;color:#fff}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{background:var(--accent2)}
+.btn.on{border-color:var(--accent);color:#fff;background:var(--accent-soft)}
+.btn:disabled{opacity:.35;cursor:default}
+.toolbar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:10px 0}
+.toolbar .sep{width:1px;height:20px;background:var(--border2);margin:0 4px}
+.toolbar .spacer{flex:1}
+/* tabs */
+.tabs{display:flex;flex-wrap:wrap;margin:0 0 12px;border:1px solid var(--border);background:#0a0c0f;border-radius:5px;overflow:hidden}
+.tab{appearance:none;border:0;border-right:1px solid var(--border);background:#0a0c0f;color:#8f949c;cursor:pointer;font-weight:800;text-transform:uppercase;letter-spacing:.06em;position:relative;padding:10px 16px;font-size:10.5px}
+.tab:hover{color:#fff;background:#101318}
+.tab.active{background:#15181d;color:#fff}
+.tab.active:after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--accent)}
+.tab .count{color:var(--mid);margin-left:5px}
+.pane{display:none}.pane.active{display:block}
+/* category window */
+.cat{background:var(--panel);border:1px solid var(--border);border-radius:5px;margin-bottom:8px;overflow:hidden}
+.cat-head{display:grid;grid-template-columns:18px minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 12px;cursor:pointer;user-select:none}
+.cat-head:hover{background:#121519}
+.chev{color:var(--muted);font-size:11px;transition:transform .15s}
+.cat.open .chev{transform:rotate(90deg)}
+.cat-title{font-size:13px;font-weight:900;text-transform:uppercase;letter-spacing:.04em}
+.cat-title small{color:var(--muted);font-weight:600;text-transform:none;letter-spacing:0;font-size:11.5px;margin-left:8px}
+.cat-sum{display:flex;gap:6px;align-items:center}
+.pill{font-size:10.5px;font-weight:800;padding:2px 7px;border-radius:3px;border:1px solid var(--border2);color:#c7cbd1;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pill.f{color:var(--accent-light);border-color:var(--accent);background:var(--accent-soft)}
+.pill.e{color:var(--mid);border-color:#6b5a26}
+.cat-body{display:none;border-top:1px solid var(--border)}
+.cat.open .cat-body{display:block}
+.ctrl{display:grid;grid-template-columns:64px minmax(0,1fr) auto 236px;align-items:center;gap:8px 10px;padding:10px 12px;border-bottom:1px solid var(--border);background:var(--panel3)}
+.ctrl .lab{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:#777e88;font-weight:900;width:64px}
+.ctrl input[type=range]{width:100%;min-width:0;accent-color:var(--accent)}
+.stepper{display:inline-flex;align-items:center;gap:6px}
+.stepper button{width:26px;height:26px;border-radius:3px;border:1px solid var(--border2);background:#0a0c0f;font-weight:900;font-size:15px;line-height:1;cursor:pointer;padding:0}
+.stepper .minus{color:var(--bad)}.stepper .plus{color:var(--good)}
+.stepper button:hover{border-color:#4a4f57}
+.stepper input{width:72px;text-align:center;background:#090b0e;color:var(--text);border:1px solid var(--border2);border-radius:3px;padding:4px;font-variant-numeric:tabular-nums}
+.ctrl .presets{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}.ctrl .presets .btn{padding:6px 0;text-align:center}
+.ctrl .hint{color:var(--muted);font-size:11.5px;grid-column:1/-1}
+@media (max-width:760px){.ctrl{grid-template-columns:64px minmax(0,1fr) auto}.ctrl .presets{grid-column:1/-1}}
+table{width:100%;border-collapse:collapse}
+th{color:#7d848e;font-size:9px;text-transform:uppercase;letter-spacing:.07em;background:#0d0f12;text-align:left;padding:7px 12px;border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:6px 12px;border-bottom:1px solid #1a1d22;vertical-align:top}
+tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:#12151a}
+td.key{font-family:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;font-size:12px;color:#e3e5e8}
+td.key .note{display:block;font-family:Inter,system-ui,sans-serif;color:var(--muted);font-size:11px;margin-top:1px}
+td.num{font-variant-numeric:tabular-nums;font-family:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;font-size:12px;color:#aeb3ba}
+td.file{color:var(--muted);font-size:11.5px;white-space:nowrap}
+.tag{display:inline-block;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.07em;padding:1px 5px;border-radius:3px;border:1px solid currentColor;margin-left:6px;vertical-align:1px}
+.tag.rate{color:var(--mid)}.tag.shape{color:var(--fixed)}.tag.unused{color:var(--muted)}
+.ed{display:flex;gap:4px;align-items:center}
+input.edit{width:100%;min-width:150px;font-family:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;font-size:12px;padding:4px 6px;border:1px solid var(--border2);border-radius:3px;background:#090b0e;color:var(--text)}
+input.edit.down{color:var(--good)}input.edit.up{color:var(--bad)}
+input.edit.edited{border-color:var(--mid);background:#17140a}
+.undo{width:24px;height:24px;padding:0;border-radius:3px;border:1px solid var(--border2);background:transparent;color:var(--mid);cursor:pointer}
+.sub-hint{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+details.list{margin-top:4px}
+details.list summary{cursor:pointer;color:var(--muted);font-size:11px;list-style:none}
+details.list summary::before{content:"▸ ";}
+details.list[open] summary::before{content:"▾ ";}
+.entries{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:2px 14px;margin-top:4px;font-size:11.5px}
+.entries span{display:flex;justify-content:space-between;gap:8px;color:#aeb3ba}
+.entries b{font-weight:600;color:var(--good);font-variant-numeric:tabular-nums}
+/* files tab */
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:5px;overflow:hidden;margin-bottom:10px}
+.status-ok{color:var(--good);font-weight:800;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em}
+.status-miss{color:var(--muted);font-weight:800;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em}
+.chg-n{color:var(--mid);font-weight:800}
+.old{color:#8b9098;text-decoration:line-through;text-decoration-color:#555}
+.new{color:var(--text)}
+/* affordability */
+.trow{display:grid;grid-template-columns:110px minmax(0,1fr) 300px;gap:10px;align-items:center;padding:5px 12px}
+.trow .nm{display:flex;gap:7px;align-items:center;font-weight:700}
+.trow .nm small{color:var(--muted);font-weight:600}
+.dot{width:12px;height:12px;border-radius:50%;flex:none}
+.track{position:relative;height:18px;background:#090b0e;border-radius:3px;overflow:hidden;border:1px solid #1a1d22}
+.seg{position:absolute;top:0;bottom:0}
+.seg.fixed{background:#3a3f47}.seg.free{background:var(--accent-light)}.seg.short{background:repeating-linear-gradient(45deg,#5a2626 0 4px,#3a1a1a 4px 8px)}
+.tk{position:absolute;top:0;bottom:0;border-left:1px dashed #fff;opacity:.5}
+.trow .val{font-size:11.5px;text-align:right;font-variant-numeric:tabular-nums;color:#c7cbd1}
+.lvl{display:inline-block;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.07em;padding:1px 5px;border-radius:3px;border:1px solid currentColor;margin-left:6px;min-width:84px;text-align:center}
+.lvl.l0{color:var(--bad)}.lvl.l1{color:var(--mid)}.lvl.l2{color:#c7cbd1}.lvl.l3{color:var(--good)}.lvl.l4{color:var(--accent-light)}
+.foot{font-size:11.5px;color:var(--muted);padding:8px 12px 12px}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#050607;border:1px solid #3a3f47;color:#fff;padding:9px 14px;border-radius:4px;font-size:12px;box-shadow:0 12px 30px rgba(0,0,0,.45);display:none;z-index:50;max-width:90vw}
+.empty{color:var(--muted);padding:14px 12px}
+/* Other Lab tools (shared spec: stint_lab/handoff_savelab_landing_links.md) */
+.landing-tools{margin-top:12px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:760px){.landing-tools{grid-template-columns:minmax(0,1fr)}}
+.landing-tools-label{grid-column:1/-1;font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:#777e88;font-weight:900;margin-bottom:-4px}
+.tool-card{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:14px 16px;border:1px solid #24282e;border-radius:10px;
+  background:linear-gradient(180deg,#111419,#0b0e12);color:#f4f4f5;text-align:left;text-decoration:none}
+a.tool-card:hover,a.tool-card:focus-visible{border-color:#626975;outline:none;box-shadow:inset 3px 0 0 #e10600}
+.tool-icon{width:42px;height:42px;border-radius:50%;background:#e10600;display:grid;place-items:center;box-shadow:0 0 0 6px rgba(225,6,0,.12)}
+.tool-title{display:block;font-size:16px;font-weight:900;text-transform:uppercase;letter-spacing:.06em}
+.tool-sub{display:block;font-size:12px;color:#8b9098;margin-top:3px;line-height:1.4}
+.tool-go{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:#fff;background:#e10600;border-radius:3px;padding:8px 11px;white-space:nowrap}
+.tool-card.green .tool-icon,.tool-card.green .tool-go{background:#00c94a}.tool-card.green .tool-icon{box-shadow:0 0 0 6px rgba(0,201,74,.14)}
+a.tool-card.green:hover,a.tool-card.green:focus-visible{box-shadow:inset 3px 0 0 #00c94a}
+a.tool-card.green:hover .tool-go{background:#2ee070}
+@media (max-width:760px){
+  .hero{grid-template-columns:1fr}.drop-title{font-size:22px}
+  .trow{grid-template-columns:90px minmax(0,1fr)}.trow .val{grid-column:1/-1;text-align:left}
+  td.file,th.file{display:none}
+}
+.drop-actions{display:flex;gap:8px;justify-content:center;margin-top:16px}
+.dropzone .status{color:var(--muted);font-size:12px;margin-top:10px;min-height:16px}
+body.dragging .dropzone{border-color:var(--accent);background:radial-gradient(circle at 50% 40%,rgba(47,111,224,.14),transparent 60%),#0c0e11}
+.fchip.bad{border-color:#6e2626;color:var(--bad)}
+.status-bad{color:var(--bad);font-weight:800;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em}
+.afford-bar{border:0;border-bottom:1px solid var(--border);border-radius:0;margin:0}
+.presets-inline{display:flex;gap:4px;flex-wrap:wrap}
+.edit-bar.idle{border-color:var(--border);background:var(--panel)}
+input.edit.err{border-color:var(--bad)}
+.empty{color:var(--muted);padding:14px 12px}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><div class="brand-mark" title="TP Finance Lab"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="width:26px;height:26px"><ellipse cx="6" cy="6.2" rx="3.8" ry="1.3"/><path d="M2.2 6.2v7c0 .7 1.5 1.3 3.3 1.3M2.2 9.4c0 .7 1.5 1.3 3.3 1.3"/><ellipse cx="18" cy="4.6" rx="3.8" ry="1.3"/><path d="M21.8 4.6v7c0 .7-1.5 1.3-3.3 1.3M21.8 7.8c0 .7-1.5 1.3-3.3 1.3"/><ellipse cx="12" cy="10" rx="4.8" ry="1.7"/><path d="M7.2 10v9c0 .9 2.1 1.7 4.8 1.7s4.8-.8 4.8-1.7v-9M7.2 13c0 .9 2.1 1.7 4.8 1.7s4.8-.8 4.8-1.7M7.2 16c0 .9 2.1 1.7 4.8 1.7s4.8-.8 4.8-1.7"/></svg></div><div><div class="brand-title">TP Finance Lab</div><div class="brand-sub">Team Principal data pack finance tool</div></div></div>
+  <span class="version-pill">v0.10</span>
+</header>
+<div class="app-accent-line"></div>
+<div class="wrap">
+  <div class="hero">
+    <div><h1>Load · Scale · Export</h1><div class="sub">Rebalance every money value in a data pack. Load constants.py and the JSON files, scale each finance category, download the edited files.</div></div>
+    <div class="hero-badge">Local processing <span>· Your files stay in this browser</span></div>
+  </div>
+
+  <div id="upload">
+    <div class="dropzone" id="drop" tabindex="0" role="button" aria-label="Drop data pack files here or click to browse">
+      <div>
+        <div class="drop-icon">↓</div>
+        <div class="drop-title">Drag &amp; drop data pack files</div>
+        <div class="drop-sub">Drop <b>constants.py</b> and the <b>.json</b> files, or the whole data pack folder</div>
+        <div class="drop-or">or click anywhere to browse</div>
+        <div class="drop-files" id="dropFiles"></div>
+        <div class="drop-actions"><button class="btn" id="pickFolder" type="button">Choose folder</button><button class="btn primary" id="openApp" type="button" hidden>Continue</button></div>
+        <div class="status" id="dropStatus"></div>
+      </div>
+    </div>
+    <input type="file" id="fileInput" multiple accept=".json,.py,application/json,text/x-python" hidden>
+    <input type="file" id="folderInput" webkitdirectory multiple hidden>
+    <div class="landing-tools">
+      <div class="landing-tools-label">Other Lab tools</div>
+      <a class="tool-card" href="https://brunocp88.github.io/TP-SaveViewer/index.html">
+        <span class="tool-icon"><svg style="min-width:0;width:22px;height:22px;display:block" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M4 19h16M7 16V9M12 16V5M17 16v-4"/></svg></span>
+        <span><span class="tool-title">TP Save Lab</span><span class="tool-sub">Analyze, compare and edit a Team Principal career save: development, contracts, suppliers, finances and standings.</span></span>
+        <span class="tool-go">Open →</span>
+      </a>
+      <a class="tool-card green" href="https://brunocp88.github.io/TP-SaveViewer/stint-lab.html">
+        <span class="tool-icon"><svg style="min-width:0;width:22px;height:22px;display:block" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9.5 2.5h5M12 2.5V5"/></svg></span>
+        <span><span class="tool-title">TP Stint Lab</span><span class="tool-sub">Race strategy simulator: load tyremodel.json and a track file, compare 1, 2 and 3 stop plans with the best stint split, and edit and download the tyre model.</span></span>
+        <span class="tool-go">Open →</span>
+      </a>
+    </div>
+  </div>
+
+  <div id="app" hidden>
+    <div class="bar">
+      <span class="bar-label">Loaded files</span><strong id="nLoaded"></strong>
+      <div class="files" id="loadedFiles"></div>
+      <button class="btn" id="addFiles" type="button">Add files</button>
+      <button class="btn" id="clearFiles" type="button">Start over</button>
+    </div>
+    <div class="bar edit-bar" id="editBar">
+      <span class="bar-label">Unsaved edits</span>
+      <span class="grow" id="editSummary"></span>
+      <button class="btn primary" id="dlAll" type="button">Download edited files</button>
+    </div>
+
+    <div class="toolbar">
+      <span class="bar-label">Presets</span>
+      <button class="btn" id="pApplied" type="button">My mod settings</button>
+      <button class="btn" id="pReset" type="button">All x1.00</button>
+      <span class="spacer"></span>
+      <button class="btn" id="expandAll" type="button">Expand all</button>
+      <button class="btn" id="collapseAll" type="button">Collapse all</button>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button class="tab active" data-t="sliders" type="button">Sliders</button>
+      <button class="tab" data-t="files" type="button">Files <span class="count" id="tFiles"></span></button>
+      <button class="tab" data-t="changes" type="button">Changes <span class="count" id="tChanges"></span></button>
+      <button class="tab" data-t="afford" type="button">Affordability</button>
+    </div>
+    <div class="pane active" id="pane-sliders"><div class="panel empty" id="noRows" hidden>None of the loaded files hold finance values.</div><div id="cats"></div></div>
+    <div class="pane" id="pane-files"><div class="panel"><table><thead><tr><th>File</th><th>Status</th><th>Values found</th><th>Changed</th><th></th></tr></thead><tbody id="filesBody"></tbody></table></div></div>
+    <div class="pane" id="pane-changes"><div class="panel"><table><thead><tr><th class="file">File</th><th>Key</th><th>In file</th><th>New</th></tr></thead><tbody id="chgBody"></tbody></table></div></div>
+    <div class="pane" id="pane-afford"><div class="panel">
+      <div class="bar afford-bar"><span class="bar-label">Costs from</span><strong id="saveName">No save loaded</strong><span class="grow"></span>
+        <span id="distBtns" class="presets-inline"></span>
+        <button class="btn" id="loadSave" type="button">Load save</button></div>
+      <input type="file" id="saveInput" accept=".json,application/json" hidden>
+      <div id="teams" style="padding:8px 0"></div><div class="foot" id="teamFoot"></div></div></div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+// ---------- reading constants.py and JSON ----------
+// Both files are scanned for plain number literals with their key path and position in the text.
+// Edits replace those characters only, so every other byte of the file stays as it was.
+const NUM_RE = /^(?:0[xX][0-9a-fA-F_]+|0[oO][0-7_]+|0[bB][01_]+|(?:\d[\d_]*\.?[\d_]*|\.\d[\d_]*)(?:[eE][+-]?\d[\d_]*)?)[jJ]?/;
+const OPS2 = new Set(['==', '!=', '<=', '>=', '**', '//', '->', ':=', '+=', '-=', '*=', '/=', '<<', '>>']);
+function tokenize(src, py) {
+  const T = []; let i = 0; const n = src.length;
+  while (i < n) {
+    const c = src[i];
+    if (c === '\n') { T.push({ t: 'nl', s: i, e: i + 1 }); i++; continue; }
+    if (c === ' ' || c === '\t' || c === '\r' || c === '\f' || c === '﻿') { i++; continue; }
+    if (py && c === '\\' && (src[i + 1] === '\n' || (src[i + 1] === '\r' && src[i + 2] === '\n'))) { i += src[i + 1] === '\n' ? 2 : 3; continue; }
+    if (py && c === '#') { while (i < n && src[i] !== '\n') i++; continue; }
+    let s0 = i, j = i;
+    if (py && /[rRbBuUfF]/.test(c)) { const m = /^[rRbBuUfF]{1,2}(?=['"])/.exec(src.slice(i, i + 3)); if (m) j = i + m[0].length; }
+    const q = src[j];
+    if (q === '"' || q === "'") {
+      i = j;
+      const tq = py && src.substr(i, 3) === q + q + q;
+      let inner0, inner1;
+      if (tq) { i += 3; inner0 = i; while (i < n && src.substr(i, 3) !== q + q + q) { if (src[i] === '\\') i++; i++; } inner1 = i; i += 3; }
+      else { i++; inner0 = i; while (i < n && src[i] !== q) { if (src[i] === '\\') i++; else if (src[i] === '\n' && py) break; i++; } inner1 = i; i++; }
+      T.push({ t: 'str', s: s0, e: i, v: src.slice(inner0, inner1) });
+      continue;
+    }
+    if (/[0-9]/.test(c) || (c === '.' && /[0-9]/.test(src[i + 1] || ''))) {
+      const m = NUM_RE.exec(src.slice(i, i + 64));
+      const raw = m[0]; i += raw.length;
+      T.push({ t: /[jJ]$/.test(raw) ? 'other' : 'num', s: s0, e: i, raw, v: Number(raw.replace(/_/g, '')) });
+      continue;
+    }
+    if (/[A-Za-z_À-￿]/.test(c)) {
+      const m = /^[A-Za-z_À-￿][A-Za-z0-9_À-￿]*/.exec(src.slice(i, i + 200));
+      i += m[0].length; T.push({ t: 'id', s: s0, e: i, v: m[0] }); continue;
+    }
+    const two = src.substr(i, 2);
+    if (OPS2.has(two)) { T.push({ t: 'op', s: i, e: i + 2, v: two }); i += 2; continue; }
+    T.push({ t: 'op', s: i, e: i + 1, v: c }); i++;
+  }
+  T.push({ t: 'eof', s: n, e: n });
+  return T;
+}
+function parseSource(src, py) {
+  const T = tokenize(src, py), leaves = [];
+  let p = 0;
+  const OPEN = { '{': '}', '[': ']', '(': ')' };
+  const isStop = (tk, stops) => tk.t === 'eof' || (tk.t === 'op' && stops.includes(tk.v)) || (tk.t === 'nl' && stops.includes('nl'));
+  const skipNl = () => { while (T[p].t === 'nl') p++; };
+  function skipTo(stops) { // skip a balanced run of tokens up to a stop at depth 0
+    let d = 0;
+    while (T[p].t !== 'eof') {
+      const tk = T[p];
+      if (d === 0 && isStop(tk, stops)) return;
+      if (tk.t === 'op') { if (OPEN[tk.v]) d++; else if (')]}'.includes(tk.v)) { if (d === 0) return; d--; } }
+      p++;
+    }
+  }
+  // parses one value; returns its kind. In containers newlines are ignored; at Python top level a newline ends the value.
+  function value(path, node, stops) {
+    const inCont = !stops.includes('nl');
+    if (inCont) skipNl();
+    const first = T[p], mark = leaves.length, start = p;
+    let kind = 'other', sv = null;
+    if (first.t === 'op' && (first.v === '-' || first.v === '+') && T[p + 1].t === 'num') {
+      const nt = T[p + 1]; p += 2;
+      if (inCont) skipNl();
+      if (isStop(T[p], stops)) { leaves.push({ path, node, s: first.s, e: nt.e, v: first.v === '-' ? -nt.v : nt.v, isInt: !/[.eE]/.test(nt.raw) }); return 'num'; }
+      p = start; skipTo(stops); return 'other';
+    }
+    if (first.t === 'num') {
+      p++; if (inCont) skipNl();
+      if (isStop(T[p], stops)) { leaves.push({ path, node, s: first.s, e: first.e, v: first.v, isInt: !/[.eE]/.test(first.raw) }); return 'num'; }
+      p = start; skipTo(stops); return 'other';
+    }
+    if (first.t === 'op' && OPEN[first.v]) {
+      container(path, node);
+      if (inCont) skipNl();
+      if (isStop(T[p], stops)) return 'cont';
+      leaves.length = mark; p = start; skipTo(stops); return 'other'; // e.g. [..] + [..]: an expression, left alone
+    }
+    if (first.t === 'str') { sv = first.v; kind = 'str'; }
+    p++;
+    if (inCont) skipNl();
+    if (kind === 'str') { while (T[p].t === 'str') { p++; if (inCont) skipNl(); } }
+    if (isStop(T[p], stops)) return kind === 'str' ? { str: sv } : kind;
+    p = start; skipTo(stops); leaves.length = mark; return 'other';
+  }
+  function container(path, parent) {
+    const open = T[p].v, close = OPEN[open]; p++;
+    const node = { parent, name: null };
+    if (open === '{') {
+      for (;;) {
+        skipNl();
+        if (T[p].t === 'eof') return;
+        if (T[p].t === 'op' && T[p].v === '}') { p++; return; }
+        if (T[p].t === 'op' && T[p].v === ',') { p++; continue; }
+        const kt = T[p];
+        if (kt.t === 'op' && kt.v === '**') { skipTo([',', '}']); continue; }
+        let key = null;
+        if ((kt.t === 'str' || kt.t === 'num' || kt.t === 'id') && T[p + 1].t === 'op' && T[p + 1].v === ':') { key = kt.t === 'num' ? kt.v : kt.v; p += 2; }
+        else if ((kt.t === 'str' || kt.t === 'num' || kt.t === 'id') && T[p + 1].t === 'nl') { // key, newline, colon
+          let q = p + 1; while (T[q].t === 'nl') q++;
+          if (T[q].t === 'op' && T[q].v === ':') { key = kt.v; p = q + 1; }
+        }
+        if (key === null) { skipTo([',', '}']); continue; }
+        const r = value(path.concat(String(key)), node, [',', '}']);
+        if (r && r.str != null) { if (key === 'name') node.name = r.str; (node.strs ||= {})[key] = r.str; }
+      }
+    }
+    let idx = 0;
+    for (;;) {
+      skipNl();
+      if (T[p].t === 'eof') return;
+      if (T[p].t === 'op' && T[p].v === close) { p++; return; }
+      if (T[p].t === 'op' && T[p].v === ',') { p++; continue; }
+      value(path.concat(idx++), node, [',', close]);
+    }
+  }
+  if (!py) { value([], null, []); return { leaves }; }
+  // constants.py: top-level assignments at column 0 only (NAME = value, or NAME: type = value)
+  while (T[p].t !== 'eof') {
+    const tk = T[p];
+    const col0 = tk.s === 0 || src[tk.s - 1] === '\n';
+    if (tk.t === 'id' && col0) {
+      let q = p + 1;
+      if (T[q].t === 'op' && T[q].v === ':') { q++; let d = 0; while (T[q].t !== 'eof' && !(d === 0 && ((T[q].t === 'op' && T[q].v === '=') || T[q].t === 'nl'))) { if (T[q].t === 'op' && OPEN[T[q].v]) d++; else if (T[q].t === 'op' && ')]}'.includes(T[q].v)) d--; q++; } }
+      if (T[q].t === 'op' && T[q].v === '=') {
+        p = q + 1;
+        value([tk.v], null, ['nl', ';']);
+        continue;
+      }
+    }
+    // skip the rest of this logical line
+    let d = 0;
+    while (T[p].t !== 'eof') {
+      const t2 = T[p];
+      if (t2.t === 'op' && OPEN[t2.v]) d++;
+      else if (t2.t === 'op' && ')]}'.includes(t2.v)) d = Math.max(0, d - 1);
+      else if (t2.t === 'nl' && d === 0) { p++; break; }
+      p++;
+    }
+  }
+  return { leaves };
+}
+const ownerName = leaf => { for (let n = leaf.node; n; n = n.parent) if (n.name) return n.name; return null; };
+const ownerStr = (leaf, k) => { for (let n = leaf.node; n; n = n.parent) if (n.strs?.[k] != null) return n.strs[k]; return null; };
+
+// ---------- which values belong to which category ----------
+// Path patterns: exact key, RegExp, '*' = any one level, '**' = any number of levels.
+function matchPath(pat, path, i = 0, j = 0) {
+  if (i === pat.length) return j === path.length;
+  const s = pat[i];
+  if (s === '**') { for (let k = j; k <= path.length; k++) if (matchPath(pat, path, i + 1, k)) return true; return false; }
+  if (j >= path.length) return false;
+  const seg = String(path[j]);
+  const ok = s === '*' || (s instanceof RegExp ? s.test(seg) : s === seg);
+  return ok && matchPath(pat, path, i + 1, j + 1);
+}
+const C = (cat, name, o = {}) => ({ cat, file: 'constants.py', pat: [name, '**'], label: name, ...o });
+const J = (cat, file, pat, label, o = {}) => ({ cat, file, pat, label, ...o });
+const SHAPE = { kind: 'shape', note: 'not money, never scaled' };
+const NONZERO = { min: 0.001, note: 'the game divides by this: never 0' };
+const byKey1 = l => typeof l.path[1] === 'string' ? l.path[1] : null; // dict constants: one row per key
+const HQ_SKIP = /cost|upkeep|maint|^levels?$|_m$|^\d+$|price|build/i;
+const hqGroup = l => { const o = ownerName(l); if (o) return o; for (let k = l.path.length - 2; k >= 0; k--) { const s = String(l.path[k]); if (!HQ_SKIP.test(s)) return s; } return null; };
+const RULES = [
+  J('Prize money', 'regulations.json', ['**', 'options', '*', 'payouts', '*'], 'prize_money_distribution', { prize: true, group: l => ownerStr(l, 'key') }),
+  J('Prize money', 'regulations.json', ['**', 'prize_money_distribution', '**'], 'prize_money_distribution', { prize: true, group: l => { const i = l.path.indexOf('prize_money_distribution'); return typeof l.path[i + 1] === 'string' ? l.path[i + 1] : null; } }),
+  ...['DRIVER_SALARY_MIN_M', 'DRIVER_SALARY_MAX_M', 'DRIVER_SALARY_OFFER_MAX_M'].map(n => C('Driver pay', n)),
+  ...['POINT', 'WIN', 'PODIUM'].flatMap(w => [C('Driver pay', `DRIVER_BONUS_PER_${w}_MAX_M`, NONZERO), C('Driver pay', `DRIVER_BONUS_PER_${w}_INTEREST_REFERENCE_M`, NONZERO)]),
+  ...['DRIVER_SALARY_ELITE_THRESHOLD', 'DRIVER_SALARY_ELITE_SPLIT', 'DRIVER_SALARY_GROWTH_BELOW_EXP', 'DRIVER_SALARY_GROWTH_ABOVE_EXP'].map(n => C('Driver pay', n, SHAPE)),
+  J('Driver pay', 'drivers.json', ['**', 'salary_m'], 'drivers.json salary_m', { note: 'per driver contract' }),
+  J('Driver pay', 'drivers.json', ['**', 'pay_driver_amount_m'], 'drivers.json pay_driver_amount_m', { note: 'money a pay driver brings' }),
+  C('Staff pay', 'STAFF_SALARY_PER_SKILL', { note: 'per skill point' }),
+  ...['POINT', 'WIN', 'PODIUM'].flatMap(w => [C('Staff pay', `STAFF_BONUS_PER_${w}_MAX_M`, NONZERO), C('Staff pay', `STAFF_BONUS_PER_${w}_INTEREST_REFERENCE_M`, NONZERO)]),
+  J('Staff pay', 'staff.json', ['**', 'salary_m'], 'staff.json salary_m', { note: 'per staff contract' }),
+  C('Chassis and aero development', 'CHASSIS_DEV_BUDGET_OPTIONS', { group: byKey1, pat: ['CHASSIS_DEV_BUDGET_OPTIONS', '*', /amount_m$/], note: 'new car, current car' }),
+  C('Chassis and aero development', 'CHASSIS_DEV_SPEC_B_BUDGET_MULTIPLIER', { kind: 'shape', note: 'multiplier, follows the chassis budgets on its own' }),
+  C('Chassis and aero development', 'DEV_MAX_PROJECT_SPEND', { note: 'chassis project cap' }),
+  C('Chassis and aero development', 'AERO_DEV_BUDGET_OPTIONS', { group: byKey1, pat: ['AERO_DEV_BUDGET_OPTIONS', '*', /amount_m$/], note: 'development, spec' }),
+  C('Chassis and aero development', 'AERO_CONCEPT_FEE_M'),
+  J('Engine, tyre and ERS upgrades', 'engine_upgrades.json', ['**', /cost|price|_m$/i, '**'], 'engine_upgrades.json costs', { group: l => { const s = l.path.find(x => typeof x === 'string' && !/cost|price|_m$|^levels?$/i.test(x)); return s || null; } }),
+  J('Engine, tyre and ERS upgrades', 'ers_development.json', ['**', 'level_cost_base_m', '**'], 'ERS level_cost_base_m'),
+  J('Engine, tyre and ERS upgrades', 'ers_development.json', ['**', 'weekly_research_cost_m_per_staff'], 'ERS weekly_research_cost_m_per_staff'),
+  J('Part build costs', 'car_parts.json', ['**', 'build_cost_m'], 'car_parts build_cost_m'),
+  J('Part build costs', 'engines.json', ['**', 'unit_rules', '**', 'build_cost_m'], 'engines unit_rules build_cost_m', { note: 'own engine, per unit' }),
+  J('Part build costs', 'ers_development.json', ['**', 'build_cost_m'], 'ERS build_cost_m', { note: 'per unit' }),
+  C('Part build costs', 'DRIVER_AID_BUILD_COST_M'),
+  C('Supplier prices', 'ENGINE_UNIT_COST_RANGE_M', { note: 'customer engine, per unit' }),
+  C('Supplier prices', 'EXTERNAL_PARTS_COST_RANGES_M', { group: byKey1, note: 'per part: low, high' }),
+  J('Supplier prices', 'tyre_suppliers.json', ['**', /price|cost/i, '**'], 'tyre_suppliers prices'),
+  J('Supplier prices', 'engines.json', ['**', 'cost_m'], 'engines.json cost_m', { kind: 'unused', note: 'cosmetic: the game prices engines from ENGINE_UNIT_COST_RANGE_M' }),
+  J('Facilities (HQ)', 'headquarters.json', ['**', /upkeep|maint/i, '**'], 'upkeep', { group: hqGroup, after: true }),
+  J('Facilities (HQ)', 'headquarters.json', ['**', /cost|price/i, '**'], 'build cost', { group: hqGroup, after: true }),
+  C('Facilities (HQ)', 'HQ_CONSTRUCTION_DEPOSIT_PCT', { kind: 'shape', note: 'share, not money' }),
+  ...['RACE_OPERATION_COST_PER_EVENT_M', 'RACE_DNF_COST_M', 'PRESEASON_TESTING_ENTRY_COST_M', 'FORMULA_ENTRY_ADMIN_FEE_M'].map(n => C('Race weekends, testing and juniors', n)),
+  C('Race weekends, testing and juniors', 'PRIVATE_TESTING_COST_PER_LAP_TEST_TRACK', { dollars: true, note: 'dollars, not millions' }),
+  C('Race weekends, testing and juniors', 'PRIVATE_TESTING_COST_PER_LAP_OTHER_TRACK', { dollars: true, note: 'dollars, not millions' }),
+  C('Race weekends, testing and juniors', 'JUNIOR_SERIES_SEAT_COST_M', { group: byKey1, note: 'base, per quality step' }),
+  J('Team money and ownership', 'teams.json', ['**', 'starting_balance_m'], 'teams.json starting_balance_m'),
+  J('Team money and ownership', 'teams.json', ['**', 'budget_m'], 'teams.json budget_m', { note: 'yearly income of a team that joins mid-career' }),
+  C('Team money and ownership', 'INITIAL_TEAM_BALANCE_M', { note: 'fallback when a team has no starting balance' }),
+  C('Team money and ownership', 'TEAM_MIN_VALUATION_M'),
+  J('Team money and ownership', 'events.json', ['**', 'amount_m'], 'events.json amount_m', { note: 'major investors' }),
+  C('Team money and ownership', 'CAPITAL_GAINS_TAX_RATE', { kind: 'shape', note: 'share, not money' }),
+  J('Supplier development budgets', 'engines.json', ['**', 'annual_budget_m'], 'engines.json annual_budget_m', { note: 'supplier engine development' }),
+  C('Supplier development budgets', 'ENGINE_DEV_SUPPLIER_BUDGET_PER_PLANT_LEVEL_M', { note: 'scale together with annual_budget_m' }),
+  J('Supplier development budgets', 'parts.json', ['**', 'budget_m'], 'parts.json budget_m'),
+  C('Supplier development budgets', 'GOV_RESET_PARTS_SUPPLIER_BUDGET_PER_M', { kind: 'rate', note: 'rate per $1M: goes the opposite way to budgets' }),
+  C('AI spending targets', 'AI_DEV_WEEKLY_BUDGETS', { group: byKey1 }),
+  ...['AI_DEV_MIN_WEEKLY_SPEND', 'AI_DEV_HQ_BUFFER_M', 'AI_HQ_FORCE_SPEND_BALANCE_M'].map(n => C('AI spending targets', n)),
+  ...['AI_DEV_RESERVE_RATIO', 'AI_DEV_HQ_SEASON_CAP_RATIO', 'AI_HQ_RESERVE_PCT', 'CONTRACT_RESERVE_PCT'].map(n => C('AI spending targets', n, { kind: 'shape', note: 'share, not money' })),
+  J('Sponsors', 'sponsors.json', ['**', 'amount_m'], 'sponsors.json amount_m'),
+  J('Sponsors', 'config.json', ['**', 'sponsor_amount_brackets', '*', /^(low|high)_m$/], 'sponsor_amount_brackets', { note: 'low, high per bracket' }),
+];
+const OTHER_CAT = 'Other money values';
+// Prize money is read from regulations.json only; the constants.py list is never shown or edited.
+const IGNORED = new Set(['PRIZE_MONEY_PAYOUTS_M']);
+const NOT_MONEY_RE = /(SHARE|PCT|RATIO|RATE|MULT|MULTIPLIER|FACTOR)$/;
+const OTHER_RE = /(_M|_COST|_COSTS|_BUDGET|_BUDGETS|_PRICE|_FEE|_FEES|_SALARY)$|_COST_|_BUDGET_/;
+const CATS = [...new Set(RULES.map(r => r.cat)), OTHER_CAT];
+const FILE_ORDER = ['constants.py', ...new Set(RULES.map(r => r.file).filter(f => f !== 'constants.py'))];
+
+// ---------- state ----------
+const files = new Map();   // name -> {name, path, text, py, leaves, error}
+let rows = [];             // built from the loaded files
+let factors = Object.fromEntries(CATS.map(c => [c, 1])), edits = {}, curve = 0;
+const open = new Set();
+let save = null, prizeDist = null;
+const LS = 'tp-finance-lab-1';
+try { const s = JSON.parse(localStorage.getItem(LS) || 'null'); if (s) { for (const c of CATS) if (typeof s.f?.[c] === 'number') factors[c] = s.f[c]; if (s.e && typeof s.e === 'object') edits = s.e; if (typeof s.c === 'number') curve = s.c; (s.o || []).forEach(c => open.add(c)); } } catch (e) {}
+const persist = () => { try { localStorage.setItem(LS, JSON.stringify({ f: factors, e: edits, c: curve, o: [...open] })); } catch (e) {} };
+
+const APPLIED_CURVE = 65;
+const APPLIED_F = { "Prize money": 0.35, "Driver pay": 0.1, "Staff pay": 0.1, "Chassis and aero development": 0.1, "Engine, tyre and ERS upgrades": 0.1, "Part build costs": 0.1, "Supplier prices": 0.1, "Facilities (HQ)": 0.1, "Race weekends, testing and juniors": 0.1, "Team money and ownership": 0.2, "Supplier development budgets": 0.1, "AI spending targets": 0.2, "Sponsors": 0.2 };
+const APPLIED_E = {};
+for (const g of ['Driver pay|DRIVER', 'Staff pay|STAFF']) for (const w of ['POINT', 'WIN', 'PODIUM']) { APPLIED_E[`${g}_BONUS_PER_${w}_MAX_M`] = '0.001'; APPLIED_E[`${g}_BONUS_PER_${w}_INTEREST_REFERENCE_M`] = '0.1'; }
+APPLIED_E['Driver pay|DRIVER_SALARY_MIN_M'] = '0.25';
+APPLIED_E['Supplier prices|EXTERNAL_PARTS_COST_RANGES_M · fuel'] = '0.2, 0.2';
+APPLIED_E['Team money and ownership|INITIAL_TEAM_BALANCE_M'] = '5';
+APPLIED_E['AI spending targets|AI_DEV_RESERVE_RATIO'] = '0.15';
+
+// ---------- numbers ----------
+function rnd(v, dollars) { if (dollars) return Math.round(v / 50) * 50; const a = Math.abs(v); const s = a >= 20 ? 0.5 : a >= 2 ? 0.05 : a >= 0.2 ? 0.005 : 0.001; return +(Math.round(v / s) * s).toFixed(3); }
+const fmt = v => (Math.round(v * 1000) / 1000).toLocaleString('en-US', { maximumFractionDigits: 3, useGrouping: false });
+const scaleOf = (kind, f) => kind === 'shape' || kind === 'unused' ? 1 : kind === 'rate' ? 1 / f : f;
+// Curve: 0 = the file's shape. Positive pulls every place toward the average (100 = all equal).
+// Negative raises each value to a power (up to 3 at -100), so the gaps grow toward the top. The pot stays the same.
+function curveNums(nums, c) {
+  const sum = nums.reduce((a, v) => a + v, 0), m = sum / nums.length;
+  if (c >= 0) return nums.map(v => m + (v - m) * (1 - c / 100));
+  if (nums.some(v => v < 0)) return nums.slice();
+  const pw = nums.map(v => Math.pow(v, 1 - c / 50)), ps = pw.reduce((a, v) => a + v, 0);
+  return ps ? pw.map(v => v * sum / ps) : nums.slice();
+}
+const LIST_MAX = 14;
+const listMode = r => r.prize || r.leaves.length <= LIST_MAX;
+function sliderNums(r) {
+  const f = factors[r.cat], base = r.leaves.map(l => l.v);
+  if (r.prize) return curveNums(base, curve).map(v => Math.max(0, Math.round(v * f)));
+  const k = scaleOf(r.kind, f);
+  return base.map(v => { if (k === 1) return v; let x = rnd(v * k, r.dollars); if (r.min != null && v >= r.min && x < r.min) x = r.min; return x; });
+}
+function parseEdit(r, txt) {
+  const nums = (String(txt).match(/-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?/g) || []).map(Number);
+  if (!listMode(r)) {
+    if (nums.length !== 1 || !(nums[0] > 0)) return { err: 'Type one multiplier, like x0.5' };
+    const m = nums[0], k = r.min;
+    return { mult: m, nums: r.leaves.map(l => { let x = rnd(l.v * m, r.dollars); if (k != null && l.v >= k && x < k) x = k; return x; }) };
+  }
+  const n = r.leaves.length;
+  if (nums.length !== n) return { err: `Needs ${n} number${n > 1 ? 's' : ''}, found ${nums.length}` };
+  if (r.min != null && nums.some(v => v < r.min)) return { err: `Each value must be at least ${r.min}` };
+  return { nums };
+}
+function current(r) { if (edits[r.key] != null) { const p = parseEdit(r, edits[r.key]); if (!p.err) return p.nums; } return sliderNums(r); }
+const same = (a, b) => Math.abs(a - b) < 1e-9;
+const sliderText = r => listMode(r) ? sliderNums(r).map(fmt).join(', ') : 'x' + fmt(+scaleOf(r.kind, factors[r.cat]).toFixed(3));
+function summary(nums) { if (!nums.length) return ''; const lo = Math.min(...nums), hi = Math.max(...nums); return `${nums.length} values, ${fmt(lo)}${lo !== hi ? '-' + fmt(hi) : ''}`; }
+
+// ---------- build rows from the loaded files ----------
+function leafLabels(r) {
+  // Name each value by what differs between the values of the row; parts every value shares are dropped.
+  const ps = r.leaves.map(l => l.path.slice(r.file === 'constants.py' ? 1 : 0).filter(s => s !== r.groupName));
+  const common = new Set(ps[0].filter(s => ps.length > 1 && ps.every(p => p.includes(s))));
+  return r.leaves.map((l, i) => ownerName(l) || ps[i].filter(s => !common.has(s)).map(s => typeof s === 'number' ? '#' + (s + 1) : s).join(' · ') || String(l.path[l.path.length - 1]));
+}
+function buildRows() {
+  const out = [], claimed = new Set();
+  const take = (rule, f) => {
+    const ls = f.leaves.filter(l => !claimed.has(l) && matchPath(rule.pat, l.path));
+    if (!ls.length) return;
+    const groups = new Map();
+    for (const l of ls) { const g = rule.group ? rule.group(l) : null; if (rule.group && g == null) continue; if (!groups.has(g)) groups.set(g, []); groups.get(g).push(l); }
+    for (const [g, gl] of groups) {
+      gl.forEach(l => claimed.add(l));
+      const label = g == null ? rule.label : (rule.after ? `${g} ${rule.label}` : `${rule.label} · ${g}`);
+      out.push({ ...rule, label, groupName: g, key: rule.cat + '|' + label, leaves: gl, fileName: f.name });
+    }
+  };
+  for (const rule of RULES) { const f = files.get(rule.file); if (f && !f.error) take(rule, f); }
+  const py = files.get('constants.py');
+  if (py && !py.error) {
+    const names = [...new Set(py.leaves.filter(l => !claimed.has(l)).map(l => l.path[0]))].filter(n => !IGNORED.has(n) && OTHER_RE.test(n) && !NOT_MONEY_RE.test(n) && !RULES.some(r => r.file === 'constants.py' && r.pat[0] === n));
+    for (const n of names) take(C(OTHER_CAT, n, { note: 'not in any category above' }), py);
+  }
+  const order = new Map(CATS.map((c, i) => [c, i]));
+  out.sort((a, b) => order.get(a.cat) - order.get(b.cat));
+  out.forEach((r, i) => { r.id = i; r.leafNames = leafLabels(r); });
+  rows = out;
+}
+
+// ---------- category windows ----------
+function renderCats() {
+  const host = $('cats'); host.innerHTML = '';
+  let num = 0;
+  for (const c of CATS) {
+    const rs = rows.filter(r => r.cat === c);
+    if (!rs.length) continue;
+    const isP = c === 'Prize money' && rs.some(r => r.prize);
+    const sec = document.createElement('section'); sec.className = 'cat'; sec.dataset.cat = c;
+    sec.innerHTML = `<div class="cat-head" role="button" tabindex="0" aria-expanded="false"><span class="chev">▶</span>
+      <div class="cat-title">${++num}. ${esc(c)}<small>${rs.length} row${rs.length > 1 ? 's' : ''} · ${rs.reduce((a, r) => a + r.leaves.length, 0)} values</small></div><div class="cat-sum"></div></div>
+      <div class="cat-body">
+        <div class="ctrl"><span class="lab">${isP ? 'Size' : 'Multiplier'}</span>
+          <input type="range" class="mr" min="0.05" max="3" step="0.05" aria-label="${esc(c)} multiplier">
+          <span class="stepper"><button class="minus mm" type="button" aria-label="Lower">−</button><input class="mul" inputmode="decimal" aria-label="${esc(c)} multiplier value"><button class="plus mp" type="button" aria-label="Raise">+</button></span>
+          <span class="presets">${[0.1, 0.25, 0.5, 1, 1.5].map(p => `<button class="btn" type="button" data-p="${p}">x${p}</button>`).join('')}</span></div>
+        ${isP ? `<div class="ctrl"><span class="lab">Curve</span><input type="range" class="cr" min="-100" max="100" step="1" aria-label="Curve">
+          <span class="stepper"><button class="minus cm" type="button" aria-label="Lower">−</button><input class="cn" inputmode="numeric" aria-label="Curve"><button class="plus cp" type="button" aria-label="Raise">+</button></span>
+          <span class="presets">${[-50, -25, 0, 25, 50].map(p => `<button class="btn" type="button" data-c="${p}">${p > 0 ? '+' + p : p}</button>`).join('')}</span>
+          <span class="hint">0 keeps the file's shape. Positive flattens it (100 pays every place the same), negative makes it steeper (more money to the top places). The pot stays the same.</span></div>` : ''}
+        <div style="overflow-x:auto"><table><colgroup><col style="width:27%"><col style="width:27%"><col style="width:34%"><col class="file" style="width:12%"></colgroup>
+        <thead><tr><th>Key</th><th>In file</th><th>New</th><th class="file">File</th></tr></thead><tbody>
+        ${rs.map(r => `<tr><td class="key">${esc(r.label)}${r.kind === 'rate' ? '<span class="tag rate">rate</span>' : r.kind === 'shape' ? '<span class="tag shape">not money</span>' : r.kind === 'unused' ? '<span class="tag unused">unused</span>' : ''}${r.note ? `<span class="note">${esc(r.note)}</span>` : ''}</td>
+          <td class="num">${listMode(r) ? r.leaves.map(l => fmt(l.v)).join(', ') : esc(summary(r.leaves.map(l => l.v)))}${listMode(r) && r.leaves.length > 1 && !r.prize && r.leafNames.every(n => /^[A-Za-z_][\w ]*$/.test(n) && !/#/.test(n)) ? `<span class="sub-hint">${esc(r.leafNames.join(', '))}</span>` : ''}</td>
+          <td><div class="ed"><input class="edit" data-r="${r.id}" spellcheck="false" aria-label="New value for ${esc(r.label)}"><button class="undo" type="button" data-u="${r.id}" title="Back to the slider" aria-label="Back to the slider" hidden>↺</button></div><span class="sub-hint" data-h="${r.id}"></span>
+            ${listMode(r) ? '' : `<details class="list"><summary>Show all ${r.leaves.length}</summary><div class="entries" data-l="${r.id}"></div></details>`}</td>
+          <td class="file">${esc(r.fileName)}</td></tr>`).join('')}
+        </tbody></table></div></div>`;
+    host.appendChild(sec);
+    const head = sec.querySelector('.cat-head');
+    const toggle = () => { open.has(c) ? open.delete(c) : open.add(c); paintOpen(); persist(); };
+    head.addEventListener('click', toggle);
+    head.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
+    const setF = v => { v = +v; if (!isFinite(v)) return; factors[c] = +Math.min(3, Math.max(0.05, v)).toFixed(2); update(); persist(); };
+    sec.querySelector('.mr').addEventListener('input', e => setF(e.target.value));
+    const mul = sec.querySelector('.mul');
+    mul.addEventListener('change', () => { const v = parseFloat(mul.value.replace(/^x/i, '').replace(',', '.')); if (v > 0) setF(v); else mul.value = 'x' + factors[c].toFixed(2); });
+    mul.addEventListener('blur', () => { mul.value = 'x' + factors[c].toFixed(2); });
+    sec.querySelector('.mm').addEventListener('click', () => setF(factors[c] - 0.05));
+    sec.querySelector('.mp').addEventListener('click', () => setF(factors[c] + 0.05));
+    sec.querySelectorAll('.btn[data-p]').forEach(b => b.addEventListener('click', () => setF(b.dataset.p)));
+    if (isP) {
+      const setC = v => { v = Math.round(+v); if (!isFinite(v)) return; curve = Math.min(100, Math.max(-100, v)); update(); persist(); };
+      sec.querySelector('.cr').addEventListener('input', e => setC(e.target.value));
+      const cn = sec.querySelector('.cn');
+      cn.addEventListener('change', () => { const v = parseInt(cn.value, 10); if (isFinite(v)) setC(v); else cn.value = curveText(); });
+      cn.addEventListener('blur', () => { cn.value = curveText(); });
+      sec.querySelector('.cm').addEventListener('click', () => setC(curve - 1));
+      sec.querySelector('.cp').addEventListener('click', () => setC(curve + 1));
+      sec.querySelectorAll('.btn[data-c]').forEach(b => b.addEventListener('click', () => setC(b.dataset.c)));
+    }
+    sec.querySelectorAll('input.edit').forEach(inp => inp.addEventListener('change', () => {
+      const r = rows[+inp.dataset.r], t = inp.value.trim();
+      if (!t || t === sliderText(r)) delete edits[r.key]; else edits[r.key] = t;
+      update(); persist();
+    }));
+    sec.querySelectorAll('.undo').forEach(b => b.addEventListener('click', () => { delete edits[rows[+b.dataset.u].key]; update(); persist(); }));
+  }
+  $('noRows').hidden = rows.length > 0;
+  paintOpen();
+}
+const curveText = () => (curve > 0 ? '+' : '') + curve;
+function paintOpen() { document.querySelectorAll('.cat').forEach(s => { const o = open.has(s.dataset.cat); s.classList.toggle('open', o); s.querySelector('.cat-head').setAttribute('aria-expanded', o); }); }
+
+// ---------- update ----------
+function fileChanges() {
+  const per = new Map();
+  for (const r of rows) {
+    const nv = current(r);
+    r.leaves.forEach((l, i) => { if (!same(nv[i], l.v)) { if (!per.has(r.fileName)) per.set(r.fileName, []); per.get(r.fileName).push({ leaf: l, v: nv[i] }); } });
+  }
+  return per;
+}
+function update() {
+  const chg = [];
+  for (const sec of document.querySelectorAll('.cat')) {
+    const c = sec.dataset.cat, f = factors[c], rs = rows.filter(r => r.cat === c);
+    sec.querySelector('.mr').value = f;
+    const mul = sec.querySelector('.mul'); if (document.activeElement !== mul) mul.value = 'x' + f.toFixed(2);
+    let ec = 0, cc = 0;
+    for (const r of rs) {
+      const inp = sec.querySelector(`input.edit[data-r="${r.id}"]`), h = sec.querySelector(`[data-h="${r.id}"]`);
+      const ed = edits[r.key] != null, p = ed ? parseEdit(r, edits[r.key]) : null;
+      if (ed) ec++;
+      if (document.activeElement !== inp) inp.value = ed ? edits[r.key] : sliderText(r);
+      const nv = current(r), base = r.leaves.map(l => l.v);
+      const n2 = nv.reduce((a, v, i) => a + (same(v, base[i]) ? 0 : 1), 0); cc += n2;
+      const up = nv.some((v, i) => v > base[i] + 1e-9), down = nv.some((v, i) => v < base[i] - 1e-9);
+      inp.classList.toggle('edited', ed); inp.classList.toggle('err', !!(p && p.err));
+      inp.classList.toggle('down', down && !up); inp.classList.toggle('up', up && !down);
+      sec.querySelector(`[data-u="${r.id}"]`).hidden = !ed;
+      h.textContent = p && p.err ? p.err : !listMode(r) ? (n2 ? summary(nv) : '') : (r.kind === 'shape' || r.kind === 'unused') && !ed ? 'not scaled' : '';
+      const ent = sec.querySelector(`[data-l="${r.id}"]`);
+      if (ent && ent.closest('details').open) ent.innerHTML = r.leaves.map((l, i) => `<span>${esc(r.leafNames[i])}<b>${same(nv[i], l.v) ? fmt(l.v) : fmt(l.v) + ' → ' + fmt(nv[i])}</b></span>`).join('');
+      if (n2) chg.push({ r, from: listMode(r) ? base.map(fmt).join(', ') : summary(base), to: listMode(r) ? nv.map(fmt).join(', ') : `${ed && p && !p.err ? 'x' + fmt(p.mult) : sliderText(r)} · ${summary(nv)}` });
+    }
+    const showCurve = c === 'Prize money' && sec.querySelector('.cr');
+    if (showCurve) { sec.querySelector('.cr').value = curve; const cn = sec.querySelector('.cn'); if (document.activeElement !== cn) cn.value = curveText(); }
+    sec.querySelector('.cat-sum').innerHTML = `<span class="pill${f !== 1 ? ' f' : ''}">x${f.toFixed(2)}</span>${showCurve && curve ? `<span class="pill f">curve ${curveText()}</span>` : ''}${ec ? `<span class="pill e">${ec} typed</span>` : ''}<span class="pill">${cc} changed</span>`;
+  }
+  const per = fileChanges();
+  const nVals = [...per.values()].reduce((a, x) => a + x.length, 0), nFiles = per.size;
+  const bad = rows.filter(r => edits[r.key] != null && parseEdit(r, edits[r.key]).err).length;
+  $('editSummary').textContent = (nVals ? `${nVals} value${nVals > 1 ? 's' : ''} in ${nFiles} file${nFiles > 1 ? 's' : ''} differ from the loaded files.` : 'No changes yet.') + (bad ? ` ${bad} typed value${bad > 1 ? 's have' : ' has'} a problem and ${bad > 1 ? 'are' : 'is'} left as the slider sets ${bad > 1 ? 'them' : 'it'}.` : '');
+  $('editBar').classList.toggle('idle', !nVals);
+  $('dlAll').disabled = !nVals;
+  $('tFiles').textContent = nFiles || ''; $('tChanges').textContent = chg.length || '';
+  const names = [...files.keys()].sort((a, b) => (FILE_ORDER.indexOf(a) + 1 || 99) - (FILE_ORDER.indexOf(b) + 1 || 99) || a.localeCompare(b));
+  const found = new Map(); rows.forEach(r => found.set(r.fileName, (found.get(r.fileName) || 0) + r.leaves.length));
+  $('loadedFiles').innerHTML = names.map(n => { const f = files.get(n); return `<span class="fchip ${f.error ? 'bad' : per.has(n) ? 'chg' : found.get(n) ? 'ok' : 'miss'}" title="${esc(f.path)}">${esc(n)}</span>`; }).join('');
+  $('nLoaded').textContent = files.size;
+  $('filesBody').innerHTML = names.map(n => {
+    const f = files.get(n), k = per.get(n)?.length || 0;
+    const st = f.error ? `<span class="status-bad">Could not read</span><span class="sub-hint">${esc(f.error)}</span>` : found.get(n) ? '<span class="status-ok">Loaded</span>' : '<span class="status-miss">No finance values</span>';
+    return `<tr><td class="key">${esc(f.path)}</td><td>${st}</td><td class="num">${found.get(n) || '–'}</td><td>${k ? `<span class="chg-n">${k}</span>` : '<span style="color:var(--muted)">–</span>'}</td>
+      <td style="text-align:right"><button class="btn${k ? ' primary' : ''}" type="button" data-f="${esc(n)}" ${k ? '' : 'disabled'}>Download</button></td></tr>`;
+  }).join('');
+  $('filesBody').querySelectorAll('button[data-f]').forEach(b => b.addEventListener('click', () => { const f = files.get(b.dataset.f); download(f.name, editedText(f, per.get(f.name)), f.py ? 'text/x-python' : 'application/json'); }));
+  $('chgBody').innerHTML = chg.length ? chg.map(x => `<tr><td class="file">${esc(x.r.fileName)}</td><td class="key">${esc(x.r.label)}</td><td class="num old">${esc(x.from)}</td><td class="num new">${esc(x.to)}</td></tr>`).join('')
+    : '<tr><td colspan="4" style="color:var(--muted)">No changes yet.</td></tr>';
+  renderTeams();
+}
+
+// ---------- writing files ----------
+function numText(v, leaf) {
+  if (Number.isInteger(v)) return leaf.isInt ? String(v) : v.toFixed(1);
+  return String(+v.toFixed(6));
+}
+function editedText(f, list) {
+  if (!list || !list.length) return f.text;
+  const reps = list.map(x => ({ s: x.leaf.s, e: x.leaf.e, t: numText(x.v, x.leaf) })).sort((a, b) => b.s - a.s);
+  let t = f.text;
+  for (const r of reps) t = t.slice(0, r.s) + r.t + t.slice(r.e);
+  return t;
+}
+function download(name, data, type) {
+  const blob = data instanceof Blob ? data : new Blob([data], { type: type || 'application/octet-stream' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+// minimal zip writer (stored, no compression)
+const CRC = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+const crc32 = b => { let c = 0xffffffff; for (let i = 0; i < b.length; i++) c = CRC[(c ^ b[i]) & 255] ^ (c >>> 8); return (c ^ 0xffffffff) >>> 0; };
+function makeZip(entries) {
+  const enc = new TextEncoder(), parts = [], central = []; let off = 0;
+  const d = new Date(), dt = ((d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1)) & 0xffff, dd = (((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate()) & 0xffff;
+  for (const e of entries) {
+    const name = enc.encode(e.name), data = enc.encode(e.text), crc = crc32(data);
+    const h = new DataView(new ArrayBuffer(30));
+    h.setUint32(0, 0x04034b50, true); h.setUint16(4, 20, true); h.setUint16(6, 0x0800, true); h.setUint16(8, 0, true); h.setUint16(10, dt, true); h.setUint16(12, dd, true);
+    h.setUint32(14, crc, true); h.setUint32(18, data.length, true); h.setUint32(22, data.length, true); h.setUint16(26, name.length, true); h.setUint16(28, 0, true);
+    parts.push(new Uint8Array(h.buffer), name, data);
+    const c = new DataView(new ArrayBuffer(46));
+    c.setUint32(0, 0x02014b50, true); c.setUint16(4, 20, true); c.setUint16(6, 20, true); c.setUint16(8, 0x0800, true); c.setUint16(10, 0, true); c.setUint16(12, dt, true); c.setUint16(14, dd, true);
+    c.setUint32(16, crc, true); c.setUint32(20, data.length, true); c.setUint32(24, data.length, true); c.setUint16(28, name.length, true); c.setUint32(42, off, true);
+    central.push(new Uint8Array(c.buffer), name);
+    off += 30 + name.length + data.length;
+  }
+  const csize = central.reduce((a, b) => a + b.length, 0);
+  const end = new DataView(new ArrayBuffer(22));
+  end.setUint32(0, 0x06054b50, true); end.setUint16(8, entries.length, true); end.setUint16(10, entries.length, true); end.setUint32(12, csize, true); end.setUint32(16, off, true);
+  return new Blob([...parts, ...central, new Uint8Array(end.buffer)], { type: 'application/zip' });
+}
+$('dlAll').addEventListener('click', () => {
+  const per = fileChanges(); if (!per.size) return;
+  const entries = [...per].map(([n, list]) => { const f = files.get(n); return { name: f.path, text: editedText(f, list) }; });
+  const root = (entries[0].name.includes('/') ? entries[0].name.split('/')[0] : 'data_pack');
+  download(`${root}_finance_edited.zip`, makeZip(entries));
+});
+
+// ---------- loading files ----------
+function addFile(name, path, text) {
+  const py = /\.py$/i.test(name);
+  let leaves = [], error = null;
+  try {
+    if (!py) JSON.parse(text);
+    leaves = parseSource(text, py).leaves;
+  } catch (e) { error = py ? 'Could not read this Python file' : 'Not valid JSON: ' + e.message; }
+  files.set(name, { name, path, text, py, leaves, error });
+}
+async function addFileList(list) {
+  const known = new Set(FILE_ORDER), picked = [...list].filter(f => known.has(f.name));
+  for (const f of picked) addFile(f.name, f.webkitRelativePath || f.relPath || f.name, await f.text());
+  afterLoad(picked.length, list.length - picked.length);
+}
+function afterLoad(nAdded, nSkipped) {
+  buildRows();
+  $('dropFiles').innerHTML = [...files.keys()].map(n => `<span class="fchip ${files.get(n).error ? 'bad' : 'ok'}">${esc(n)}</span>`).join('');
+  $('openApp').hidden = !files.size;
+  $('dropStatus').textContent = nAdded || nSkipped ? `${nAdded} file${nAdded === 1 ? '' : 's'} read${nSkipped ? `, ${nSkipped} other file${nSkipped === 1 ? '' : 's'} skipped (no finance values)` : ''}.` : '';
+  if (!files.size) return;
+  showApp();
+}
+function showApp() { $('upload').hidden = true; $('app').hidden = false; renderCats(); update(); }
+async function readEntry(entry, out) {
+  if (entry.isFile) { const f = await new Promise((res, rej) => entry.file(res, rej)); f.relPath = entry.fullPath.replace(/^\//, ''); out.push(f); return; }
+  if (entry.isDirectory) {
+    const rd = entry.createReader();
+    for (;;) { const batch = await new Promise((res, rej) => rd.readEntries(res, rej)); if (!batch.length) break; for (const e of batch) await readEntry(e, out); }
+  }
+}
+async function handleDrop(e) {
+  e.preventDefault(); document.body.classList.remove('dragging');
+  const items = [...(e.dataTransfer.items || [])], out = [];
+  const entries = items.map(it => it.webkitGetAsEntry && it.webkitGetAsEntry()).filter(Boolean);
+  if (entries.length) { for (const en of entries) await readEntry(en, out); addFileList(out); }
+  else addFileList(e.dataTransfer.files);
+}
+document.addEventListener('dragover', e => { e.preventDefault(); document.body.classList.add('dragging'); });
+document.addEventListener('dragleave', e => { if (!e.relatedTarget) document.body.classList.remove('dragging'); });
+document.addEventListener('drop', e => { if (e.dataTransfer && [...e.dataTransfer.types].includes('Files')) handleDrop(e); });
+$('drop').addEventListener('click', e => { if (e.target.closest('button')) return; $('fileInput').click(); });
+$('drop').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); $('fileInput').click(); } });
+$('pickFolder').addEventListener('click', () => $('folderInput').click());
+$('openApp').addEventListener('click', showApp);
+$('fileInput').addEventListener('change', e => { addFileList(e.target.files); e.target.value = ''; });
+$('folderInput').addEventListener('change', e => { addFileList(e.target.files); e.target.value = ''; });
+$('addFiles').addEventListener('click', () => $('fileInput').click());
+$('clearFiles').addEventListener('click', () => { files.clear(); rows = []; $('dropFiles').innerHTML = ''; $('openApp').hidden = true; $('dropStatus').textContent = ''; $('app').hidden = true; $('upload').hidden = false; });
+
+// ---------- affordability (from a save) ----------
+const COST_MAP = { 'Driver Salaries': 'Driver pay', 'Staff Salaries': 'Staff pay', 'Engine Supply': 'Supplier prices', 'Parts Supply': 'Supplier prices', 'Tyre Supply': 'Supplier prices', 'Race Costs': 'Race weekends, testing and juniors', 'Facility Maintenance': 'Facilities (HQ)', 'Car Construction': 'Part build costs' };
+function readSave(d, name) {
+  const teams = d.teams && typeof d.teams === 'object' ? d.teams : null;
+  if (!teams) throw new Error('No teams in this file');
+  const list = Object.entries(teams).filter(([, t]) => Array.isArray(t.finance_history) && t.finance_history.length);
+  if (!list.length) throw new Error('No finance history in this save');
+  const weeksBySeason = {};
+  list[0][1].finance_history.forEach(e => { weeksBySeason[e.season] = (weeksBySeason[e.season] || 0) + 1; });
+  const seasons = Object.keys(weeksBySeason).map(Number).sort((a, b) => a - b);
+  const full = Math.max(...Object.values(weeksBySeason));
+  const last = seasons[seasons.length - 1];
+  const done = seasons.filter(s => s < last || weeksBySeason[s] >= 52);
+  const season = done.length ? done[done.length - 1] : last;
+  const played = weeksBySeason[season], scale = done.length ? 1 : (full > played ? full : 52) / played;
+  const pts = d.constructors_points || {};
+  const out = list.map(([nm, t]) => {
+    const cost = {};
+    t.finance_history.filter(e => e.season === season).forEach(e => { for (const [k, v] of Object.entries(e.expense_items || {})) { const c = COST_MAP[k]; if (c) cost[c] = (cost[c] || 0) + v * scale; } });
+    const rgb = Array.isArray(t.color_rgb) ? t.color_rgb : null;
+    return { nm, cost, pos: t.previous_constructor_position, pts: +pts[nm] || 0, col: rgb ? `rgb(${rgb.slice(0, 3).join(',')})` : '#8b9098' };
+  });
+  const byPos = out.every(t => t.pos > 0);
+  out.sort((a, b) => byPos ? a.pos - b.pos : b.pts - a.pts);
+  const reg = d.regulations?.prize_money_distribution;
+  return { name, teams: out, season, extrapolated: !done.length, played, byPos, dist: reg && typeof reg === 'object' ? reg.current : typeof reg === 'string' ? reg : null };
+}
+$('loadSave').addEventListener('click', () => $('saveInput').click());
+$('saveInput').addEventListener('change', async e => {
+  const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+  try { save = readSave(JSON.parse(await f.text()), f.name); prizeDist = save.dist; } catch (err) { toast('Could not read the save: ' + err.message); return; }
+  update();
+});
+function devLevels() {
+  const get = (name, tier) => { const r = rows.find(x => x.label === `${name} · ${tier}`); return r ? current(r) : null; };
+  const fee = rows.find(x => x.label === 'AERO_CONCEPT_FEE_M'), feeV = fee ? current(fee)[0] : 0;
+  const plan = [['Shoestring', 'shoestring', 'shoestring'], ['Moderate', 'moderate', 'standard'], ['Large', 'large', 'factory'], ['Factory', 'factory', 'factory']];
+  const out = [];
+  for (const [label, ch, ae] of plan) {
+    const c = get('CHASSIS_DEV_BUDGET_OPTIONS', ch), a = get('AERO_DEV_BUDGET_OPTIONS', ae);
+    if (!c || !a) return null;
+    out.push({ label, cost: c.reduce((x, y) => x + y, 0) + (a[0] || 0) + 3 * (a[1] || 0) + feeV });
+  }
+  return out;
+}
+function renderTeams() {
+  const prizeRows = rows.filter(r => r.prize);
+  $('distBtns').innerHTML = prizeRows.length > 1 ? prizeRows.map(r => `<button class="btn${(prizeDist || 'balanced') === r.groupName ? ' on' : ''}" type="button" data-d="${esc(r.groupName)}">${esc(r.groupName)}</button>`).join('') : '';
+  $('distBtns').querySelectorAll('button').forEach(b => b.addEventListener('click', () => { prizeDist = b.dataset.d; renderTeams(); }));
+  $('saveName').textContent = save ? `${save.name} · season ${save.season}${save.extrapolated ? `, ${save.played} weeks scaled to a full season` : ''}` : 'No save loaded';
+  if (!save) { $('teams').innerHTML = '<div class="empty">Load a save to compare each team\'s prize money with its season costs. Costs are read from the save\'s finance history and follow the sliders.</div>'; $('teamFoot').textContent = ''; return; }
+  const pr = prizeRows.find(r => r.groupName === (prizeDist || 'balanced')) || prizeRows[0];
+  if (!pr) { $('teams').innerHTML = '<div class="empty">Load regulations.json to compare prize money with season costs.</div>'; $('teamFoot').textContent = ''; return; }
+  const prize = current(pr), lv = devLevels();
+  const rs = save.teams.map((t, i) => ({ ...t, p: prize[i] ?? 0, fx: Object.entries(t.cost).reduce((a, [c, v]) => a + v * factors[c], 0) }));
+  const maxV = Math.max(1, ...rs.map(r => Math.max(r.p, r.fx + (lv ? lv[lv.length - 1].cost : 0))));
+  $('teams').innerHTML = rs.map((r, i) => {
+    const left = r.p - r.fx; let k = -1; if (lv) lv.forEach((L, j) => { if (left >= L.cost) k = j; });
+    const tag = !lv ? '' : k < 0 ? `<span class="lvl l0">${left < 0 ? 'Loses money' : 'Below shoestring'}</span>` : `<span class="lvl l${k + 1}">${lv[k].label}</span>`;
+    return `<div class="trow"><div class="nm"><span class="dot" style="background:${r.col}"></span>${esc(r.nm)} <small>P${i + 1}</small></div>
+      <div class="track"><span class="seg fixed" style="left:0;width:${Math.min(r.fx, r.p) / maxV * 100}%"></span>${r.fx > r.p ? `<span class="seg short" style="left:${r.p / maxV * 100}%;width:${(r.fx - r.p) / maxV * 100}%"></span>` : ''}<span class="seg free" style="left:${r.fx / maxV * 100}%;width:${Math.max(0, left) / maxV * 100}%"></span>
+      ${lv ? lv.map(L => `<span class="tk" style="left:${(r.fx + L.cost) / maxV * 100}%" title="${L.label}"></span>`).join('') : ''}</div>
+      <div class="val">${fmt(Math.round(r.p))} prize · ${Math.round(r.fx)} fixed · ${Math.round(left)} left ${tag}</div></div>`;
+  }).join('');
+  $('teamFoot').textContent = `Order: ${save.byPos ? 'last season\'s constructors\' finish' : 'current constructors\' points'}. Prize list: ${pr.groupName}. Grey = fixed season costs covered by prize money (drivers, staff, engine, parts, tyres, race weekends, HQ upkeep, car builds), striped = not covered, blue = money left. ` +
+    (lv ? 'Dashed lines: a full season program (new and current chassis, aero development, 3 spec updates and concept fee) at ' + lv.map(L => `${L.label} ${Math.round(L.cost)}M`).join(', ') + '.' : 'Load constants.py to see the development program lines.');
+}
+
+// ---------- shell ----------
+let tt; function toast(m) { const t = $('toast'); t.textContent = m; t.style.display = 'block'; clearTimeout(tt); tt = setTimeout(() => t.style.display = 'none', 4000); }
+$('pApplied').addEventListener('click', () => { curve = APPLIED_CURVE; factors = Object.fromEntries(CATS.map(c => [c, APPLIED_F[c] ?? 1])); edits = { ...APPLIED_E }; update(); persist(); });
+$('pReset').addEventListener('click', () => { curve = 0; for (const c of CATS) factors[c] = 1; edits = {}; update(); persist(); });
+$('expandAll').addEventListener('click', () => { CATS.forEach(c => open.add(c)); paintOpen(); persist(); });
+$('collapseAll').addEventListener('click', () => { open.clear(); paintOpen(); persist(); });
+$('cats').addEventListener('toggle', e => { if (e.target.tagName === 'DETAILS') update(); }, true);
+document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {
+  document.querySelectorAll('.tab').forEach(x => x.classList.toggle('active', x === t));
+  document.querySelectorAll('.pane').forEach(p => p.classList.toggle('active', p.id === 'pane-' + t.dataset.t));
+}));
+window.TPFL = { parseSource, matchPath, files, get rows() { return rows; }, editedText, fileChanges, makeZip };
+
+</script>
+</body>
+</html>
