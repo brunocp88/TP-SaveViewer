@@ -77,6 +77,8 @@ button:disabled{opacity:.4;cursor:default}
 button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
 button.primary:hover{background:var(--accent2)}
 .btnrow{display:flex;flex-wrap:wrap;gap:6px}
+.setbtns{align-items:center;justify-content:space-between;margin-top:6px}
+label.chk[hidden]{display:none}
 .drop{border:1.5px dashed #3a3f47;border-radius:5px;padding:14px 12px;text-align:center;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);cursor:pointer;background:var(--panel3)}
 .drop:hover{border-color:#626975;color:#c7cbd1}
 .drop.need{border-color:var(--accent);color:#fff;background:#0b170f}
@@ -150,7 +152,79 @@ textarea{width:100%;font-family:var(--mono);font-size:11px;background:var(--fiel
 .st-axis .lbl{grid-column:3;text-align:center;font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--label);font-weight:900}
 .st-legend{display:flex;gap:14px;margin-top:8px;font-size:11px;color:#c7cbd1}
 .st-legend i{display:inline-block;width:18px;height:8px;border-radius:2px;margin-right:6px;vertical-align:0}
-.cmpwide{margin-top:12px}
+.st-row.pick{cursor:pointer}.st-row.pick:hover{background:#121519}
+.plan-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
+@media (max-width:700px){.plan-tabs{grid-template-columns:minmax(0,1fr)}}
+.ptab{display:grid;grid-template-columns:1fr auto;gap:3px 10px;text-align:left;padding:9px 12px;border:1px solid var(--line2);border-radius:3px;background:var(--chip);cursor:pointer;min-height:58px;box-sizing:border-box}
+.ptab:hover{border-color:#41464d}
+.ptab .pl{display:flex;align-items:center;gap:6px}
+.ptab .prm{padding:0 6px;font-size:13px;line-height:16px;border-color:transparent;background:transparent;color:var(--muted)}
+.ptab .prm:hover{color:#fff;border-color:var(--line2)}
+.ptab .pw{grid-column:1/-1;display:flex;gap:4px;flex-wrap:wrap}
+.ptab.empty{border-style:dashed;opacity:.35;cursor:default}
+.ptab .pl{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.06em;color:#fff}
+.ptab .ps{font-family:var(--mono);font-size:10.5px;color:var(--muted);justify-self:end}
+.ptab .pt{font-size:13px;font-weight:800;color:#fff}
+.ptab .pg{font-size:11px;color:#c7cbd1;justify-self:end;align-self:center}
+.ptab.on{background:#15181d;border-color:var(--accent);box-shadow:inset 0 -2px 0 var(--accent)}
+.ptab.add{display:flex;align-items:center;justify-content:center;border-style:dashed;text-transform:uppercase;letter-spacing:.05em;font-weight:800;color:#c7cbd1;font-size:11px}
+.planwide{margin-top:12px}
+.plan-stops{display:inline-flex;gap:6px;margin-left:auto}
+.plan-stops button{padding:4px 9px;font-size:9.5px}
+.pwrap{position:relative;background:var(--panel3);border:1px solid #1c2026;border-radius:3px;padding:0 6px 6px}
+.ptop{position:relative;height:30px}
+.pchart{position:relative;height:300px}
+.pbot{position:relative;height:30px}
+.pseg{position:absolute;top:4px;display:flex;justify-content:center;gap:3px;padding:0 2px;box-sizing:border-box}
+.pseg button{padding:3px 0;width:30px;font-size:10px;line-height:1.3;opacity:.55}
+.pseg button.on{opacity:1;color:#14171b;border-color:transparent}
+.pseg button.on.soft{background:var(--soft);color:#fff}.pseg button.on.medium{background:var(--med)}.pseg button.on.hard{background:var(--hard)}
+.pseg button:hover{opacity:1}
+.pstop{position:absolute;transform:translateX(-50%);display:inline-flex;align-items:center;gap:2px;background:var(--panel3);padding:0 2px;z-index:2}
+.pstop b{font-family:var(--mono);font-size:11px;color:#fff;min-width:18px;text-align:center}
+.pstop button,.pfuel button{padding:0 5px;font-size:12px;line-height:16px;border-color:transparent;background:transparent}
+.pstop button:hover,.pfuel button:hover{border-color:var(--line2);background:#111419}
+.pfuel{position:absolute;top:6px;display:flex;justify-content:center;align-items:center;gap:2px;font-family:var(--mono);font-size:11px;color:var(--bad)}
+.pfuel.auto span{color:#c7cbd1}
+.pfuel .pa{font-family:var(--body);font-size:8.5px;padding:0 4px;border-color:var(--line2)}
+.plan-grid{display:grid;grid-template-columns:minmax(0,560px) minmax(0,1fr);gap:16px;align-items:start;margin-top:10px}
+@media (max-width:1000px){.plan-grid{grid-template-columns:minmax(0,1fr)}}
+table.plan-t{border-collapse:collapse;width:100%;font-size:12px;color:#c7cbd1}
+table.plan-t th{font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--label);font-weight:900;text-align:left;padding:0 8px 5px 0}
+table.plan-t td{padding:4px 8px 4px 0;border-top:1px solid #1d2127;white-space:nowrap}
+table.plan-t td.pn{font-weight:800;color:#fff;width:34px}
+table.plan-t td.lp{font-family:var(--mono);font-size:11.5px;color:#e7eaee}
+table.plan-t td.lp span{color:var(--muted)}
+table.plan-t .cmpb{display:flex;gap:3px}
+table.plan-t .cmpb button{padding:3px 7px;font-size:10px;display:inline-flex;align-items:center;gap:4px}
+table.plan-t .cmpb button .dot{margin:0;width:8px;height:8px}
+table.plan-t .cmpb button.on{background:#15181d;color:#fff;border-color:var(--accent);box-shadow:inset 0 -2px 0 var(--accent)}
+.plan-rows{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.plan-row{display:grid;grid-template-columns:62px auto 108px 180px minmax(0,1fr);gap:10px;align-items:center;font-size:12px;color:#c7cbd1;padding:6px 8px;border:1px solid var(--line);border-radius:3px;background:var(--chip)}
+.plan-row .pn{font-weight:800;color:#fff;font-size:11px;text-transform:uppercase;letter-spacing:.05em}
+.plan-row .cmpb{display:flex;gap:4px}
+.plan-row .cmpb button{padding:4px 8px;font-size:9.5px;display:inline-flex;align-items:center;gap:5px}
+.plan-row .cmpb button .dot{margin:0}
+.plan-row .cmpb button.on{background:#15181d;color:#fff;border-color:var(--accent);box-shadow:inset 0 -2px 0 var(--accent)}
+.plan-row .lp{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.stp{display:inline-flex;align-items:center;gap:6px}
+.stp .k{white-space:nowrap;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--label);font-weight:900}
+.stp button{padding:2px 7px;font-size:12px;line-height:1.2}
+.stp .v{white-space:nowrap;font-family:var(--mono);font-size:12px;color:#fff;min-width:44px;text-align:center;border:1px solid var(--line2);border-radius:3px;padding:3px 6px;background:var(--field)}
+.stp button.auto{font-size:9px;padding:3px 6px}.stp button.auto.on{border-color:var(--accent);color:#fff;box-shadow:inset 0 -2px 0 var(--accent)}
+.plan-res{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:10px 0 8px;font-size:12px;color:#c7cbd1}
+#planRes{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.plan-res .rt{font-size:16px;font-weight:900;color:#fff}
+@media (max-width:700px){.plan-row{grid-template-columns:1fr 1fr}}
+.aistint{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-top:10px;padding-top:9px;border-top:1px solid #1d2127;font-size:12px;color:#c7cbd1}
+.aistint b{font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--label);font-weight:900}
+.aistint .dot{margin-right:5px}
+table.res.compact th,table.res.compact td{padding:5px 8px}
+table.res.compact td.cc{text-align:right}
+table.res.compact td.cc .lp{color:var(--muted);font-size:10.5px;margin-left:6px;font-weight:400}
+table.res.compact td.cc.best{color:#fff;font-weight:800}
+table.res.compact td.cc.illegal{text-decoration:none;color:#5c626b}
+table.res.compact tr.mdl td{text-align:left;font-weight:800;color:#fff;padding-top:10px}
 table.res td.mc{text-align:left;min-width:190px;padding:8px 12px;vertical-align:middle}
 .mh{display:flex;align-items:center;gap:6px;margin-bottom:5px}
 .mn{font-family:var(--mono);font-size:11px;color:#c7cbd1}
@@ -221,6 +295,7 @@ a.tool-card.blue:hover,a.tool-card.blue:focus-visible{box-shadow:inset 3px 0 0 #
         <div class="drop" id="dropTyre" tabindex="0" role="button">Drop tyremodel.json files here, or click to choose</div>
         <input type="file" id="fileTyre" accept=".json,application/json" multiple hidden>
         <div class="sets" id="sets"></div>
+        <div class="btnrow setbtns"><label class="chk" id="cmpWrap"><input type="checkbox" id="cmpOn"><span class="ck"></span><span>Compare models</span></label><button id="addVan">Add Vanilla 0.99.5</button></div>
         <div class="toast" id="tyreMsg"></div>
         <div class="sect">Editing: <span id="editName"></span></div>
         <div class="tablewrap"><table class="cmp" id="cmpTable"></table></div>
@@ -262,6 +337,7 @@ a.tool-card.blue:hover,a.tool-card.blue:focus-visible{box-shadow:inset 3px 0 0 #
         <label class="f"><span>Tank size (kg)</span><input type="number" id="tank" step="10"></label>
         <div class="note" id="massOut"></div>
         <label class="f"><span>FUEL_PER_LAP_CONSTANT</span><input type="number" id="fpc" step="5"></label>
+        <label class="f"><span>FUEL_REFERENCE_EFFICIENCY</span><input type="number" id="fre" step="5" min="1"></label>
         <div class="note" id="fplOut"></div>
         <label class="chk"><input type="checkbox" id="refuel"><span class="ck"></span><span>Refuelling allowed</span></label>
         <label class="f"><span>Refuel time per 10 kg (s), game value</span><input type="number" data-dec="1" id="ref" step="0.1" readonly tabindex="-1" class="ro"></label>
@@ -274,12 +350,14 @@ a.tool-card.blue:hover,a.tool-card.blue:focus-visible{box-shadow:inset 3px 0 0 #
     <div class="col">
       <div class="panel">
         <h2>Top strategies: <span id="activeName2"></span></h2>
-        <p class="note">The 12 fastest plans. Each stint is drawn in its compound colour with its length in laps; numbers under the bar are the pit-stop laps. The fastest plan shows its total race time, the others their gap to it.</p>
+        <p class="note"><span id="topLead">The fastest legal plan for each number of stops, filled up to 5 with the next fastest plans, numbered by rank among all plans.</span> Each stint is drawn in its compound colour with its length in laps; numbers under the bar are the pit-stop laps. The fastest plan shows its total race time, the others their gap to it.</p>
         <div class="stints" id="stintChart"></div>
+        <div class="aistint" id="aiStint"></div>
+        <div class="btnrow" style="margin-top:8px"><button id="topAll">Show all 12</button></div>
       </div>
       <div class="panel">
         <h2>Tyre loss over one stint</h2>
-        <p class="note">Time lost to wear only, against each model's new hard tyre, on an empty car. Lines are coloured by compound. Dots mark where the AI pits. Solid lines are the model you are editing; other loaded models are dashed.</p>
+        <p class="note">Time lost to wear only, against each model's new hard tyre, on an empty car. Lines are coloured by compound. Dots mark where the AI pits. With Compare models on, solid lines are the selected model and other loaded models are dashed.</p>
         <div class="chart"><canvas id="cTyre"></canvas></div>
       </div>
       <div class="panel">
@@ -292,10 +370,16 @@ a.tool-card.blue:hover,a.tool-card.blue:focus-visible{box-shadow:inset 3px 0 0 #
       </div>
     </div>
   </div>
-  <div class="panel cmpwide">
-        <h2>Strategy comparison</h2>
-        <p class="note">Each loaded tyre model side by side. A cell shows the gap to that model's fastest legal plan (that plan shows its total race time) and the stints in compound colours with their laps. Every soft, medium and hard order is tried for 1, 2 and 3 stops. Faded cells break a limit, tagged WEAR (a stint wears past the AI pit threshold), TANK (with refuelling, a stint needs more fuel than the tank holds) or the number of compounds the model requires.</p>
-        <div class="tablewrap" style="margin-top:10px"><table class="res" id="matrix"></table></div>
+      <div class="panel planwide" id="planPanel">
+        <h2>Strategy planner: <span id="activeName4"></span></h2>
+        <p class="note">Pick the compound above each stint, move a stop with &lsaquo; &rsaquo; on the lap axis or by dragging its line, and with refuelling set each stint's fuel under the lap numbers (grey = just enough to the next stop). Click a plan in Top strategies to load it into the selected plan.</p>
+        <div class="plan-tabs" id="planTabs"></div>
+        <div class="plan-res"><span id="planRes"></span><span class="plan-stops"><button id="planAdd">Add stop</button><button id="planDel">Remove stop</button></span></div>
+        <div class="pwrap" id="pWrap">
+          <div class="ptop" id="pTop"></div>
+          <div class="pchart"><canvas id="cPlan"></canvas></div>
+          <div class="pbot" id="pBot"></div>
+        </div>
       </div>
       <details class="panel note">
         <summary><h2>How the simulator calculates</h2></summary>
@@ -304,7 +388,7 @@ a.tool-card.blue:hover,a.tool-card.blue:focus-visible{box-shadow:inset 3px 0 0 #
           <li>Grip = grip_base x (1 - grip_loss x wear) for lateral and longitudinal separately, never below half of grip_base. Past wear_cliff_onset_pct, wear counts wear_cliff_mult times faster. As in the game's tyre_model.py, during a race the tyre effect of the first lap in each wear_quantum step (default 0.02 = 2% of tyre life) is reused until wear reaches the next step, so lap times fall in small steps for every compound; a compound without a cliff also rounds wear to the nearest step. Fuel still changes every lap.</li>
           <li>Fuel is mass only, as in the game's realistic_physics.py: acceleration x [1 + (800/total - 1) x 0.5], clamped 0.70-1.25; corner speed x [1 + (sqrt(800/total) - 1) x 0.5], clamped 0.84-1.08. Braking ignores mass.</li>
           <li>Lap time = corner share / (corner speed x sqrt(lateral grip)) + accelerating share / sqrt(acceleration) + braking share / sqrt(longitudinal grip). The shares and the grip-to-speed link are estimates, not game code.</li>
-          <li>Fuel per lap = FUEL_PER_LAP_CONSTANT x fuel_consumption x length / race distance, where race distance = race laps (50 x lap_modifier) x length. Engine fuel efficiency is not included.</li>
+          <li>Fuel per lap = fuel_consumption x FUEL_PER_LAP_CONSTANT / FUEL_REFERENCE_EFFICIENCY, for an engine with fuel efficiency 50 (the game multiplies by 1 - 0.25 x (efficiency - 50) / 50). A track file without fuel_consumption uses the game's estimate: 1 + (straight share - 0.25) x 0.6 + (1 - lap_modifier / 3.5) x 0.2.</li>
           <li>Each plan is a sequence of dry compounds, one per stint, in any order. With "Optimal split" the stint lengths are searched exhaustively for the fastest legal race; "Equal stints" splits the laps evenly, as earlier versions did. A plan needs as many different dry compounds as the model's mandatory_compound_count.</li>
           <li> With refuelling each stint starts with its own fuel and pays refuel time at the stop; without it the car starts with the fuel for the whole race, whatever the tank size, and stops are for tyres only. Traffic and track position are not modelled, so multi-stop gains are best case.</li>
         </ul>
@@ -321,10 +405,10 @@ const DEFCLIFF={soft:[35,2.0,2.0],medium:[45,1.85,1.85],hard:[65,1.6,1.6]};
 const SET_COLORS=["#d6332b","#2f6fd6","#1f8a4c","#9a4fd0","#d97a00","#0e8f91"];
 const comp=(a)=>Object.fromEntries(FIELDS.map((f,i)=>[f,a[i]??null]));
 const BUILTIN=[
-  {name:"Vanilla 0.99.5",mandatory:2,wearQuantum:0.02,defaultCompound:"medium",startProb:{soft:0.35,medium:0.4,hard:0.2,intermediate:0.04,wet:0.01},compounds:{soft:comp([1.0175,1.0165,0.036,0.06,0.1,35,2.0,2.0]),medium:comp([1.01,1.01,0.025,0.055,0.085,45,1.85,1.85]),hard:comp([1.002,1.002,0.018,0.05,0.075,65,1.6,1.6])}}
+  {name:"Vanilla 0.99.5",mandatory:1,wearQuantum:0.02,defaultCompound:"medium",startProb:{soft:0.35,medium:0.4,hard:0.2,intermediate:0.04,wet:0.01},compounds:{soft:comp([1.0175,1.0165,0.036,0.06,0.1,35,2.0,2.0]),medium:comp([1.01,1.01,0.025,0.055,0.085,45,1.85,1.85]),hard:comp([1.002,1.002,0.018,0.05,0.075,65,1.6,1.6])}}
 ];
 const AVG={name:"No track file loaded: using default track values",laps:60,len:5,twm:1,tfc:1,pit:20,base:85,shC:40,shA:45,shB:15};
-let sets=BUILTIN.map(s=>structuredClone(s)),active=0,trackLabel=AVG.name;
+let topAll=false,sets=BUILTIN.map(s=>({...structuredClone(s),builtin:true})),active=0,trackLabel=AVG.name;
 const ORDER=["soft","medium","hard"];
 const dryNames=s=>ORDER.filter(c=>s.compounds[c]);
 
@@ -341,7 +425,7 @@ function fmtDec(){document.querySelectorAll("input[data-dec]").forEach(el=>{if(e
 document.addEventListener("change",e=>{const el=e.target;if(el.dataset&&el.dataset.dec&&el.value!=="")el.value=(+el.value).toFixed(+el.dataset.dec)});
 function defaults(){
   setTrack(AVG);
-  $("chassis").value=600;$("engine").value=115;$("fpc").value=140;$("refuel").checked=true;$("ref").value=1.5;$("tank").value=120;$("th").value=0.75;$("prof").value=1.0;
+  $("chassis").value=600;$("engine").value=115;$("fpc").value=100;$("fre").value=50;$("refuel").checked=true;$("ref").value=1.5;$("tank").value=120;$("th").value=0.75;$("prof").value=1.0;
 }
 
 /* ---------- uploads ---------- */
@@ -369,10 +453,13 @@ async function addTyreFiles(files){
       if(sets.length>SET_COLORS.length)sets.shift();
     }catch(e){errs.push(f.name+": "+e.message)}
   }
-  if(added){active=sets.length-1}
+  // A built-in model left unedited is replaced by the first uploaded file; an edited one stays.
+  if(added){sets=sets.filter(s=>!(s.builtin&&untouched(s)));active=sets.length-1}
   msg($("tyreMsg"),errs.length?errs.join("; "):`Added ${added} tyre model${added>1?"s":""}.`,errs.length>0);
   renderSets();renderTable();update();
 }
+// Game estimate when a track has no fuel_consumption (lap_modifier limited to 0.5-3.5).
+function estFc(j){const sh=j.micro_sectors.filter(m=>m.type==="straight").reduce((a,m)=>a+m.length_pct,0)/100,lm=Math.min(3.5,Math.max(0.5,j.lap_modifier??1));return 1+(sh-0.25)*0.6+(1-lm/3.5)*0.2}
 async function addTrackFile(files){
   const f=files[0];if(!f)return;
   try{
@@ -381,7 +468,7 @@ async function addTrackFile(files){
     const L=j.length_km*1000;let ct=0,st=0;
     for(const m of j.micro_sectors){const d=L*m.length_pct/100;if(m.type==="straight")st+=d/(270/3.6);else ct+=d/(m.target_speed_kmh/3.6)}
     const corner=Math.round(100*ct/(ct+st));
-    setTrack({name:j.name?j.name+" ("+f.name+")":f.name,laps:j.lap_modifier?Math.round(50*j.lap_modifier):Math.ceil(305/j.length_km),len:+j.length_km.toFixed(3),twm:j.tyre_wear_mult??1,tfc:j.fuel_consumption??1,
+    setTrack({name:j.name?j.name+" ("+f.name+")":f.name,laps:j.lap_modifier?Math.round(50*j.lap_modifier):Math.ceil(305/j.length_km),len:+j.length_km.toFixed(3),twm:j.tyre_wear_mult??1,tfc:j.fuel_consumption??+estFc(j).toFixed(2),
       pit:j.pit_lane_loss_s??AVG.pit,base:Math.round((ct+st)*1.11),shC:corner,shA:Math.max(0,85-corner),shB:15});
     msg($("trackMsg"),(j.lap_modifier?"Loaded. Race laps = 50 x lap_modifier":"Loaded. No lap_modifier, so laps are set for a 305 km race")+"; corner share and lap time estimated from micro-sectors.");
   }catch(e){msg($("trackMsg"),f.name+": "+e.message,true)}
@@ -389,11 +476,16 @@ async function addTrackFile(files){
 }
 
 /* ---------- sets + editor ---------- */
+const modelKey=s=>JSON.stringify([s.mandatory,s.wearQuantum,s.defaultCompound,s.startProb,s.compounds]);
+const untouched=s=>{const b=BUILTIN.find(x=>x.name===s.name);return !!b&&modelKey(b)===modelKey(s)};
+// Models shown in the comparison table and tyre chart: only the selected one unless Compare models is on.
+const shown=()=>$("cmpOn").checked&&sets.length>1?sets.map((_,i)=>i):[active];
 function renderSets(){
   $("sets").innerHTML=sets.map((s,i)=>`<div class="setrow ${i===active?"active":""}" data-i="${i}">
     <span class="sw" style="background:${SET_COLORS[i]}"></span><span class="nm" title="${s.name}">${s.name}</span>
     <button data-act="edit" data-i="${i}">${i===active?"Editing":"Edit"}</button>
     <button data-act="del" data-i="${i}" ${sets.length<2?"disabled":""} aria-label="Remove ${s.name}">Remove</button></div>`).join("");
+  $("cmpWrap").hidden=sets.length<2;$("addVan").hidden=sets.some(s=>s.builtin);
   $("editName").textContent=sets[active].name;$("mand").value=sets[active].mandatory||1;$("wq").value=(+(sets[active].wearQuantum??0.02)).toFixed(3);$("wq").dataset.last=$("wq").value;renderRace();$("activeName2").textContent=sets[active].name;$("activeName3").textContent=sets[active].name;
 }
 $("sets").addEventListener("click",e=>{
@@ -469,8 +561,12 @@ $("split").addEventListener("change",update);
 $("cmpTable").addEventListener("change",e=>{if(e.target.id!=="cliffOn")return;const s=sets[active];
   for(const c of dryNames(s)){if($("cliffOn").checked)restoreCliff(s,c);else clearCliff(s,c)}
   renderTable();update()});
+$("cmpOn").addEventListener("change",update);
+$("topAll").addEventListener("click",()=>{topAll=!topAll;update()});
+$("addVan").addEventListener("click",()=>{sets.push({...structuredClone(BUILTIN[0]),builtin:true});if(sets.length>SET_COLORS.length)sets.shift();
+  active=sets.length-1;renderSets();renderTable();update()});
 $("dupSet").addEventListener("click",()=>{
-  const c=structuredClone(sets[active]);c.name=c.name+" (copy)";sets.push(c);if(sets.length>SET_COLORS.length)sets.shift();
+  const c=structuredClone(sets[active]);c.name=c.name+" (copy)";delete c.builtin;sets.push(c);if(sets.length>SET_COLORS.length)sets.shift();
   active=sets.length-1;renderSets();renderTable();update();
 });
 // Full tyremodel.json: the uploaded file with the edited dry-compound values written back.
@@ -508,9 +604,9 @@ const accelMult=t=>clamp(1+(800/t-1)*0.5,0.70,1.25);
 const cornerMult=t=>clamp(1+(Math.sqrt(800/t)-1)*0.5,0.84,1.08);
 function S(){
   const len=+$("tlen").value,tfc=+$("tfc").value,laps=+$("laps").value;
-  // Fuel per lap = FUEL_PER_LAP_CONSTANT x fuel_consumption x length / race distance (race laps x length).
-  const fpl=laps>0&&len>0?(+$("fpc").value)*tfc*len/(laps*len):0;
-  $("fplOut").textContent=`= ${fpl.toFixed(2)} kg per lap, ${(fpl*laps).toFixed(0)} kg per race (average engine)`;
+  // Fuel per lap = fuel_consumption x FUEL_PER_LAP_CONSTANT / FUEL_REFERENCE_EFFICIENCY (engine efficiency 50 = x1.0).
+  const fpl=(+$("fpc").value)*tfc/Math.max(1,+$("fre").value);
+  $("fplOut").textContent=`= ${fpl.toFixed(2)} kg per lap, ${(fpl*laps).toFixed(0)} kg per race (engine efficiency 50)`;
   const dryKg=+$("chassis").value+ +$("engine").value,tankKg=+$("tank").value,startKg=dryKg+($("refuel").checked?tankKg:fpl*laps),pc=x=>(x>=1?"+":"")+((x-1)*100).toFixed(1)+"%";
   $("massOut").innerHTML=`Empty, ${dryKg} kg: acceleration ${pc(accelMult(dryKg))}, corner speed ${pc(cornerMult(dryKg))}<br>${$("refuel").checked?"Full tank":"Race start, full race fuel"}, ${startKg.toFixed(0)} kg: acceleration ${pc(accelMult(startKg))}, corner speed ${pc(cornerMult(startKg))}`;
   $("tank").disabled=!$("refuel").checked; // without refuelling the tank size is ignored
@@ -636,26 +732,15 @@ const fmt=x=>(x>=0?"+":"")+x.toFixed(1);
 function update(){
   const P=S();
   const results=sets.map(s=>runSet(s,P));
-  // matrix: best plan per stop count, then single-compound plans
   const ccol=c=>`var(--${c==="medium"?"med":c})`;
   const TAG=w=>w==="wear"?"WEAR":w==="tank"?"TANK":w==="empty stint"?"EMPTY":w.replace(/needs (\d) compounds/,"$1 COMPOUNDS");
-  const mini=o=>{let at=0;return `<div class="mb">${o.seq.map((c,i)=>{const l=o.L[i],x=at;at+=l;return `<span class="mbs ${c}" style="left:calc(${(100*x/P.laps).toFixed(3)}% + ${i?1:0}px);width:calc(${(100*l/P.laps).toFixed(3)}% - ${i?2:0}px)">${l}</span>`}).join("")}</div>`};
-  const cell=(o,showSeq)=>{if(!o)return"<td class='mc'>-</td>";
-    const top=o.ok&&Math.abs(o.gap)<1e-6,cls=!o.ok?"illegal":(top?"best":"");
-    return `<td class="mc ${cls}" title="${o.name}: ${o.L.join(" / ")} laps${o.ok?"":"; breaks "+o.why.join(", ")}"><div class="mh"><span class="mn">${showSeq?o.name:""}</span>${o.ok?"":o.why.map(w=>`<span class="tag">${TAG(w)}</span>`).join("")}<span class="mg">${top?raceTime(o.t):fmt(o.gap)+" s"}</span></div>${mini(o)}</td>`};
   const bestOf=(r,N)=>{const c=r.filter(o=>o.N===N);return c.filter(o=>o.ok).sort((a,b)=>a.t-b.t)[0]||c.sort((a,b)=>a.t-b.t)[0]};
-  const keys=[];for(const c of ORDER)for(const N of [1,2,3])if(results.some(r=>r.find(o=>o.name===seqName(Array(N+1).fill(c)))))keys.push([c,N]);
-  const ncol=sets.length+1;
-  $("matrix").innerHTML="<tr><th>Strategy</th>"+sets.map((s,i)=>`<th><span class="dot" style="background:${SET_COLORS[i]}"></span>${s.name}</th>`).join("")+"</tr>"+
-    `<tr class="grp"><td colspan="${ncol}">Best plan, any compounds</td></tr>`+
-    [1,2,3].map(N=>`<tr><td>Best ${N}-stop</td>`+results.map(r=>cell(bestOf(r,N),true)).join("")+"</tr>").join("")+
-    `<tr class="grp"><td colspan="${ncol}">One compound throughout</td></tr>`+
-    keys.map(([c,N])=>`<tr><td><span class="dot" style="background:${ccol(c)}"></span>${cap(c)} ${N}-stop</td>`+
-      results.map(r=>cell(r.find(x=>x.name===seqName(Array(N+1).fill(c))),false)).join("")+"</tr>").join("")+
-    "<tr class='foot'><td>Compounds required</td>"+sets.map(s=>`<td>${s.mandatory||1}</td>`).join("")+"</tr>"+
-    "<tr class='foot'><td>Longest stint before AI pits</td>"+sets.map(s=>`<td>${dryNames(s).map(cn=>cn[0].toUpperCase()+Math.floor(P.th/prep(cn,s.compounds[cn],P).rate)).join(" ")}</td>`).join("")+"</tr>";
+  const V=shown(),vs=V.map(i=>sets[i]);
   // top strategies for active
-  const R=results[active],bad=css("--bad"),TOP=ranked(R).slice(0,12);
+  const R=results[active],bad=css("--bad"),RK=ranked(R),ALL=RK.slice(0,12),TOP=topAll?ALL:(()=>{const t=[1,2,3].map(n=>RK.find(o=>o.N===n&&o.ok)).filter(Boolean);for(const o of RK){if(t.length>=5)break;if(!t.includes(o))t.push(o)}return t.sort((a,b)=>(b.ok-a.ok)||(a.t-b.t))})();
+  $("aiStint").innerHTML="<b>Longest stint before AI pits</b>"+dryNames(sets[active]).map(cn=>`<span><span class="dot" style="background:${ccol(cn)}"></span>${cap(cn)} ${Math.floor(P.th/prep(cn,sets[active].compounds[cn],P).rate)} laps</span>`).join("");
+  $("topAll").textContent=topAll?"Show best per stop count":"Show all 12";
+  $("topLead").textContent=topAll?"The 12 fastest plans.":"The fastest legal plan for each number of stops, filled up to 5 with the next fastest plans, numbered by rank among all plans.";
   const major=o=>{const m={};o.seq.forEach((c,i)=>m[c]=(m[c]||0)+o.L[i]);return Object.entries(m).sort((a,b)=>b[1]-a[1])[0][0]};
   // stint chart: one row per plan, a segment per stint in its compound colour
   const N=P.laps,pct=x=>(100*x/N).toFixed(3)+"%",step=N>40?10:5;
@@ -663,13 +748,13 @@ function update(){
     let at=0;const segs=o.seq.map((c,i)=>{const l=o.L[i],x0=at;at+=l;
       return `<div class="st-seg ${c}" style="left:calc(${pct(x0)} + ${i?1:0}px);width:calc(${pct(l)} - ${i?2:0}px)" title="${cap(c)}: ${l} laps (laps ${x0+1}-${at})">${l}</div>`+(i<o.seq.length-1?`<span class="st-pit" style="left:${pct(at)}">${at}</span>`:"")}).join("");
     const top=o.ok&&Math.abs(o.gap)<1e-6;
-    return `<div class="st-row ${o.ok?"":"illegal"}" title="${o.ok?"":"Breaks "+o.why.join(", ")}"><span class="st-rank">${ri+1}</span><span class="st-name">${o.name}</span><div class="st-track">${segs}</div><span class="st-gap ${top?"best":""}">${top?raceTime(o.t):fmt(o.gap)+" s"}</span></div>`}).join("")+
+    return `<div class="st-row pick ${o.ok?"":"illegal"}" data-k="${ri}" title="${o.ok?"Click to load into the Strategy planner":"Breaks "+o.why.join(", ")+". Click to load into the Strategy planner"}"><span class="st-rank">${RK.indexOf(o)+1}</span><span class="st-name">${o.name}</span><div class="st-track">${segs}</div><span class="st-gap ${top?"best":""}">${top?raceTime(o.t):fmt(o.gap)+" s"}</span></div>`}).join("")+
     `<div class="st-axis"><span></span><span></span><div class="ticks">${Array.from({length:Math.floor(N/step)+1},(_,k)=>`<span style="left:${pct(k*step)}">${k*step}</span>`).join("")}</div><span></span><div class="lbl">Lap</div></div>`+
     `<div class="st-legend"><span><i style="background:var(--soft)"></i>Soft</span><span><i style="background:var(--med)"></i>Medium</span><span><i style="background:var(--hard)"></i>Hard</span></div>`;
   // tyre loss overlay
-  const maxL=Math.min(80,Math.max(...sets.flatMap(s=>dryNames(s).map(cn=>Math.floor(P.th/prep(cn,s.compounds[cn],P).rate))))+5);
+  const maxL=Math.min(80,Math.max(...vs.flatMap(s=>dryNames(s).map(cn=>Math.floor(P.th/prep(cn,s.compounds[cn],P).rate))))+5);
   const xs=[...Array(maxL+1).keys()];const ds=[];
-  sets.forEach((s,i)=>{
+  V.forEach(i=>{const s=sets[i];
     const href=s.compounds.hard?prep("hard",s.compounds.hard,P,s.wearQuantum):prep(dryNames(s)[0],s.compounds[dryNames(s)[0]],P,s.wearQuantum);
     const r0=lapTime(href,0,0,P);
     dryNames(s).forEach(cn=>{const c=prep(cn,s.compounds[cn],P,s.wearQuantum);const stint=Math.floor(P.th/c.rate);
@@ -693,7 +778,119 @@ function update(){
     o4.plugins.tooltip.callbacks={label:x=>`${x.dataset.label}: ${raceTime(best[x.datasetIndex].cum[x.dataIndex])} (${x.parsed.y>=0?"+":""}${x.parsed.y.toFixed(1)} s)`};
     draw("c","cCum","line",{labels:[...Array(P.laps).keys()].map(i=>i+1),datasets:best.map(o=>({label:`${o.N}-stop ${o.name} (${raceTime(o.t)})`,data:o.cum.map((v,i)=>+(v-pace*(i+1)).toFixed(2)),
       borderColor:STOPCOL[o.N-1],backgroundColor:STOPCOL[o.N-1],borderWidth:2,tension:0,stepped:false}))},o4)}
+  lastP=P;lastR=R;lastTop=TOP;renderPlanner();
 }
+
+/* ---------- strategy planner ---------- */
+// plan = compounds per stint, pit laps (lap the car stops at the end of), fuel per stint in kg (null = Auto: just enough to the next stop).
+let plans=[],cur=0,plan=null,planKey="",lastP=null,lastR=null,lastTop=[],drag=-1;
+const planL=(N,pits)=>[...pits,N].map((x,i,a)=>x-(i?a[i-1]:0));
+function planFrom(o){let a=0;return {seq:[...o.seq],pits:o.L.slice(0,-1).map(l=>a+=l),fuel:o.seq.map(()=>null)}}
+function normPlan(s,P){
+  const N=P.laps,names=dryNames(s),key=active+"|"+N+"|"+s.name;
+  // a new model or race length starts from that model's best plan
+  if(key!==planKey){planKey=key;plans=[];cur=0}
+  plan=plans[cur]||null;
+  if(!plan||plan.pits.some((x,i)=>x<1||x>=N||(i&&x<=plan.pits[i-1]))){plan=lastTop[0]?planFrom(lastTop[0]):{seq:[names[0],names[0]],pits:[Math.floor(N/2)],fuel:[null,null]}}
+  plan.seq=plan.seq.map(c=>names.includes(c)?c:names[0]);plans[cur]=plan;
+  for(const q of plans)if(q.pits.some((x,i)=>x<1||x>=N||(i&&x<=q.pits[i-1])))Object.assign(q,structuredClone(plan));
+  plans.forEach(q=>q.seq=q.seq.map(c=>names.includes(c)?c:names[0]));
+}
+function simPlan(s,P,plan){
+  const N=P.laps,L=planL(N,plan.pits),cs={};for(const cn of dryNames(s))cs[cn]=prep(cn,s.compounds[cn],P,s.wearQuantum);
+  let t=0,lap=0,fuel=P.refuel?0:N*P.fpl,out=null;const warn=new Set(),life=[],fpts=[],loads=[];
+  L.forEach((sl,si)=>{
+    const c=cs[plan.seq[si]];
+    if(P.refuel){const want=plan.fuel[si]??sl*P.fpl,load=Math.max(want,fuel);
+      if(load>P.tank+1e-9)warn.add("TANK");
+      if(si)t+=P.pit+P.ref*Math.max(0,load-fuel);fpts.push({x:lap,y:fuel});fuel=load;loads.push(load)}
+    else if(si)t+=P.pit;
+    fpts.push({x:lap,y:fuel});
+    const pts=[{x:lap,y:100,w:0}];
+    for(let i=0;i<sl;i++){
+      if(fuel<P.fpl-1e-9&&out==null)out=lap+1;
+      t+=lapTime(c,i,Math.max(0,fuel-P.fpl/2),P);fuel=Math.max(0,fuel-P.fpl);lap++;
+      const w=Math.min(1,(i+1)*c.rate);pts.push({x:lap,y:+(100*(1-w)).toFixed(2),w});fpts.push({x:lap,y:+fuel.toFixed(2)});
+    }
+    if(sl*c.rate>P.th+1e-9)warn.add("WEAR");
+    life.push({c:plan.seq[si],pts,si});
+  });
+  if(out!=null)warn.add("OUT OF FUEL LAP "+out);
+  const need=Math.min(s.mandatory||1,dryNames(s).length);if(new Set(plan.seq).size<need)warn.add(need+" COMPOUNDS");
+  return {t,warn:[...warn],life,fpts,L,loads};
+}
+function renderPlanner(){
+  const P=lastP,s=sets[active];if(!P)return;normPlan(s,P);
+  const N=P.laps,r=simPlan(s,P,plan),names=dryNames(s),ccol=c=>`var(--${c==="medium"?"med":c})`;
+  $("activeName4").textContent=s.name;
+  $("planAdd").disabled=r.L.length>=4||N<r.L.length+1;$("planDel").disabled=r.L.length<=2;
+  const best=lastR.filter(o=>o.ok).sort((x,y)=>x.t-y.t)[0],gap=best?r.t-best.t:null;
+  // every plan: race time, gap to the model's best plan, warnings; the selected plan is the one being edited and drawn
+  const all=plans.map(q=>q===plan?r:simPlan(s,P,q)),fastest=Math.min(...all.map(x=>x.t));
+  $("planTabs").innerHTML=plans.map((q,k)=>`<div class="ptab ${k===cur?"on":""}" data-pk="${k}" role="button" tabindex="0"><span class="pl">Plan ${"ABC"[k]}${plans.length>1?`<button class="prm" data-rm="${k}" title="Remove plan ${"ABC"[k]}" aria-label="Remove plan ${"ABC"[k]}">&times;</button>`:""}</span><span class="ps">${seqName(q.seq)} ${all[k].L.join("/")}</span><span class="pt">${raceTime(all[k].t)}</span><span class="pg">${plans.length>1?(Math.abs(all[k].t-fastest)<0.05?"fastest plan":fmt(all[k].t-fastest)+" s"):""}</span><span class="pw">${all[k].warn.map(w=>`<span class="tag">${w}</span>`).join("")}</span></div>`).join("")+
+    [0,1,2].slice(plans.length).map(k=>k===plans.length?`<button class="ptab add" id="planNew">+ Add plan ${"ABC"[k]}</button>`:`<div class="ptab empty"></div>`).join("");
+  $("planRes").innerHTML=`<span class="rt">Plan ${"ABC"[cur]}: ${raceTime(r.t)}</span>`+(best?`<span>${Math.abs(gap)<0.05?"matches the best plan":fmt(gap)+" s to the best plan"} (${best.name} ${best.L.join("/")})</span>`:"")+r.warn.map(w=>`<span class="tag">${w}</span>`).join("");
+  const ds=r.life.map(st=>{const col=css("--"+(st.c==="medium"?"med":st.c));return {label:`Stint ${st.si+1}: ${cap(st.c)}`,data:st.pts,yAxisID:"y",borderColor:col,backgroundColor:col+"2e",fill:"origin",borderWidth:2,pointRadius:0,tension:0,
+    segment:{borderDash:g=>g.p1.raw.w>P.th+1e-9?[5,4]:undefined}}});
+  ds.push({label:"Fuel (kg)",data:r.fpts,yAxisID:"y2",borderColor:css("--bad"),backgroundColor:css("--bad"),borderWidth:1.6,pointRadius:0,tension:0,fill:false});
+  const o=opts("lap","tyre life left (%)");o.parsing=false;
+  o.scales.x={...o.scales.x,type:"linear",min:0,max:N,ticks:{...o.scales.x.ticks,stepSize:N>40?10:5}};
+  o.scales.y={...o.scales.y,min:0,max:100,ticks:{...o.scales.y.ticks,callback:v=>v+"%"}};
+  const fmax=Math.ceil((P.refuel?Math.max(P.tank,...r.loads):N*P.fpl)/30)*30;
+  o.scales.y2={position:"right",min:0,max:fmax,title:{display:true,text:"FUEL (KG)",color:css("--label"),font:{family:"Inter",size:10,weight:"800"}},ticks:{color:css("--bad"),font:{family:"Inter",size:11},stepSize:fmax/6,callback:v=>v+" kg"},grid:{display:false},border:{color:"#555b64"}};
+  o.plugins.legend.display=false;
+  // lap numbers next to a stop are hidden: the stop's own stepper sits there
+  o.scales.x.title={display:false};o.scales.x.ticks.callback=v=>plan.pits.some(p=>Math.abs(p-v)<Math.max(2,N*0.035))?"":v;
+  o.layout={padding:{top:4}};
+  o.plugins.tooltip.callbacks={title:x=>"Lap "+x[0].parsed.x,label:x=>x.dataset.yAxisID==="y2"?`Fuel ${x.parsed.y.toFixed(1)} kg`:`${x.dataset.label}: ${x.parsed.y.toFixed(1)}% left`};
+  o.interaction={mode:"nearest",axis:"x",intersect:false};
+  o.onResize=()=>requestAnimationFrame(()=>placePlan(r,P));
+  draw("p","cPlan","line",{datasets:ds},o);
+  placePlan(r,P);
+}
+// Controls drawn on the chart: compound buttons above each stint, the stop lap (with < >) on the x axis at each stop, fuel per stint under the lap numbers.
+function placePlan(r,P){
+  const ch=charts.p;if(!ch)return;const N=P.laps,names=dryNames(sets[active]);
+  const off=ch.canvas.getBoundingClientRect().left-$("pWrap").getBoundingClientRect().left,X=v=>off+ch.scales.x.getPixelForValue(v);
+  const st=[0,...plan.pits,N],span=i=>`left:${X(st[i]).toFixed(1)}px;width:${(X(st[i+1])-X(st[i])).toFixed(1)}px`;
+  $("pTop").innerHTML=r.L.map((sl,i)=>{const w=X(st[i+1])-X(st[i]),few=w<104;
+    return `<div class="pseg" style="${span(i)}">${(few?[plan.seq[i]]:names).map(cn=>`<button data-pc="${cn}" data-i="${i}" ${few?'data-cyc="1"':""} class="${plan.seq[i]===cn?"on":""} ${cn}" title="${few?"Click to change compound":cap(cn)}" aria-label="${cap(cn)}">${CODE[cn]}</button>`).join("")}</div>`}).join("");
+  const axisY=ch.canvas.getBoundingClientRect().top+ch.scales.x.top+6-$("pBot").getBoundingClientRect().top; // lap-number row, in pBot coordinates
+  $("pBot").style.height=P.refuel?"30px":"8px";
+  $("pBot").innerHTML=plan.pits.map((p,i)=>`<span class="pstop" style="left:${X(p).toFixed(1)}px;top:${axisY.toFixed(0)}px"><button data-pit="${i}" data-d="-1" aria-label="Stop earlier">&lsaquo;</button><b>${p}</b><button data-pit="${i}" data-d="1" aria-label="Stop later">&rsaquo;</button></span>`).join("")+
+    (P.refuel?r.L.map((sl,i)=>{const fv=plan.fuel[i]??sl*P.fpl;return `<div class="pfuel ${plan.fuel[i]==null?"auto":""}" style="${span(i)}"><button data-fu="${i}" data-d="-1" aria-label="Less fuel">&lsaquo;</button><span>${fv.toFixed(1)} kg</span><button data-fu="${i}" data-d="1" aria-label="More fuel">&rsaquo;</button>${plan.fuel[i]==null?"":`<button class="pa" data-auto="${i}" title="Back to just enough fuel for this stint">Auto</button>`}</div>`}).join(""):"");
+}
+// stop lines on the planner chart, draggable
+const pitLines={id:"pitLines",afterDatasetsDraw(ch){if(ch.canvas.id!=="cPlan"||!plan)return;const {ctx,chartArea:A,scales:{x}}=ch;ctx.save();
+  plan.pits.forEach((p,i)=>{const px=x.getPixelForValue(p);ctx.strokeStyle=i===drag?"#fff":"#c7cbd1";ctx.lineWidth=i===drag?2:1.2;ctx.setLineDash([]);
+    ctx.beginPath();ctx.moveTo(px,A.top);ctx.lineTo(px,A.bottom);ctx.stroke()});ctx.restore()}};
+Chart.register(pitLines);
+const nearPit=e=>{const ch=charts.p;if(!ch||!plan)return -1;const rc=ch.canvas.getBoundingClientRect(),px=e.clientX-rc.left;
+  let k=-1,bd=8;plan.pits.forEach((p,i)=>{const d=Math.abs(ch.scales.x.getPixelForValue(p)-px);if(d<bd){bd=d;k=i}});return k};
+$("cPlan").addEventListener("pointerdown",e=>{drag=nearPit(e);if(drag>=0){$("cPlan").setPointerCapture(e.pointerId);e.preventDefault()}});
+$("cPlan").addEventListener("pointermove",e=>{const ch=charts.p;if(!ch)return;
+  if(drag<0){$("cPlan").style.cursor=nearPit(e)>=0?"ew-resize":"";return}
+  const rc=ch.canvas.getBoundingClientRect(),v=Math.round(ch.scales.x.getValueForPixel(e.clientX-rc.left)),lo=(plan.pits[drag-1]??0)+1,hi=(plan.pits[drag+1]??lastP.laps)-1;
+  const nv=clamp(v,lo,hi);if(nv!==plan.pits[drag]){plan.pits[drag]=nv;renderPlanner()}});
+const endDrag=()=>{if(drag>=0){drag=-1;renderPlanner()}};
+$("cPlan").addEventListener("pointerup",endDrag);$("cPlan").addEventListener("pointercancel",endDrag);
+$("planTabs").addEventListener("click",e=>{const b=e.target.closest("button,.ptab[data-pk]");if(!b)return;
+  if(b.id==="planNew"){plans.push(structuredClone(plan));cur=plans.length-1}
+  else if(b.dataset.rm!=null){const k=+b.dataset.rm;plans.splice(k,1);if(cur>=k&&cur>0)cur--;cur=Math.min(cur,plans.length-1)}
+  else cur=+b.dataset.pk;
+  renderPlanner()});
+$("pWrap").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;const N=lastP.laps,d=+b.dataset.d;
+  if(b.dataset.cyc){const ns=dryNames(sets[active]),i=+b.dataset.i;plan.seq[i]=ns[(ns.indexOf(plan.seq[i])+1)%ns.length]}
+  else if(b.dataset.pc){plan.seq[+b.dataset.i]=b.dataset.pc}
+  else if(b.dataset.pit!=null){const i=+b.dataset.pit;plan.pits[i]=clamp(plan.pits[i]+d,(plan.pits[i-1]??0)+1,(plan.pits[i+1]??N)-1)}
+  else if(b.dataset.fu!=null){const i=+b.dataset.fu,L=planL(N,plan.pits);const cur=plan.fuel[i]??L[i]*lastP.fpl;plan.fuel[i]=Math.max(0,Math.round(cur+d))}
+  else if(b.dataset.auto!=null){plan.fuel[+b.dataset.auto]=null}
+  renderPlanner()});
+$("planAdd").addEventListener("click",()=>{const N=lastP.laps,L=planL(N,plan.pits),k=L.indexOf(Math.max(...L));if(L[k]<2)return;
+  const start=k?plan.pits[k-1]:0;plan.pits.splice(k,0,start+Math.floor(L[k]/2));plan.seq.splice(k+1,0,plan.seq[k]);plan.fuel.splice(k,1,null,null);renderPlanner()});
+$("planDel").addEventListener("click",()=>{if(plan.seq.length<=2)return;plan.pits.pop();plan.seq.pop();plan.fuel.pop();plan.fuel[plan.fuel.length-1]=null;renderPlanner()});
+$("stintChart").addEventListener("click",e=>{const row=e.target.closest(".st-row");if(!row||row.dataset.k==null)return;plan=plans[cur]=planFrom(lastTop[+row.dataset.k]);renderPlanner();
+  $("planPanel").scrollIntoView({behavior:"smooth",block:"nearest"})});
 
 wireDrop($("dropTyre"),$("fileTyre"),addTyreFiles);
 wireDrop($("dropTrack"),$("fileTrack"),addTrackFile);
