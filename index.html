@@ -1486,6 +1486,7 @@ font-size:9px;
   gap:5px;
   flex-wrap:wrap;
 }
+.driver-negotiation-filters .driver-negotiation-hide-reserve{margin:0 14px 0 10px}
 .driver-negotiation-filter-btn{
   min-width:72px;
 }
@@ -5157,6 +5158,10 @@ input.cbar-val:focus{outline:none;border-color:var(--accent)}
 .project-edit-dialog.project-edit-two{width:min(640px,calc(100vw - 32px))!important;max-width:640px!important}
 /* ROUND 6 (2026-10-07): grid editor for engines, next-year chassis and the chassis baseline */
 .grid-edit-dialog{width:min(560px,calc(100vw - 32px));max-width:560px;padding:0}
+.grid-edit-table td,.grid-step{position:relative}
+.grid-edit-delta{position:absolute;left:100%;top:50%;transform:translateY(-50%);margin-left:6px;font-size:11px;font-weight:900;line-height:1;white-space:nowrap;pointer-events:none}
+.grid-edit-delta.pos{color:var(--good)}
+.grid-edit-delta.neg{color:var(--bad)}
 .grid-edit-form{padding:10px 16px 14px}
 .grid-edit-table{width:100%;border-collapse:collapse;margin:4px 0 12px}
 .grid-edit-table th,.grid-edit-table td{padding:4px 6px;text-align:center;font-size:13px}
@@ -5167,9 +5172,9 @@ input.cbar-val:focus{outline:none;border-color:var(--accent)}
 .grid-edit-input{width:92px;text-align:center;font-size:14px;padding:5px 6px;border-radius:6px;border:1px solid rgba(255,255,255,.18);background:rgba(0,0,0,.25);color:inherit}
 .grid-edit-input.changed{border-color:#e5b94a;box-shadow:0 0 0 1px #e5b94a inset}
 .grid-edit-ro{color:var(--muted,#9aa3ad)}
-.grid-step{display:inline-flex;align-items:center;gap:4px}
+.grid-step{display:inline-flex;align-items:stretch;gap:4px}
 .grid-step .grid-edit-input{width:72px}
-.grid-step-btn{width:24px;height:28px;border-radius:5px;font:700 15px/1 inherit;color:#fff;cursor:pointer;padding:0}
+.grid-step-btn{width:24px;min-height:28px;height:auto;border-radius:5px;font:700 15px/1 inherit;color:#fff;cursor:pointer;padding:0}
 .grid-step-minus{background:#5a1418;border:1px solid #b3262b}
 .grid-step-minus:hover{background:#7a1a20}
 .grid-step-plus{background:#14462a;border:1px solid #2f9a5a}
@@ -5282,6 +5287,12 @@ input.cbar-val:focus{outline:none;border-color:var(--accent)}
 .academy-edit-bar{display:flex;align-items:center;gap:14px;margin:0 0 10px}
 .academy-edit-bar span{font-size:12px;color:var(--muted)}
 /* Drivers > Database: fixed column widths; long text wraps instead of widening its column */
+.inj-mark{display:inline-block;width:14px;height:14px;border-radius:50%;background:#fff;vertical-align:-2px;margin-right:6px;position:relative;flex:none}
+#contracts .team-seat.filled-seat,#juniorcontracts .team-seat.filled-seat{position:relative}
+.inj-corner{position:absolute;left:4px;top:4px;margin:0;vertical-align:baseline;z-index:1}
+.inj-mark::before,.inj-mark::after{content:"";position:absolute;background:#e10600;border-radius:1px}
+.inj-mark::before{left:3px;right:3px;top:6px;height:2px}
+.inj-mark::after{top:3px;bottom:3px;left:6px;width:2px}
 #driverInfoTable{table-layout:fixed;width:100%;min-width:1480px}
 #driverInfoTable th,#driverInfoTable td{white-space:normal;overflow-wrap:break-word;padding-left:5px;padding-right:5px}
 #driverInfoTable th{white-space:nowrap;letter-spacing:.03em;line-height:1.2}
@@ -5416,6 +5427,52 @@ input.cbar-val:focus{outline:none;border-color:var(--accent)}
 .fin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-items:start}
 .fin-box{border:1px solid var(--border);border-radius:4px;background:var(--panel3);padding:10px 12px;min-width:0}
 .fin-box.wide{grid-column:1/-1}
+.tp-collapsible-title{cursor:pointer;user-select:none;display:flex;align-items:center;gap:8px}
+.tp-collapsible-title::before{content:"";width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid #8a929c;flex:none;transition:transform .12s}
+.tp-collapsible-title:hover::before{border-top-color:#e6e9ed}
+.tp-collapsed>.tp-collapsible-title::before{transform:rotate(-90deg)}
+.tp-collapsed>:not(.tp-collapsible-title){display:none!important}
+.staff-role-filters{display:flex;flex-wrap:wrap;gap:5px;margin:2px 0 10px}
+.staff-role-filters:empty{display:none}
+.staff-role-btn{min-width:0!important;padding-left:8px!important;padding-right:8px!important}
+.loaded-save-load{display:flex;align-items:center;gap:6px;padding-left:18px;border-left:1px solid var(--border)}
+.loaded-save-load .tp-control-btn{min-width:0!important;padding-left:10px!important;padding-right:10px!important}
+.reg-o.dis{opacity:.45;cursor:default}
+.reg-sev-now{margin-left:8px;font-size:10px;font-weight:800;letter-spacing:.04em;color:#9aa4ae;text-transform:uppercase}
+.eng-fixed{font-weight:800;color:var(--muted)}
+.eng-preview{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:4px}
+.eng-pv{font-size:12px;padding:3px 8px;border:1px solid var(--border2);border-radius:3px;background:#0a0c0f;color:#cbd4dc}.eng-pv b{margin-right:4px;color:#fff}
+.eng-pv-drastic{border-color:#5b2523}.eng-pv-major{border-color:#6b4423}.eng-pv-minor{border-color:#5b5a23}
+.sch-tracks{padding:10px 14px;margin-top:10px}
+.sch-th{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:15px;user-select:none}.sch-caret{color:var(--muted);width:12px}
+.sch-tracks.closed #schTBody{display:none}.sch-tracks.closed .sch-caret{transform:none}
+#schTBody{margin-top:10px}
+.sch-drop{display:flex;align-items:center;gap:12px;border:1px dashed var(--border2);border-radius:5px;padding:10px 12px;background:var(--panel3)}
+.sch-drop>div{flex:1}.sch-drop.over{border-color:var(--accent2);background:#1a0f0f}
+.sch-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}.sch-chips:empty{display:none}
+.sch-chip{font-size:12px;padding:3px 8px;border:1px solid var(--border2);border-radius:3px;color:var(--muted);background:#0a0c0f}
+.sch-chip.on{border-color:#5b2523;color:#fff;background:var(--accent-soft)}.sch-chip b{color:var(--accent2)}
+.sch-note{font-size:13px;color:var(--mid);margin:0 0 10px}
+.sch-sum{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 10px;font-size:13px;color:var(--muted)}.sch-sum strong{font-size:16px;color:#fff}
+.sch-weeks{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px}
+.sch-weeks .sch-name{font-size:12px}
+.sch-wk{background:var(--panel);border:1px solid var(--border);border-radius:5px;padding:7px 9px 9px;min-height:96px;display:flex;flex-direction:column;gap:3px}
+.sch-top{display:flex;align-items:center;gap:6px;min-height:22px}
+.sch-n{white-space:nowrap;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.sch-r{font-size:13px;font-weight:800;color:#fff;background:var(--accent);border-radius:3px;padding:2px 7px}
+.sch-lock{white-space:nowrap;margin-left:auto;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.sch-x{margin-left:auto;appearance:none;border:1px solid var(--border2);background:#0a0c0f;color:var(--bad);border-radius:3px;width:20px;height:20px;line-height:16px;padding:0;font-size:14px;font-weight:800;cursor:pointer}
+.sch-wk.race{border-left:3px solid var(--accent);cursor:grab;background:linear-gradient(180deg,var(--accent-soft),var(--panel) 70%)}
+.sch-wk.special{border-left:3px solid #6a8fd8;cursor:grab}.sch-wk.special .sch-name{color:#9bb8f0}
+.sch-wk.empty{background:var(--panel3);border-style:dashed}
+.sch-wk.locked{opacity:.55;cursor:default}
+.sch-wk.missing{border-left-color:var(--mid)}
+.sch-wk.dragging{opacity:.4}.sch-wk.over{outline:2px solid var(--accent2)}
+.sch-name{font-size:15px;font-weight:800;line-height:1.2;margin-top:2px}
+.sch-meta{font-size:12px;color:#aeb3ba}
+.sch-id{font-size:10.5px;color:var(--muted);font-family:ui-monospace,Menlo,monospace;overflow-wrap:anywhere}
+.sch-sel{margin-top:auto;width:100%;background:#0a0c0f;color:#9aa1ab;border:1px solid var(--border2);border-radius:4px;padding:5px 6px;font:inherit;font-size:13px;cursor:pointer}
+.sch-sel:hover,.sch-sel:focus{border-color:var(--accent);color:var(--text)}
 .fin-box-title{font-size:14px;font-weight:900;letter-spacing:.09em;text-transform:uppercase;color:#c9ced5}
 .fin-box-meta{font-size:11px;color:var(--muted);margin:2px 0 6px}
 .fin-legend{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:10px;color:#aab0b8;margin:2px 0 4px}
@@ -5660,6 +5717,11 @@ a.tool-card.green:hover,a.tool-card.green:focus-visible{box-shadow:inset 3px 0 0
       <strong id="loadedSaveFile">—</strong>
     </div>
     <div id="loadedSaveContext" class="loaded-save-context">—</div>
+    <div class="loaded-save-load">
+      <button id="loadMoreSave" class="tp-control-btn tp-control-action tp-control-compact" type="button" title="Load another save. This replaces the current one.">Load another save</button>
+      <button id="loadMoreFiles" class="tp-control-btn tp-control-action tp-control-compact" type="button" title="Add track .json files for the Schedule tab">Add files</button>
+      <input id="loadMoreInput" type="file" accept=".json,application/json" multiple hidden>
+    </div>
   </div>
   <div id="editNotice" class="edit-notice" hidden>
     <div class="edit-notice-copy">
@@ -5693,6 +5755,7 @@ a.tool-card.green:hover,a.tool-card.green:focus-visible{box-shadow:inset 3px 0 0
     <button class="tab" data-tab="headquarters" title="Teams" aria-label="Teams"><span class="tab-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V5l7-3 7 3v16M9 7h2M13 7h2M9 11h2M13 11h2M9 15h2M13 15h2M10 21v-3h4v3"/></svg></span><span class="tab-label">Teams</span></button>
     <button class="tab" data-tab="financials" title="Finances" aria-label="Finances"><span class="tab-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="6" cy="6.2" rx="3.8" ry="1.3"/><path d="M2.2 6.2v7c0 .7 1.5 1.3 3.3 1.3M2.2 9.4c0 .7 1.5 1.3 3.3 1.3"/><ellipse cx="18" cy="4.6" rx="3.8" ry="1.3"/><path d="M21.8 4.6v7c0 .7-1.5 1.3-3.3 1.3M21.8 7.8c0 .7-1.5 1.3-3.3 1.3"/><ellipse cx="12" cy="10" rx="4.8" ry="1.7"/><path d="M7.2 10v9c0 .9 2.1 1.7 4.8 1.7s4.8-.8 4.8-1.7v-9M7.2 13c0 .9 2.1 1.7 4.8 1.7s4.8-.8 4.8-1.7M7.2 16c0 .9 2.1 1.7 4.8 1.7s4.8-.8 4.8-1.7"/></svg></span><span class="tab-label">Finances</span></button>
     <button class="tab" data-tab="regulations" title="Regulations" aria-label="Regulations"><span class="tab-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M5 7h14M7 7l-3 7a3 3 0 0 0 6 0L7 7zM17 7l-3 7a3 3 0 0 0 6 0l-3-7zM8 21h8"/></svg></span><span class="tab-label">Regulations</span></button>
+    <button class="tab" data-tab="schedule" title="Schedule" aria-label="Schedule"><span class="tab-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg></span><span class="tab-label">Schedule</span></button>
     <button class="tab" data-tab="electronics" title="TECHNOLOGY" aria-label="TECHNOLOGY"><span class="tab-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="1.5"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/><path d="M12.5 8.5 10 12.2h3L11.5 15.5" stroke-linejoin="round"/></svg></span><span class="tab-label">TECHNOLOGY</span></button>
     <button class="tab" data-tab="drivers" title="Drivers" aria-label="Drivers"><span class="tab-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3"/><path d="M5 20c.8-4.2 3.1-6 7-6s6.2 1.8 7 6"/></svg></span><span class="tab-label">Drivers</span></button>
     <button class="tab" data-tab="staffcontracts" title="Staff" aria-label="Staff"><span class="tab-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="7" width="16" height="12" rx="2"/><path d="M9 7V5h6v2M4 11h16M10 14h4"/></svg></span><span class="tab-label">Staff</span></button>
@@ -5867,7 +5930,7 @@ a.tool-card.green:hover,a.tool-card.green:focus-visible{box-shadow:inset 3px 0 0
               <select id="supplierPerformanceType" class="selector-native-hidden" aria-hidden="true" tabindex="-1"></select>
               <div id="supplierPerformanceTypeRail" class="selector-rail tp-control-group tp-control-wrap supplier-part-type-rail" role="group" aria-label="Supplier part type"></div>
             </div>
-            <label class="supplier-active-toggle tp-check tp-check-compact"><input id="supplierPerformanceActiveOnly" type="checkbox"> <span>Active only</span></label>
+            <label class="supplier-active-toggle tp-check tp-check-compact"><input id="supplierPerformanceActiveOnly" type="checkbox" checked> <span>Active only</span></label>
           </div>
           <div class="supplier-perf-bottom-right">
             <div class="supplier-perf-mode tp-control-group">
@@ -5939,7 +6002,7 @@ a.tool-card.green:hover,a.tool-card.green:focus-visible{box-shadow:inset 3px 0 0
             <input id="juniorContractSearch" class="driver-search" type="search" placeholder="Search drivers..." autocomplete="off" />
             <label class="driver-filter-check tp-check"><input id="juniorHideMain" type="checkbox"> <span>Hide main</span></label>
             <label class="driver-filter-check tp-check"><input id="juniorHideSigned" type="checkbox"> <span>Hide assigned</span></label>
-            <div id="juniorAgeRow" class="jr-age-row"><label class="driver-filter-check tp-check"><input type="checkbox" data-junior-age="18"> <span>U18</span></label><label class="driver-filter-check tp-check"><input type="checkbox" data-junior-age="21"> <span>U21</span></label><label class="driver-filter-check tp-check"><input type="checkbox" data-junior-age="23"> <span>U23</span></label></div>
+            <div id="juniorAgeRow" class="jr-age-row"><label class="driver-filter-check tp-check"><input type="checkbox" data-junior-age="18"> <span>≤18</span></label><label class="driver-filter-check tp-check"><input type="checkbox" data-junior-age="21"> <span>≤21</span></label><label class="driver-filter-check tp-check"><input type="checkbox" data-junior-age="23"> <span>≤23</span></label></div>
             <div id="juniorSortRow" class="perf-control-row"><button class="perf-mode-btn tp-control-btn tp-control-action active" type="button" data-junior-sort="name">Name</button><button class="perf-mode-btn tp-control-btn tp-control-action" type="button" data-junior-sort="overall">Overall</button><button class="perf-mode-btn tp-control-btn tp-control-action" type="button" data-junior-sort="age">Age</button></div>
           </div>
           <div id="juniorDriverList" class="driver-contract-list"></div>
@@ -5972,6 +6035,10 @@ a.tool-card.green:hover,a.tool-card.green:focus-visible{box-shadow:inset 3px 0 0
             <input id="driverInfoFreeAgentsOnly" type="checkbox">
             <span>FREE AGENTS ONLY</span>
           </label>
+          <label class="driver-filter-check tp-check">
+            <input id="driverInfoShowRetired" type="checkbox">
+            <span>SHOW RETIRED DRIVERS</span>
+          </label>
         </div>
         <div class="driver-filter-row driver-filter-row-bottom">
           <label class="driver-filter-check tp-check">
@@ -5979,12 +6046,16 @@ a.tool-card.green:hover,a.tool-card.green:focus-visible{box-shadow:inset 3px 0 0
             <span>GENERATED DRIVERS ONLY</span>
           </label>
           <label class="driver-filter-check tp-check">
-            <input id="driverInfoAge21Only" type="checkbox">
-            <span>=&lt;21</span>
+            <input id="driverInfoAge18Only" type="checkbox" data-driver-age-filter>
+            <span>≤18</span>
           </label>
           <label class="driver-filter-check tp-check">
-            <input id="driverInfoShowRetired" type="checkbox">
-            <span>SHOW RETIRED DRIVERS</span>
+            <input id="driverInfoAge21Only" type="checkbox" data-driver-age-filter>
+            <span>≤21</span>
+          </label>
+          <label class="driver-filter-check tp-check">
+            <input id="driverInfoAge23Only" type="checkbox" data-driver-age-filter>
+            <span>≤23</span>
           </label>
         </div>
       </div>
@@ -6099,6 +6170,7 @@ a.tool-card.green:hover,a.tool-card.green:focus-visible{box-shadow:inset 3px 0 0
             <input id="hideSignedStaff" type="checkbox">
             <span>Unsigned only</span>
           </label>
+          <div id="staffRoleFilters" class="staff-role-filters" role="group" aria-label="Staff role filter"></div>
           <div id="staffContractList" class="driver-contract-list"></div>
         </aside>
 
@@ -6143,10 +6215,20 @@ a.tool-card.green:hover,a.tool-card.green:focus-visible{box-shadow:inset 3px 0 0
   </section>
 
   <section id="regulations" class="tabpane">
-    <div class="panel toolbar hq-toolbar">
-      <div class="toolbar-heading"><label class="title">Regulations</label><div class="small">Rules in force now and the change set for next season, with the latest ballot.</div></div>
-    </div>
     <div class="panel"><div id="regBody"></div></div>
+  </section>
+
+  <section id="schedule" class="tabpane">
+    <div class="panel toolbar">
+      <div class="toolbar-heading"><label class="title">Schedule</label><div class="small">The 52-week calendar stored in the save. Weeks already played are locked; later weeks can be changed, moved or cleared.</div></div>
+      <div id="schSeasonRow" class="perf-control-row"></div>
+    </div>
+    <div id="schBody"></div>
+    <div class="panel sch-tracks" id="schTrackPanel">
+      <div class="sch-th" id="schTh" role="button" tabindex="0" aria-expanded="true"><span class="sch-caret">▾</span><b>Track files</b><span id="schTCount" class="small"></span></div>
+      <div id="schTBody"><div id="schDrop" class="sch-drop" tabindex="0"><div><span class="small">Drop the .json files from the data pack's tracks folder here, or</span></div><button id="schPick" class="tp-control-btn tp-control-action" type="button">Choose files</button><button id="schClear" class="tp-control-btn tp-control-action" type="button" disabled>Clear all</button><input id="schFiles" type="file" accept=".json,application/json" multiple hidden></div>
+      <div id="schTracks" class="sch-chips"></div></div>
+    </div>
   </section>
 
   <section id="teamtakeover" class="tabpane">
@@ -6366,7 +6448,7 @@ const allTeamsToggle=$('allTeamsToggle');
 const mainTabs=$('mainTabs'),tabsMenuToggle=$('tabsMenuToggle');
 const fileEl=$('file'),saveDropZone=$('saveDropZone'),downloadEdited=$('downloadEdited'),tpDownloadReviewDialog=$('tpDownloadReviewDialog'),tpDownloadReviewSummary=$('tpDownloadReviewSummary'),tpDownloadReviewList=$('tpDownloadReviewList'),tpDownloadReviewClose=$('tpDownloadReviewClose'),tpDownloadReviewCancel=$('tpDownloadReviewCancel'),tpDownloadReviewOk=$('tpDownloadReviewOk'),statusEl=$('status'),appEl=$('app'),uploadPanel=$('uploadPanel'),heroEl=$('hero'),loadedSaveFile=$('loadedSaveFile'),loadedSaveContext=$('loadedSaveContext'),editNotice=$('editNotice'),editSummary=$('editSummary'),saveHealthPanel=$('saveHealthPanel'),saveHealthSummary=$('saveHealthSummary'),saveHealthDetails=$('saveHealthDetails'),editorLogPanel=$('editorLogPanel'),editorLogSummary=$('editorLogSummary'),editorLogList=$('editorLogList'),undoLastChange=$('undoLastChange'),undoHint=$('undoHint'),metricEl=$('metric'),teamsEl=$('teams'),svg=$('chart'),devRankEl=$('devRank'),
 chartTitleEl=$('chartTitle'),chartMetaEl=$('chartMeta'),fittedTeam=$('fittedTeam'),warehouseTeam=$('warehouseTeam'),warehousePartToggles=$('warehousePartToggles'),warehouseTable=$('warehouseTable'),devProjectsTeam=$('devProjectsTeam'),devProjectsPartToggles=$('devProjectsPartToggles'),devProjectsTable=$('devProjectsTable'),devProjectsTitle=$('devProjectsTitle'),devProjectsMeta=$('devProjectsMeta'),juniorResultsSeries=$('juniorResultsSeries'),juniorResultsTitle=$('juniorResultsTitle'),juniorResultsMeta=$('juniorResultsMeta'),f1StandingsView=$('f1StandingsView'),juniorStandingsView=$('juniorStandingsView'),juniorDriverStandings=$('juniorDriverStandings'),juniorTeamStandings=$('juniorTeamStandings'),juniorContractsTitle=$('juniorContractsTitle'),juniorContractsMeta=$('juniorContractsMeta'),juniorSeriesSelect=$('juniorSeriesSelect'),juniorAcademyMode=$('juniorAcademyMode'),juniorContractSearch=$('juniorContractSearch'),juniorHideSigned=$('juniorHideSigned'),juniorDriverList=$('juniorDriverList'),juniorTeamSeatGrid=$('juniorTeamSeatGrid'),juniorContractDetail=$('juniorContractDetail'),carsEl=$('cars'),
-fittedNotice=$('fittedNotice'),perfMatrix=$('perfMatrix'),perfMatrixTitle=$('perfMatrixTitle'),perfMatrixMeta=$('perfMatrixMeta'),perfSourceDeveloped=$('perfSourceDeveloped'),perfSourceFitted=$('perfSourceFitted'),perfSourcePotential=$('perfSourcePotential'),perfModeRelative=$('perfModeRelative'),perfModeAbsolute=$('perfModeAbsolute'),engineMatrix=$('engineMatrix'),engineMatrixTitle=$('engineMatrixTitle'),engineMatrixMeta=$('engineMatrixMeta'),engineModeRelative=$('engineModeRelative'),engineModeAbsolute=$('engineModeAbsolute'),supplierPerformanceType=$('supplierPerformanceType'),supplierPerformanceActiveOnly=$('supplierPerformanceActiveOnly'),driverInfoSearch=$('driverInfoSearch'),driverInfoContractedOnly=$('driverInfoContractedOnly'),driverInfoFreeAgentsOnly=$('driverInfoFreeAgentsOnly'),driverInfoGeneratedOnly=$('driverInfoGeneratedOnly'),driverInfoShowRetired=$('driverInfoShowRetired'),driverInfoAge21Only=$('driverInfoAge21Only'),driverInfoMinAgeValue=$('driverInfoMinAgeValue'),driverInfoMinAge16=$('driverInfoMinAge16'),driverInfoTitle=$('driverInfoTitle'),driverInfoMeta=$('driverInfoMeta'),driverInfoTable=$('driverInfoTable'),contractsTitle=$('contractsTitle'),contractsMeta=$('contractsMeta'),contractsModeCurrent=$('contractsModeCurrent'),contractsModeNext=$('contractsModeNext'),driverContractSearch=$('driverContractSearch'),hideSignedDrivers=$('hideSignedDrivers'),driverContractList=$('driverContractList'),teamSeatGrid=$('teamSeatGrid'),driverContractDetail=$('driverContractDetail'),negotiationsPanel=$('negotiationsPanel'),
+fittedNotice=$('fittedNotice'),perfMatrix=$('perfMatrix'),perfMatrixTitle=$('perfMatrixTitle'),perfMatrixMeta=$('perfMatrixMeta'),perfSourceDeveloped=$('perfSourceDeveloped'),perfSourceFitted=$('perfSourceFitted'),perfSourcePotential=$('perfSourcePotential'),perfModeRelative=$('perfModeRelative'),perfModeAbsolute=$('perfModeAbsolute'),engineMatrix=$('engineMatrix'),engineMatrixTitle=$('engineMatrixTitle'),engineMatrixMeta=$('engineMatrixMeta'),engineModeRelative=$('engineModeRelative'),engineModeAbsolute=$('engineModeAbsolute'),supplierPerformanceType=$('supplierPerformanceType'),supplierPerformanceActiveOnly=$('supplierPerformanceActiveOnly'),driverInfoSearch=$('driverInfoSearch'),driverInfoContractedOnly=$('driverInfoContractedOnly'),driverInfoFreeAgentsOnly=$('driverInfoFreeAgentsOnly'),driverInfoGeneratedOnly=$('driverInfoGeneratedOnly'),driverInfoShowRetired=$('driverInfoShowRetired'),driverInfoAge21Only=$('driverInfoAge21Only'),driverInfoAge18Only=$('driverInfoAge18Only'),driverInfoAge23Only=$('driverInfoAge23Only'),driverInfoMinAgeValue=$('driverInfoMinAgeValue'),driverInfoMinAge16=$('driverInfoMinAge16'),driverInfoTitle=$('driverInfoTitle'),driverInfoMeta=$('driverInfoMeta'),driverInfoTable=$('driverInfoTable'),contractsTitle=$('contractsTitle'),contractsMeta=$('contractsMeta'),contractsModeCurrent=$('contractsModeCurrent'),contractsModeNext=$('contractsModeNext'),driverContractSearch=$('driverContractSearch'),hideSignedDrivers=$('hideSignedDrivers'),driverContractList=$('driverContractList'),teamSeatGrid=$('teamSeatGrid'),driverContractDetail=$('driverContractDetail'),negotiationsPanel=$('negotiationsPanel'),
 staffContractsTitle=$('staffContractsTitle'),staffContractsMeta=$('staffContractsMeta'),staffModeCurrent=$('staffModeCurrent'),staffModeNext=$('staffModeNext'),staffContractSearch=$('staffContractSearch'),hideSignedStaff=$('hideSignedStaff'),staffContractList=$('staffContractList'),staffTeamGrid=$('staffTeamGrid'),staffContractDetail=$('staffContractDetail'),staffNegotiationsPanel=$('staffNegotiationsPanel'),
 hqTeam=$('hqTeam'),hqTitle=$('hqTitle'),hqMeta=$('hqMeta'),hqTable=$('hqTable'),hqDetail=$('hqDetail'),electronicsTeam=$('electronicsTeam'),electronicsTitle=$('electronicsTitle'),electronicsMeta=$('electronicsMeta'),electronicsTable=$('electronicsTable'),electronicsDetail=$('electronicsDetail'),supplierModeCurrent=$('supplierModeCurrent'),supplierModeNext=$('supplierModeNext'),supplierTeam=null,supplierSearch=$('supplierSearch'),supplierActiveOnly=$('supplierActiveOnly'),supplierList=$('supplierList'),supplierContractsTitle=$('supplierContractsTitle'),supplierContractsMeta=$('supplierContractsMeta'),supplierContractsTable=$('supplierContractsTable'),supplierPartToggles=$('supplierPartToggles'),supplierContractsGrid=$('supplierContractsGrid'),supplierContractDetail=$('supplierContractDetail'),supplierNegotiationsPanel=$('supplierNegotiationsPanel'),supplierCurrentTableWrap=$('supplierCurrentTableWrap'),
 resultsRace=$('resultsRace'),resultsRaceButtons=$('resultsRaceButtons'),resultsTable=$('resultsTable'),postRaceDriverStandings=$('postRaceDriverStandings'),postRaceTeamStandings=$('postRaceTeamStandings'),driverStandings=$('driverStandings'),teamStandings=$('teamStandings'),tip=$('tip');
@@ -6472,6 +6554,7 @@ let engineDisplayMode='absolute';
 let engineSort={key:'engine_power',dir:'desc'};
 let contractsMode='current';
 let driverNegotiationsFilter='ongoing';
+let driverNegotiationsHideReserve=false;
 let driverNegotiationsSearch='';
 let driverNegotiationsSort={key:'driver',dir:'asc'};
 let selectedJuniorSeries='';
@@ -7575,6 +7658,7 @@ class SaveValidator {
         const role=String(c.role||'').toLowerCase();
         if(!seats.has(c.team))seats.set(c.team,{main:[],reserve:[]});
         if(role==='main'||role==='reserve')seats.get(c.team)[role].push(d.name);
+        if(role==='main')(seats.get(c.team).status=seats.get(c.team).status||[]).push([d.name,String(c.status||'equal').toLowerCase()]);
       }
       if(s===season){
         // A released main driver leaves a race car with no driver; it must be filled first.
@@ -7590,6 +7674,11 @@ class SaveValidator {
         const entryCap=Number.isInteger(Number(raw?.teams?.[team]?.entry_count))&&Number(raw.teams[team].entry_count)>=1?Number(raw.teams[team].entry_count):2;
         if(r.main.length>entryCap)out.push(`${teamName(team)}: ${r.main.length} main drivers for ${yearOf(s)} with ${entryCap} ${entryCap===1?'entry':'entries'} (${r.main.join(', ')})`);
         if(r.reserve.length>1)out.push(`${teamName(team)}: ${r.reserve.length} reserve drivers for ${yearOf(s)} (${r.reserve.join(', ')})`);
+        if(r.status?.length===2){
+          const [[n1,a],[n2,b]]=r.status,label=v=>v==='first'?'No.1':v==='second'?'No.2':'Equal';
+          if(!((a==='equal'&&b==='equal')||(a==='first'&&b==='second')||(a==='second'&&b==='first')))
+            (out.soft=out.soft||[]).push(`${teamName(team)}: main driver status clashes for ${yearOf(s)} (${n1} ${label(a)}, ${n2} ${label(b)}); use Equal + Equal or No.1 + No.2`);
+        }
       }
     }
     const res=[...new Set(out)];res.soft=[...new Set(out.soft||[])];return res;
@@ -10455,7 +10544,7 @@ function nextYearChassisProjectEditable(project){
     downOutside=false;
   },true);
 })();
-function openGridEditor({eyebrow='',title='',sub='',note='',columns=[],rows=[],extraHtml='',confirm=null,onApply,onReady=null,live=null,dialogClass='',toggles=[],footerHtml=''}){
+function openGridEditor({eyebrow='',title='',sub='',note='',columns=[],rows=[],extraHtml='',confirm=null,onApply,onReady=null,live=null,dialogClass='',toggles=[],footerHtml='',deltas=false}){
   let dialog=document.getElementById('gridEditDialog');
   if(dialog)dialog.remove();
   dialog=document.createElement('dialog');
@@ -10542,6 +10631,12 @@ function openGridEditor({eyebrow='',title='',sub='',note='',columns=[],rows=[],e
   const markChanged=input=>{
     const r=rowByKey[input.dataset.gridRow],orig=r.values[input.dataset.gridCol];
     input.classList.toggle('changed',Math.abs(Number(input.value)-roundTo(orig,r))>1e-9);
+    if(deltas){
+      // how far the field moved from the saved value, shown to the right of its + button
+      const host=input.closest('.grid-step')||input.closest('td'),d=roundTo(Number(input.value)-roundTo(orig,r),r);
+      host?.querySelector('.grid-edit-delta')?.remove();
+      if(host&&Math.abs(d)>1e-9)host.insertAdjacentHTML('beforeend',`<span class="grid-edit-delta ${d>0?'pos':'neg'}" title="Change from the saved value">${d>0?'+':'−'}${Math.abs(d).toFixed(dpOf(r))}</span>`);
+    }
   };
   for(const input of dialog.querySelectorAll('.grid-edit-input')){
     input.addEventListener('change',()=>{
@@ -10565,6 +10660,7 @@ function openGridEditor({eyebrow='',title='',sub='',note='',columns=[],rows=[],e
       const r=rowByKey[input.dataset.gridRow];
       input.value=Number(r.values[input.dataset.gridCol]).toFixed(dpOf(r));
       input.classList.remove('changed');
+      (input.closest('.grid-step')||input.closest('td'))?.querySelector('.grid-edit-delta')?.remove();
     }
     for(const t of toggles){toggleState[t.key]=t.value;paintToggle(t);}
     refreshLive();
@@ -10968,6 +11064,7 @@ function openCarBaselineEditor(teamName){
     note:"Edits this season's chassis like a completed project whose parts are already built: the week-0 baseline (the game's own baseline edit), the cap and the week-0 car mass. Steps of 0.5.\n\nThe cap applies to this season only; next season uses next year's chassis cap. Next season's chassis starting stats move with the baseline, as in the game.\n\nA Spec B/C/D chassis is not changed here (edit it in Projects). Once one is fitted, a baseline edit only shows in the weeks before it.\n\nDeveloped now: the baseline plus every gain developed this season, capped; it updates as you type.",
     columns:[{key:'base',label:'Baseline (week 0)'},{key:'pot',label:'Cap (potential)'},{key:'dev',label:'Developed now',readOnly:true}],
     rows,
+    deltas:true,
     dialogClass:'car-edit-dialog',
     live:{column:'dev',compute:(vals,rowsByKey)=>{
       const clone=JSON.parse(JSON.stringify(t));
@@ -12487,6 +12584,32 @@ function applyConsistencyTool(){
   }
 }
 function driverInfoOverall(d){const vals=['cornering','braking','consistency','smoothness','control'].map(k=>finiteNumber(d?.[k])).filter(Number.isFinite);return vals.length===5?vals.reduce((a,b)=>a+b,0):NaN;}
+function injuryMark(d,corner){const w=Math.round(Number(d?.injury_weeks));return w>0&&!d?.deceased?`<span class="inj-mark${corner?' inj-corner':''}" title="Injured: ${w} week${w===1?'':'s'}"></span>`:'';}
+const tpCollapsedWindows=new Set();
+const TP_COLLAPSIBLE_WINDOWS=[['.fin-box','.fin-box-title']];
+function tpDecorateCollapsible(){
+  for(const [boxSel,titleSel] of TP_COLLAPSIBLE_WINDOWS){
+    document.querySelectorAll(boxSel).forEach(box=>{
+      const title=box.querySelector(':scope > '+titleSel);
+      if(!title||title.classList.contains('tp-collapsible-title'))return;
+      title.classList.add('tp-collapsible-title');
+      title.setAttribute('role','button');title.setAttribute('tabindex','0');
+      const key=box.closest('.tabpane')?.id+'|'+title.textContent.trim();
+      title.dataset.collapseKey=key;
+      box.classList.toggle('tp-collapsed',tpCollapsedWindows.has(key));
+      title.setAttribute('aria-expanded',tpCollapsedWindows.has(key)?'false':'true');
+    });
+  }
+}
+document.addEventListener('click',e=>{
+  const title=e.target.closest?.('.tp-collapsible-title');if(!title)return;
+  const box=title.parentElement,key=title.dataset.collapseKey;
+  const collapsed=box.classList.toggle('tp-collapsed');
+  collapsed?tpCollapsedWindows.add(key):tpCollapsedWindows.delete(key);
+  title.setAttribute('aria-expanded',collapsed?'false':'true');
+});
+document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.classList?.contains('tp-collapsible-title')){e.preventDefault();e.target.click();}});
+new MutationObserver(tpDecorateCollapsible).observe(document.body,{childList:true,subtree:true});
 function driverInfoStatus(d){if(d?.deceased)return 'DECEASED';if(d?.retired)return 'RETIRED';if(d?.retiring)return 'RETIRING';if(Number(d?.injury_weeks)>0)return `INJURED ${Math.round(Number(d.injury_weeks))}W`;return 'ACTIVE';}
 function humanToken(v){return String(v||'—').replaceAll('_',' ').replace(/\b\w/g,c=>c.toUpperCase());}
 let driverInfoSort={key:'overall',dir:'desc'};
@@ -12726,7 +12849,9 @@ function edNextGeneratedDriverId(){
 }
 function openCreateDriver(){
   const raw=state?.raw;if(!raw||!Array.isArray(raw.drivers))return;
-  const traitsAll=edSaveTraits(),pers=edUnique(raw.drivers.map(d=>d?.personality));
+  const traitsAll=edSaveTraits(),pers=edUnique(raw.drivers.flatMap(d=>[d?.personality,...(Array.isArray(d?.personalities)?d.personalities:[])]));
+  // Newer game builds store only `personalities` (1 to 3, first = main) and no `trait`; older saves also carry `personality` and `trait`.
+  const legacyPers=raw.drivers.some(d=>d&&'personality' in d);
   const stages=edUnique(raw.drivers.map(d=>d?.career_stage));
   const nats=edSaveNationalities();
   const nextId=edNextGeneratedDriverId();
@@ -12745,7 +12870,7 @@ function openCreateDriver(){
         </div><div class="ed-col ed-col-right">${edDriverStatsHtml(shown)}<div class="ed-sum" data-ed-summary data-ed-id="${esc(nextId)}"></div></div></div>`;
       const bottom=`<div class="ed-bottom">
           ${edField('Traits (up to 2)',`${edChips('traits',traitsAll,traits,{max:2,main:true})}<div class="ed-hint">The first pick is the main trait (gold ring). With two picked, the rest are greyed out.</div>`)}
-          ${edField('Personality',edChips('personality',pers,personality))}
+          ${edField('Personalities (up to 3)',`${edChips('personality',pers,personality,{max:3,main:true})}<div class="ed-hint">The first pick is the main personality (gold ring).</div>`)}
         </div>
         <div class="ed-wide">${edField('Career stage',edChips('stage',stages,stage))}</div>
         <div class="ed-note">Written like the game's own rookies: a full driver record, 0 points and an empty career history. A name that already exists is blocked.</div>`;
@@ -12755,7 +12880,7 @@ function openCreateDriver(){
       const upd=()=>edDriverSummary(root,null);
       edWireSteppers(root,upd);
       edWireChips(root,'traits',traits,{max:2,main:true});
-      edWireChips(root,'personality',personality);
+      edWireChips(root,'personality',personality,{max:3,main:true});
       edWireChips(root,'stage',stage);
       upd();
     },
@@ -12764,17 +12889,17 @@ function openCreateDriver(){
       if(!name){await showEditBlocked('Name needed','Type the new driver’s name first.');return false;}
       const taken=new Set([...(raw.drivers||[]).map(d=>String(d?.name||'').toLowerCase()),...Object.keys(raw.driver_history||{}).map(x=>x.toLowerCase()),...Object.keys(raw.drivers_points||{}).map(x=>x.toLowerCase())]);
       if(taken.has(name.toLowerCase())){await showEditBlocked('Name already used',`${name} already exists in this save.\n\nThe game uses driver names as keys everywhere, so two drivers can't share a name.`);return false;}
-      if(!personality.length||!stage.length){await showEditBlocked('Pick a personality and a career stage','Both are needed for a driver record.');return false;}
+      if(!personality.length||!stage.length){await showEditBlocked('Pick a personality and a career stage','At least one personality and a career stage are needed for a driver record.');return false;}
       const nat=root.querySelector('[data-ed-select="nationality"]')?.value||'';
       const v=k=>edStepValue(root,k);
-      const pick={traits:traits.slice(),personality:personality[0],stage:stage[0]};
+      const pick={traits:traits.slice(),personalities:personality.slice(),stage:stage[0]};
       return ()=>{
         const id=edNextGeneratedDriverId();
         // Same keys, in the same order, as the game's own generated rookies.
         const rec={name,series_driver_id:id,age:Math.round(v('age')),number:null,nationality:nat,
           cornering:Math.round(v('cornering')),braking:Math.round(v('braking')),consistency:Math.round(v('consistency')),smoothness:Math.round(v('smoothness')),control:Math.round(v('control')),
           salary_expectation_factor:1.0,contract:null,future_contract:null,injury_weeks:0,retiring:false,retired:false,deceased:false,death_processed:false,death_event:null,last_team:null,
-          talent:Math.round(v('talent')),traits:pick.traits,trait:pick.traits[0]??null,personality:pick.personality,personalities:[pick.personality],career_stage:pick.stage,
+          talent:Math.round(v('talent')),traits:pick.traits,...(legacyPers?{trait:pick.traits[0]??null,personality:pick.personalities[0]}:{}),personalities:pick.personalities,career_stage:pick.stage,
           balance_preference:50.0,traction_preference:50.0,confidence_effects:[],morale_effects:[],performance_expectation:{},pay_driver_amount_m:Number(v('pay'))||0,
           academy_contract:null,negotiation_state:{},unemployed_seasons:0,private_test_laps_season:0};
         raw.drivers.push(rec);
@@ -13798,7 +13923,7 @@ function ttEventInfo(e){
   const pct=x=>`${+(Number(x)*100).toFixed(1)}%`;
   switch(e?.type){
     case 'engine_supplier_join':return {name:'Engine supplier joins',detail:`Supplier: ${esc(e.supplier||'—')}`};
-    case 'reg_change_engine':{let prev=0;const sev=(Array.isArray(e.severity_roll)?e.severity_roll:[]).map(x=>{const w=Number(x.max)-prev;prev=Number(x.max);return `${humanToken(x.result)} ${w}%`;}).join(' · ');return {name:'Engine regulation change',detail:`Severity roll: ${sev||'—'}`};}
+    case 'reg_change_engine':{let prev=0;const sev=(Array.isArray(e.severity_roll)?e.severity_roll:[]).map(x=>{const w=Number(x.max)-prev;prev=Number(x.max);return `${humanToken(x.result)} ${w}%`;}).join(' · ');return {name:'Engine regulation change',detail:`Severity roll: ${sev||'—'}${Number.isFinite(Number(e.guaranteed_power_threshold))?` · guaranteed at engine power ${e.guaranteed_power_threshold}`:''}`};}
     case 'team_package_aced':return {name:'Team aces its development package',detail:`${Number(e.delta)>0?'+':''}${e.delta} on ${e.pick_count} of: ${keys(e.affected_keys)}`};
     case 'team_package_struggle':return {name:'Team struggles with its development package',detail:`${Number(e.delta)>0?'+':''}${e.delta} on ${e.pick_count} of: ${keys(e.affected_keys)}`};
     case 'reg_change_aero':return {name:'Aero regulation change',detail:'—'};
@@ -13818,11 +13943,38 @@ function openEventChanceEditor(ref){
   if(kind==='buyout'){title=`${ev.team?`${ev.team} → `:''}${ev.new_name||humanToken(ev.id)}`;sub=`${humanToken(ev.buyout_type)} · from ${ttSeason(ev.first_season)}`;}
   else if(ev.type==='team_join'){title=`${raw.inactive_teams?.[ev.team]?.name||ev.team} joins`;sub='Team join event';}
   else{const i=ttEventInfo(ev);title=i.name;sub='Season-change event';}
+  const isEng=kind!=='buyout'&&ev.type==='reg_change_engine';
+  const ENG_BANDS=['stable','minor','major'],hasPw=isEng&&Number.isFinite(Number(ev.guaranteed_power_threshold));
+  const engRoll=()=>{const a=Array.isArray(ev.severity_roll)?ev.severity_roll:[];return Object.fromEntries(ENG_BANDS.map(k=>[k,Number(a.find(x=>x?.result===k)?.max)||0]));};
+  const engPreview=root=>{
+    const v=ENG_BANDS.map(k=>edStepValue(root,'eng_'+k)),w=[v[0],v[1]-v[0],v[2]-v[1],100-v[2]];
+    const el=root.querySelector('.eng-preview');
+    if(el)el.innerHTML=['Stable','Minor','Major','Drastic'].map((l,i)=>`<span class="eng-pv eng-pv-${l.toLowerCase()}"><b>${l}</b> ${w[i]}%</span>`).join('');
+  };
   openFormEditor({
-    eyebrow:kind==='buyout'?'Rebrand or buyout event':'Season-change event',title,sub,applyText:'Apply',cls:'ed-event',
-    render:()=>`<div class="ed-form ed-center" style="--cols:1">${edField('Chance per season change (%)',edStepper('chance',Math.round(n(ev.chance)*100),{min:0,max:100,step:5,dp:0,label:'Chance'}))}</div>`,
+    eyebrow:kind==='buyout'?'Rebrand or buyout event':'Season-change event',title,sub,applyText:'Apply',cls:'ed-event'+(isEng?' ed-engreg':''),
+    render:()=>isEng?`<div class="ed-form ed-center" style="--cols:1">${edField('Chance of a change per season (%)',edStepper('chance',Math.round(n(ev.chance)*100),{min:0,max:100,step:5,dp:0,label:'Chance'}))}
+      ${edField('Stable up to roll',edStepper('eng_stable',engRoll().stable,{min:0,max:100,step:1,dp:0,label:'Stable up to'}))}
+      ${edField('Minor up to roll',edStepper('eng_minor',engRoll().minor,{min:0,max:100,step:1,dp:0,label:'Minor up to'}))}
+      ${edField('Major up to roll',edStepper('eng_major',engRoll().major,{min:0,max:100,step:1,dp:0,label:'Major up to'}))}
+      ${edField('Drastic up to roll','<span class="eng-fixed">100</span>')}
+      ${hasPw?edField('Guaranteed change at engine power',edStepper('eng_power',Number(ev.guaranteed_power_threshold),{min:0,max:100,step:1,dp:0,label:'Guaranteed power threshold'})):''}
+      <div class="eng-preview" aria-label="Chance of each result"></div></div>`
+      :`<div class="ed-form ed-center" style="--cols:1">${edField('Chance per season change (%)',edStepper('chance',Math.round(n(ev.chance)*100),{min:0,max:100,step:5,dp:0,label:'Chance'}))}</div>`,
     wire:root=>{
-      edWireSteppers(root);
+      if(isEng){
+        // bands are cumulative upper bounds, so they stay in ascending order
+        const keep=()=>{
+          let prev=0;
+          for(const k of ENG_BANDS){
+            const w=root.querySelector(`.ed-step[data-ed-key="eng_${k}"]`),inp=w.querySelector('input');
+            const v=Math.max(prev,Math.min(100,Number(inp.value)||0));
+            inp.value=String(v);inp.classList.toggle('changed',Math.abs(v-Number(w.dataset.orig))>1e-9);prev=v;
+          }
+          engPreview(root);
+        };
+        edWireSteppers(root,keep);engPreview(root);
+      }else edWireSteppers(root);
       const form=root.closest('.grid-edit-form');
       if(form&&!form.querySelector('.ed-delete-row')){
         form.insertAdjacentHTML('beforeend','<div class="ed-delete-row"><button type="button" class="ed-delete-btn">Delete event</button></div>');
@@ -13839,6 +13991,19 @@ function openEventChanceEditor(ref){
       }
     },
     onApply:async root=>{
+      if(isEng){
+        const keys=['chance',...ENG_BANDS.map(k=>'eng_'+k),...(hasPw?['eng_power']:[])];
+        if(!keys.some(k=>edStepChanged(root,k)))return null;
+        const pct=Math.max(0,Math.min(100,Math.round(edStepValue(root,'chance')))),bands=ENG_BANDS.map(k=>Math.round(edStepValue(root,'eng_'+k))),pw=hasPw?Math.round(edStepValue(root,'eng_power')):null;
+        return ()=>{
+          const e=state.raw.offseason_events[idx];
+          e.chance=pct/100;
+          const old=Array.isArray(e.severity_roll)?e.severity_roll:[];
+          e.severity_roll=[...ENG_BANDS.map((k,i)=>({...(old.find(x=>x?.result===k)||{}),result:k,max:bands[i]})),{...(old.find(x=>x?.result==='drastic')||{}),result:'drastic',max:100}];
+          if(pw!=null)e.guaranteed_power_threshold=pw;
+          return `Engine regulation change: ${pct}% chance, stable ≤${bands[0]}, minor ≤${bands[1]}, major ≤${bands[2]}${pw!=null?`, guaranteed at power ${pw}`:''}`;
+        };
+      }
       if(!edStepChanged(root,'chance'))return null;
       const pct=Math.max(0,Math.min(100,Math.round(edStepValue(root,'chance'))));
       return ()=>{const e=(kind==='buyout'?state.raw.buyout_events:state.raw.offseason_events)[idx];e.chance=pct/100;return `Set the chance of ${title} to ${pct}%`;};
@@ -13936,7 +14101,7 @@ function renderTeamTakeover(){
 
 function renderDriverInfo(){
   if(!driverInfoTable||!state)return;
-  const q=String(driverInfoSearch?.value||'').trim().toLowerCase(),contractedOnly=!!driverInfoContractedOnly?.checked,freeAgentsOnly=!!driverInfoFreeAgentsOnly?.checked,generatedOnly=!!driverInfoGeneratedOnly?.checked,showRetired=!!driverInfoShowRetired?.checked,age21Only=!!driverInfoAge21Only?.checked;
+  const q=String(driverInfoSearch?.value||'').trim().toLowerCase(),contractedOnly=!!driverInfoContractedOnly?.checked,freeAgentsOnly=!!driverInfoFreeAgentsOnly?.checked,generatedOnly=!!driverInfoGeneratedOnly?.checked,showRetired=!!driverInfoShowRetired?.checked,ageLimit=driverInfoAge18Only?.checked?18:driverInfoAge21Only?.checked?21:driverInfoAge23Only?.checked?23:0;
   let rows=driverInfoAll().map(d=>{
     const normalized=SaveAccess.driverStatus(d);
     return {
@@ -13953,7 +14118,7 @@ function renderDriverInfo(){
   if(contractedOnly)rows=rows.filter(r=>!!r.team);
   if(freeAgentsOnly)rows=rows.filter(r=>!r.team);
   if(generatedOnly)rows=rows.filter(r=>driverInfoGenerated(r.d));
-  if(age21Only)rows=rows.filter(r=>Number.isFinite(finiteNumber(r.d?.age))&&finiteNumber(r.d.age)<=21);
+  if(ageLimit)rows=rows.filter(r=>Number.isFinite(finiteNumber(r.d?.age))&&finiteNumber(r.d.age)<=ageLimit);
   if(q)rows=rows.filter(r=>searchMatches(q,[r.d?.name,r.team,r.futureTeam,r.juniorTeam,r.juniorSeries,r.d?.nationality,r.role,r.d?.career_stage,...(r.d?.traits||[]),...(r.d?.personalities||[])]));
   rows.sort((a,b)=>{
     const key=driverInfoSort.key;
@@ -13967,7 +14132,7 @@ function renderDriverInfo(){
   const retiredCount=allDriverRows.filter(d=>!!d?.retired).length;
   const selectedMinAge=selectedGeneratedDriverMinimumAge();
   const belowSelectedAgeCount=generatedDriversBelowAge(selectedMinAge).length;
-  driverInfoTitle.textContent='Drivers';driverInfoMeta.textContent=`${rows.length} shown · ${allDriverRows.length} total · ${generatedCount} generated · ${retiredCount} retired${showRetired?' shown':' hidden'} · ${contractedOnly?'F1 contracted only':freeAgentsOnly?'F1 free agents only':'F1, junior-series and free-agent drivers'}${generatedOnly?' · generated only':''}${age21Only?' · age =<21':''}`;
+  driverInfoTitle.textContent='Drivers';driverInfoMeta.textContent=`${rows.length} shown · ${allDriverRows.length} total · ${generatedCount} generated · ${retiredCount} retired${showRetired?' shown':' hidden'} · ${contractedOnly?'F1 contracted only':freeAgentsOnly?'F1 free agents only':'F1, junior-series and free-agent drivers'}${generatedOnly?' · generated only':''}${ageLimit?` · age ≤${ageLimit}`:''}`;
   if(driverInfoMinAge16){
     driverInfoMinAge16.disabled=belowSelectedAgeCount===0;
     driverInfoMinAge16.textContent='Set minimum age';
@@ -13997,7 +14162,7 @@ function renderDriverInfo(){
       : r.juniorTeam
         ? `${esc(r.juniorTeam)} · ${esc(r.juniorSeries)}`
         : 'FREE AGENT';
-    html+=`<tr><td><div class="driver-name-cell"><strong>${esc(d.name||'—')}</strong><button type="button" class="supplier-edit-btn" data-driver-edit="${esc(d.name||'')}">Edit</button></div></td><td><span class="swatch swatch-color swatch-gap" style="--swatch-color:${color}"></span>${currentTeamLabel}</td><td>${esc(driverInfoStatus(d))}</td><td>${esc(d.age??'—')}</td><td>${esc(String(d.nationality||'—').toUpperCase())}</td><td>${esc(d.number??'—')}</td><td>${statChip('overall',r.overall,0)}</td><td>${statChip('cornering',d.cornering)}</td><td>${statChip('braking',d.braking)}</td><td>${statChip('consistency',d.consistency)}</td><td>${statChip('smoothness',d.smoothness)}</td><td>${statChip('control',d.control)}</td><td>${statChip('talent',d.talent)}</td><td>${esc(humanToken(d.career_stage))}</td><td>${esc((d.traits||[]).map(humanToken).join(', ')||'—')}</td><td>${esc((d.personalities||[d.personality]).filter(Boolean).map(humanToken).join(', ')||'—')}</td><td>${esc(r.futureTeam?teamLabel(r.futureTeam):'—')}</td></tr>`;
+    html+=`<tr><td><div class="driver-name-cell"><strong>${injuryMark(d)}${esc(d.name||'—')}</strong><button type="button" class="supplier-edit-btn" data-driver-edit="${esc(d.name||'')}">Edit</button></div></td><td><span class="swatch swatch-color swatch-gap" style="--swatch-color:${color}"></span>${currentTeamLabel}</td><td>${esc(driverInfoStatus(d))}</td><td>${esc(d.age??'—')}</td><td>${esc(String(d.nationality||'—').toUpperCase())}</td><td>${esc(d.number??'—')}</td><td>${statChip('overall',r.overall,0)}</td><td>${statChip('cornering',d.cornering)}</td><td>${statChip('braking',d.braking)}</td><td>${statChip('consistency',d.consistency)}</td><td>${statChip('smoothness',d.smoothness)}</td><td>${statChip('control',d.control)}</td><td>${statChip('talent',d.talent)}</td><td>${esc(humanToken(d.career_stage))}</td><td>${esc((d.traits||[]).map(humanToken).join(', ')||'—')}</td><td>${esc((d.personalities||[d.personality]).filter(Boolean).map(humanToken).join(', ')||'—')}</td><td>${esc(r.futureTeam?teamLabel(r.futureTeam):'—')}</td></tr>`;
   }
   html+='</tbody>';driverInfoTable.innerHTML=html;
   driverInfoTable.querySelectorAll('[data-driver-edit]').forEach(b=>b.addEventListener('click',()=>openDriverEditor(b.dataset.driverEdit)));
@@ -14420,7 +14585,7 @@ function seatCard(roleLabel,driver,team,slotIndex){
   return `<button type="button" class="team-seat filled-seat ${role==='reserve'?'reserve-seat':''} ${selected?'selected':''}"
     data-contract-driver="${esc(driver.name)}"${contractsMode!=='next'?` draggable="true" data-seat-driver="${esc(driver.name)}" data-seat-team="${esc(team)}"`:''}
     style="--seat-color:${color};--seat-text:${fg}">
-    <div class="seat-primary"><div class="seat-name">${esc(driver.name)}</div><div class="seat-overall">${Number.isFinite(driverInfoOverall(driver))?driverInfoOverall(driver).toFixed(0):'—'}</div></div>
+    ${injuryMark(driver,1)}<div class="seat-primary"><div class="seat-name">${esc(driver.name)}</div><div class="seat-overall">${Number.isFinite(driverInfoOverall(driver))?driverInfoOverall(driver).toFixed(0):'—'}</div></div>
     
   </button>`;
 }
@@ -14638,7 +14803,12 @@ function applyContractEditor(root,c,description='Updated personnel contract',{pe
 
   const before=beginEditorMutation();if(!before)return false;
   for(const [key,value] of changes){if(value===undefined)delete c[key];else c[key]=value;}
-  return commitEditorMutation(description,before);
+  let mateName=null;
+  if(kind==='driver'&&person&&changes.has('status')){
+    const slot=person.contract===c?'contract':person.future_contract===c?'future_contract':null;
+    if(slot)mateName=syncMateStatus(person,slot);
+  }
+  return commitEditorMutation(mateName?`${description} (${mateName}'s status follows)`:description,before);
 }
 function matchingDriverOffer(driverName,team){
   return activeNegotiations().find(n=>
@@ -14672,7 +14842,29 @@ function staffLevelSalary(staff){
 // Contract terms window shown when a driver or staff member is dropped on a seat
 // (same look as the project editor). Nothing is written here: it resolves with the
 // confirmed terms, or false on Cancel.
-function askContractTerms({kind,person,team,role,startWeek,endSeasons,endValue,salary}){
+// A team's two main drivers are Equal + Equal or No.1 + No.2 (either order).
+const DRIVER_STATUS_PARTNER={equal:'equal',first:'second',second:'first'};
+const driverContractStatus=c=>{const v=String(c?.status||'equal').toLowerCase();return DRIVER_STATUS_PARTNER[v]?v:'equal';};
+function mainDriverMates(team,slot,except){
+  return (state?.raw?.drivers||[]).filter(d=>d!==except&&!d?.deceased&&d?.[slot]&&d[slot].team===team&&String(d[slot].role||'main').toLowerCase()==='main');
+}
+function suggestedDriverStatus(team,slot,role){
+  if(String(role||'main').toLowerCase()!=='main')return 'equal';
+  const mates=mainDriverMates(team,slot,null);
+  return mates.length===1?DRIVER_STATUS_PARTNER[driverContractStatus(mates[0][slot])]:'equal';
+}
+// Inside an open editor mutation: the other main driver follows this driver's status. Returns that driver's name when changed.
+function syncMateStatus(driver,slot){
+  const c=driver?.[slot];
+  if(!c||String(c.role||'main').toLowerCase()!=='main')return null;
+  const mates=mainDriverMates(c.team,slot,driver);
+  if(mates.length!==1)return null;
+  const want=DRIVER_STATUS_PARTNER[driverContractStatus(c)],m=mates[0];
+  if(driverContractStatus(m[slot])===want&&String(m[slot].priority||'equal').toLowerCase()===want)return null;
+  m[slot].status=want;m[slot].priority=want;
+  return m.name;
+}
+function askContractTerms({kind,person,team,role,startWeek,endSeasons,endValue,salary,status}){
   const isDriver=kind==='driver';
   const [firstEnd,lastEnd]=endSeasons;
   const terms=[];for(let e=firstEnd;e<=Math.max(firstEnd,lastEnd);e++)terms.push([String(e),contractTermText(startWeek,e)]);
@@ -14691,7 +14883,7 @@ function askContractTerms({kind,person,team,role,startWeek,endSeasons,endValue,s
       </div>
     </div>
     <div class="cbar-form" data-num-scope>
-      ${isDriver?segBarHtml({label:'Status',options:DRIVER_STATUS_OPTIONS,value:'equal',attrs:'data-term="status"'}):''}
+      ${isDriver?segBarHtml({label:'Status',options:DRIVER_STATUS_OPTIONS,value:status||'equal',attrs:'data-term="status"'}):''}
       ${choiceBarHtml({label:'Term',options:terms,value:String(endValue),attrs:'data-term="end"'})}
       ${numBarHtml({label:'Salary ($m)',value:Number(salary).toFixed(2),steps:CONTRACT_STEPS.salary_m,stepLabels:STEP_LABELS_MONEY,typeable:true,attrs:'data-term="salary_m" data-num-required="true"'})}
       ${bonus('bonus_per_win_m','Win bonus')}
@@ -14883,7 +15075,8 @@ async function assignDriverToEmptySeat(driverName,team,role,slotIndex){
     startWeek:nextSeasonStartAbsWeek(),
     endSeasons:[nextSeason,nextSeason+4],
     endValue:nextSeason+(offerYears>0?Math.min(4,Math.round(offerYears)-1):0),
-    salary:Number.isFinite(offerSalary)&&offerSalary>0?offerSalary:driverLevelSalary(driver)
+    salary:Number.isFinite(offerSalary)&&offerSalary>0?offerSalary:driverLevelSalary(driver),
+    status:suggestedDriverStatus(team,'future_contract',role)
   });
   if(!terms)return false;
   for(let s=nextSeason+1;s<=terms.end;s++){
@@ -14896,7 +15089,8 @@ async function assignDriverToEmptySeat(driverName,team,role,slotIndex){
     bonus_per_point_m:terms.bonus_per_point_m,bonus_per_win_m:terms.bonus_per_win_m,bonus_per_podium_m:terms.bonus_per_podium_m};
   const before=beginEditorMutation();if(!before)return false;
   editorSet(driver,'future_contract',c);
-  if(!commitEditorMutation(`Assigned ${driver.name} to ${teamLabel(team)} (${role}) for next season`,before))return false;
+  const mateNext=syncMateStatus(driver,'future_contract');
+  if(!commitEditorMutation(`Assigned ${driver.name} to ${teamLabel(team)} (${role}) for next season${mateNext?` (${mateNext}'s status follows)`:''}`,before))return false;
 
   selectedContractDriver=driver.name;
   statusEl.textContent=`Signed ${driver.name} for ${teamLabel(team)} (${role}): ${personnelContractTermLabel(c)}.`;
@@ -15031,7 +15225,8 @@ async function assignDriverMidSeason(driver,team,role,slotIndex){
     startWeek:start,
     endSeasons:[season,Math.max(season,lastEnd)],
     endValue:season,
-    salary:driverLevelSalary(driver)
+    salary:driverLevelSalary(driver),
+    status:suggestedDriverStatus(team,'contract',seatRole)
   });
   if(!terms)return false;
   const endSeason=terms.end;
@@ -15045,6 +15240,7 @@ async function assignDriverMidSeason(driver,team,role,slotIndex){
     bonus_per_point_m:terms.bonus_per_point_m,bonus_per_win_m:terms.bonus_per_win_m,bonus_per_podium_m:terms.bonus_per_podium_m};
   const before=beginEditorMutation();if(!before)return false;
   editorSet(driver,'contract',c);
+  syncMateStatus(driver,'contract');
   if(carKey){
     // The new main driver takes over the vacant race car and everything fitted to it.
     const t=state.raw.teams[team];
@@ -15623,6 +15819,7 @@ async function cancelNegotiationContract(negotiationKey,kind){
 function driverNegotiationHeaderHtml(){
   const filterButtons=`<div class="driver-negotiation-filters" role="group" aria-label="Driver negotiation status filter">
     ${[['all','All'],['ongoing','Ongoing'],['complete','Complete']].map(([value,label])=>`<button type="button" class="driver-negotiation-filter-btn tp-control-btn tp-control-compact ${driverNegotiationsFilter===value?'active':''}" aria-pressed="${driverNegotiationsFilter===value?'true':'false'}" data-driver-negotiation-filter="${value}">${label}</button>`).join('')}
+    <label class="driver-filter-check tp-check driver-negotiation-hide-reserve"><input type="checkbox" data-driver-negotiation-hide-reserve ${driverNegotiationsHideReserve?'checked':''}><span>HIDE RESERVE</span></label>
   </div>`;
   const hasSearch=!!driverNegotiationsSearch;
   const search=`<div class="driver-negotiation-search tp-search-wrap ${hasSearch?'has-value':''}">
@@ -15637,6 +15834,10 @@ function bindDriverNegotiationPanelControls({focusSearch=false}={}){
       driverNegotiationsFilter=btn.dataset.driverNegotiationFilter||'all';
       renderNegotiationsPanel();
     });
+  });
+  negotiationsPanel.querySelector('[data-driver-negotiation-hide-reserve]')?.addEventListener('change',()=>{
+    driverNegotiationsHideReserve=!driverNegotiationsHideReserve;
+    renderNegotiationsPanel();
   });
   negotiationsPanel.querySelectorAll('[data-driver-negotiation-sort]').forEach(th=>{
     th.addEventListener('click',()=>{
@@ -15692,6 +15893,7 @@ function renderNegotiationsPanel({focusSearch=false}={}){
   const allRows=personnelNegotiationRecords().filter(n=>n?.candidate_type==='driver'&&negotiationRowVisible(n));
   const rows=allRows.filter(n=>{
     if(driverNegotiationsFilter!=='all'&&driverNegotiationGroup(n)!==driverNegotiationsFilter)return false;
+    if(driverNegotiationsHideReserve&&String((negotiationOffer(n)||{}).role||n?.context?.role||'').toLowerCase()==='reserve')return false;
     if(q&&!searchMatches(q,[n?.candidate_name,n?.team_id]))return false;
     return true;
   }).slice().sort(compareDriverNegotiations);
@@ -16071,7 +16273,7 @@ function renderJuniorTeamGrid(){
         const overall=driver?driverInfoOverall(driver):NaN;
         const talent=finiteNumber(driver?.talent);
         const juniorRating=Number.isFinite(overall)?`${overall.toFixed(0)}${Number.isFinite(talent)?` (${Math.round(talent)})`:''}`:'—';
-        return `<button type="button" class="team-seat filled-seat junior-seat-bubble ${selectedContractDriver===name?'selected':''}" data-junior-driver="${esc(name)}"><div class="seat-primary"><div class="seat-name">${esc(name)}</div><span class="seat-overall jr-seat-ov">${juniorRating}<small class="seat-age">Age: ${Number.isFinite(Number(driver?.age))?Math.round(Number(driver.age)):'—'}</small></span></div></button>`;
+        return `<button type="button" class="team-seat filled-seat junior-seat-bubble ${selectedContractDriver===name?'selected':''}" data-junior-driver="${esc(name)}">${injuryMark(driver,1)}<div class="seat-primary"><div class="seat-name">${esc(name)}</div><span class="seat-overall jr-seat-ov">${juniorRating}<small class="seat-age">Age: ${Number.isFinite(Number(driver?.age))?Math.round(Number(driver.age)):'—'}</small></span></div></button>`;
       }
       return `<button type="button" class="team-seat empty-seat junior-assign-seat junior-seat-bubble" data-junior-team="${esc(team)}"><div class="seat-name">Assign selected driver</div></button>`;
     }).join('');
@@ -16246,14 +16448,23 @@ function setSelectedContractStaff(name){
   selectedContractStaff=name||null;
   renderStaffContracts();
 }
+let staffBrowserRoles=new Set();
+function renderStaffRoleFilters(){
+  const host=$('staffRoleFilters');if(!host)return;
+  const roles=[...new Set(allStaffForContracts().map(s=>s.role).filter(Boolean))].sort((a,b)=>staffRoleLabel(a).localeCompare(staffRoleLabel(b)));
+  for(const r of [...staffBrowserRoles])if(!roles.includes(r))staffBrowserRoles.delete(r);
+  host.innerHTML=roles.map(r=>`<button type="button" class="tp-control-btn tp-control-compact staff-role-btn ${staffBrowserRoles.has(r)?'active':''}" aria-pressed="${staffBrowserRoles.has(r)?'true':'false'}" data-staff-role="${esc(r)}">${esc(staffRoleLabel(r))}</button>`).join('');
+}
 function renderStaffBrowser(){
   if(!staffContractList)return;
+  renderStaffRoleFilters();
   const q=(staffContractSearch?.value||'').trim().toLowerCase();
   const unsignedOnly=!!hideSignedStaff?.checked;
   const staff=allStaffForContracts()
     .filter(s=>{
       const signed=!!activeStaffContract(s);
       if(unsignedOnly&&signed)return false;
+      if(staffBrowserRoles.size&&!staffBrowserRoles.has(s.role))return false;
       if(!q)return true;
       return searchMatches(q,[s.name,staffRoleLabel(s.role)]);
     })
@@ -16661,6 +16872,7 @@ function renderStaffContractDetail(){
 function staffNegotiationSortValue(n,key){
   if(key==='staff')return String(n?.candidate_name||'');
   if(key==='team')return String(n?.team_id||'');
+  if(key==='role')return staffRoleLabel((negotiationOffer(n)||{}).role||n?.context?.role);
   if(key==='stage')return negotiationStageLabel(n);
   if(key==='decision')return driverNegotiationDecisionSortValue(n);
   return String(n?.candidate_name||'');
@@ -16787,7 +16999,7 @@ function renderStaffNegotiationsPanel({focusSearch=false}={}){
 
   staffNegotiationsPanel.innerHTML=`${head}
     <div class="negotiations-table-wrap"><table class="negotiations-table">
-      <thead><tr>${staffNegotiationSortHeader('staff','Staff')}${staffNegotiationSortHeader('team','Team')}<th>Role</th>${staffNegotiationSortHeader('stage','Status')}<th>Salary</th><th>Term</th><th>Interest</th>${staffNegotiationSortHeader('decision','Decision')}<th>Action</th></tr></thead>
+      <thead><tr>${staffNegotiationSortHeader('staff','Staff')}${staffNegotiationSortHeader('team','Team')}${staffNegotiationSortHeader('role','Role')}${staffNegotiationSortHeader('stage','Status')}<th>Salary</th><th>Term</th><th>Interest</th>${staffNegotiationSortHeader('decision','Decision')}<th>Action</th></tr></thead>
       <tbody>${rows.map(n=>{
         const o=negotiationOffer(n)||{};
         const team=n.team_id||'—';
@@ -18020,7 +18232,10 @@ function renderPostRaceStandings(selectedIndex){
   }
 }
 function raceTrackAbbr(track){
-  const name=String(track||'Grand Prix').trim();
+  // Track ids look like MonteCarlo_2000s or Catalunya2023_2020s: drop the era suffix and split CamelCase into words.
+  let name=String(track||'Grand Prix').trim();
+  for(let i=0;i<2;i++)name=name.replace(/[\s_-]*\d{2,4}s$/i,'').replace(/\d{4}$/,'');
+  name=name.replace(/_/g,' ').replace(/([a-z])([A-Z])/g,'$1 $2').trim()||'Grand Prix';
   const key=name.toLowerCase().replace(/[^a-z0-9]+/g,' ');
   const known=[
     [/melbourne|albert park/,'MEL'],
@@ -18030,11 +18245,14 @@ function raceTrackAbbr(track){
     [/catalunya|barcelona/,'CAT'],
     [/monaco|monte carlo/,'MON'],
     [/montreal|gilles villeneuve|canada/,'MTL'],
-    [/magny cours/,'MCF'],
+    [/magny cours/,'MAG'],
     [/a1 ring|red bull ring|spielberg/,'A1R'],
     [/hockenheim/,'HOC'],
+    [/jerez/,'JER'],
+    [/estoril/,'EST'],
+    [/buenos aires/,'BUE'],
     [/hungaroring|hungary/,'HUN'],
-    [/spa|francorchamps/,'SPA'],
+    [/\bspa\b|francorchamps/,'SPA'],
     [/monza/,'MNZ'],
     [/indianapolis/,'IND'],
     [/suzuka/,'SUZ'],
@@ -18108,7 +18326,7 @@ setTabsPinned(false);
    functions and help topics are unchanged; only the navigation groups them. */
 const TAB_GROUPS=Object.freeze({
   performance:{label:'Performance',views:[['development','Trend'],['performance','Table']]},
-  drivers:{label:'Drivers',views:[['drivers','Database'],['contracts','Contracts'],['juniorcontracts','Juniors']].concat(SHOW_CONSISTENCY_TOOL?[['consistencytool','Mass edit tools']]:[])},
+  drivers:{label:'Drivers',views:[['contracts','Contracts'],['juniorcontracts','Juniors'],['drivers','Database']].concat(SHOW_CONSISTENCY_TOOL?[['consistencytool','Mass edit tools']]:[])},
   suppliers:{label:'Suppliers',views:[['suppliercontracts','Contracts'],['suppliers','Performance']]},
   championship:{label:'Championship',views:[['standings','Standings'],['results','Results'],['champgraph','Graph']]}
 });
@@ -19085,7 +19303,7 @@ if(driverInfoContractedOnly)driverInfoContractedOnly.addEventListener('change',(
 if(driverInfoFreeAgentsOnly)driverInfoFreeAgentsOnly.addEventListener('change',()=>{if(driverInfoFreeAgentsOnly.checked&&driverInfoContractedOnly)driverInfoContractedOnly.checked=false;renderDriverInfo();});
 if(driverInfoGeneratedOnly)driverInfoGeneratedOnly.addEventListener('change',()=>{renderDriverInfo();scheduleUiPrefs();});
 if(driverInfoShowRetired)driverInfoShowRetired.addEventListener('change',()=>{renderDriverInfo();scheduleUiPrefs();});
-if(driverInfoAge21Only)driverInfoAge21Only.addEventListener('change',renderDriverInfo);
+document.querySelectorAll('[data-driver-age-filter]').forEach(box=>box.addEventListener('change',()=>{if(box.checked)document.querySelectorAll('[data-driver-age-filter]').forEach(o=>{if(o!==box)o.checked=false;});renderDriverInfo();}));
 if(driverInfoMinAgeValue){
   driverInfoMinAgeValue.addEventListener('input',renderDriverInfo);
   driverInfoMinAgeValue.addEventListener('change',()=>{driverInfoMinAgeValue.value=String(selectedGeneratedDriverMinimumAge());renderDriverInfo();});
@@ -19209,6 +19427,7 @@ async function loadSaveFile(f){
       if(staffContractSearch)staffContractSearch.value='';
       if(hideSignedDrivers)hideSignedDrivers.checked=false;
       if(hideSignedStaff)hideSignedStaff.checked=false;
+      staffBrowserRoles.clear();
       if(downloadEdited){
         downloadEdited.hidden=false;
         downloadEdited.disabled=false;
@@ -19251,6 +19470,26 @@ async function loadSaveFile(f){
   }
 }
 
+// Loaded-save bar: more files without restarting. A save replaces the current one; track files go to the Schedule tab.
+async function loadMoreFiles(list){
+  const files=[...list].filter(f=>f&&/\.json$/i.test(f.name||''));
+  if(!files.length){if(editSummary)editSummary.textContent='Choose .json files.';return;}
+  const tracks=[];let save=null;
+  for(const f of files){
+    let o=null;try{o=JSON.parse(await f.text());}catch(e){}
+    if(o&&o.teams&&typeof o.teams==='object')save=save||f;else tracks.push(f);
+  }
+  if(tracks.length)await schAddFiles(tracks);
+  if(save)await loadSaveFile(save);
+}
+$('loadMoreSave')?.addEventListener('click',()=>fileEl.click());
+$('loadMoreFiles')?.addEventListener('click',()=>$('loadMoreInput').click());
+$('loadMoreInput')?.addEventListener('change',e=>{const l=[...e.target.files];e.target.value='';loadMoreFiles(l);});
+document.addEventListener('dragover',e=>{if(appEl?.hidden||!Array.from(e.dataTransfer?.types||[]).includes('Files'))return;e.preventDefault();});
+document.addEventListener('drop',e=>{
+  if(appEl?.hidden||!Array.from(e.dataTransfer?.types||[]).includes('Files'))return;
+  e.preventDefault();loadMoreFiles(e.dataTransfer.files);
+});
 fileEl.addEventListener('change',()=>{
   const f=fileEl.files?.[0];
   if(f)loadSaveFile(f);
@@ -19329,6 +19568,12 @@ if(supplierModeNext)supplierModeNext.addEventListener('click',()=>{supplierContr
 if(supplierSearch)supplierSearch.addEventListener('input',()=>{supplierSearchText=supplierSearch.value||'';renderSupplierList();});
 if(supplierActiveOnly)supplierActiveOnly.addEventListener('change',renderSupplierList);
 if(hideSignedStaff)hideSignedStaff.addEventListener('change',renderStaffBrowser);
+$('staffRoleFilters')?.addEventListener('click',e=>{
+  const btn=e.target.closest('[data-staff-role]');if(!btn)return;
+  const r=btn.dataset.staffRole;
+  if(staffBrowserRoles.has(r))staffBrowserRoles.delete(r);else staffBrowserRoles.add(r);
+  renderStaffBrowser();
+});
 
 if(hideSignedDrivers)hideSignedDrivers.addEventListener('change',renderDriverBrowser);
 if(resultsRace)resultsRace.addEventListener('change',renderResults);
@@ -19665,9 +19910,20 @@ function renderRegulations(){
     const nxt=chip('Keep current',!up?'on keep':'keep',`data-reg-up="${r}|"`,''),
       nx=(d.options||[]).map(o=>chip(o.name,o.key===up?'on up':'',`data-reg-up="${r}|${o.key}"`,o.summary)).join('');
     const appr=up?`<span class="reg-appr">${pending[r]===up?'Approved for next season':'Set for next season'}</span>`:'';
-    return `<div class="reg-rule"><div class="reg-rh"><b>${esc(d.label||r)}</b>${appr}</div><div class="reg-rl">Now</div><div class="reg-seg">${now}</div><div class="reg-rl">Next season</div><div class="reg-seg">${nxt}${nx}</div></div>`;
+    // Rules with severities (the technical era): how strongly the change hits, stored as upcoming_severity.
+    const sevs=d.severities&&typeof d.severities==='object'?Object.entries(d.severities):[];
+    const curSev=rg[r]?.current_severity,upSev=up?(rg[r]?.upcoming_severity||d.default_severity||sevs[0]?.[0]):null;
+    const sevInfo=k=>{const v=d.severities?.[k];if(!v)return '';const ret=Number.isFinite(+v.retention)?`Carries ${Math.round(v.retention*100)}% into the new season`:'',cs=Number.isFinite(+v.concept_strength)?`concept strength \u00d7${+v.concept_strength}`:'';return [v.summary,[ret,cs].filter(Boolean).join(' \u00b7 ')].filter(Boolean).join(' ');};
+    const sevBox=sevs.length?`<div class="reg-rl">Severity next season</div><div class="reg-seg">${sevs.map(([k,v])=>chip(v.name||k,(k===upSev?'on up':'')+(up?'':' dis'),up?`data-reg-sev="${r}|${k}"`:'',sevInfo(k))).join('')}</div><div class="reg-why">${up?esc(sevInfo(upSev)):'Set a next-season era to choose its severity.'}</div>`:'';
+    const nowSev=sevs.length&&curSev?` <span class="reg-sev-now" title="${esc(sevInfo(curSev))}">${esc(d.severities?.[curSev]?.name||curSev)} severity</span>`:'';
+    return `<div class="reg-rule"><div class="reg-rh"><b>${esc(d.label||r)}</b>${appr}</div><div class="reg-rl">Now${nowSev}</div><div class="reg-seg">${now}</div><div class="reg-rl">Next season</div><div class="reg-seg">${nxt}${nx}</div>${sevBox}</div>`;
   };
   const groups=REG_GROUPS.map(([t,rs])=>`<h3 class="reg-h">${t}</h3><div class="reg-grid">${rs.map(ruleBox).join('')}</div>`).join('');
+  // Engine rule for next season: the game rolls it at week 41 and stores it in the top-level pending_reg_changes.
+  const pend=Array.isArray(raw.pending_reg_changes)?raw.pending_reg_changes:[];
+  const engRolled=week>=41;
+  const engNow=(pend.find(x=>/^engine_(minor|major|drastic)$/.test(x))||'engine_stable').slice(7);
+  const engRow=`<h3 class="reg-h">Engine rules</h3><div class="reg-grid"><div class="reg-rule"><div class="reg-rh"><b>Engine regulation</b>${engNow!=='stable'?`<span class="reg-appr">${esc(engNow[0].toUpperCase()+engNow.slice(1))} change next season</span>`:''}</div><div class="reg-rl">Next season</div><div class="reg-seg">${['stable','minor','major','drastic'].map(k=>chip(k[0].toUpperCase()+k.slice(1),(k===engNow?'on'+(k==='stable'?' keep':' up'):'')+(engRolled?'':' dis'),engRolled?`data-reg-eng="${k}"`:'',k==='stable'?'No engine rule change':'Engine rule change that resets power units')).join('')}</div><div class="reg-why">${engRolled?'The game rolled this at week 41; the chances are set in Edits and events.':'Editable once the game has rolled it at week 41; the chances are set in Edits and events.'}</div></div></div>`;
   // latest ballot
   let ballot='';
   if(reviews.length){
@@ -19682,9 +19938,103 @@ function renderRegulations(){
   }
   host.innerHTML=`<div class="reg-top">${kp.map(([a,b])=>`<div class="reg-kpi"><div class="k">${a}</div><div class="v">${b}</div></div>`).join('')}<div class="reg-spacer"></div><div class="reg-mode"><div class="k">How rules change</div><div class="reg-seg"><span class="reg-o ${pol.mode==='scripted'?'':'on'}" data-reg-mode="voting">Voting</span><span class="reg-o ${pol.mode==='scripted'?'on':''}" data-reg-mode="scripted">Scripted</span></div></div></div><div class="reg-acts"><button class="reg-btn go" type="button" data-reg-act="apply" ${nUp?'':'disabled'}>Apply upcoming now</button><button class="reg-btn" type="button" data-reg-act="clear" ${nUp?'':'disabled'}>Clear upcoming</button></div>
   ${before?`<div class="reg-note">The review is at week ${vt.review_week}. Rules set for next season before then add extra proposals; set them after the review.</div>`:''}
-  ${ballot}${groups}`;
+  ${engRow}${ballot}${groups}`;
 }
-renderHeadquarters=(o=>function(){const r=o.apply(this,arguments);try{renderRegulations()}catch(e){console.error(e)}return r})(renderHeadquarters);
+renderHeadquarters=(o=>function(){const r=o.apply(this,arguments);try{renderRegulations()}catch(e){console.error(e)}try{renderSchedule()}catch(e){console.error(e)}return r})(renderHeadquarters);
+
+/* Schedule tab: weeks of schedule / next_season_schedule; track ids are data-pack file names without .json. */
+const SCH_WEEKS=52,SCH_SPECIAL={test:'Test week',private:'Private test'};
+const schTracks=new Map();let schKey='schedule',schDrag=null;
+try{for(const t of JSON.parse(localStorage.getItem('tp-save-lab-tracks')||'[]'))if(t&&t.id)schTracks.set(t.id,t);}catch(e){}
+function schSaveTracks(){try{localStorage.setItem('tp-save-lab-tracks',JSON.stringify([...schTracks.values()].filter(t=>!t.fromSave)));}catch(e){}}
+function schSaveNames(){
+  const out=new Map();
+  for(const r of Object.values(state?.raw?.formula_regulation_governance?.reviews||{}))for(const t of Object.values(r?.snapshot?.calendar_tracks||{}))if(t?.id)out.set(t.id,{id:t.id,name:t.name||t.id,km:typeof t.length_km==='number'?t.length_km:null,fromSave:true});
+  return out;
+}
+function schTrack(id){return schTracks.get(id)||schSaveNames().get(id)||null;}
+function schLock(){const raw=state?.raw;return schKey==='schedule'?Math.max(0,(Number(raw.week_index)||0)+(raw.active_weekend?1:0)):0;}
+function schOptions(sel){
+  // Only the loaded track files are choices; the save's own list is never offered.
+  const all=new Map(schTracks);
+  if(sel&&!SCH_SPECIAL[sel]&&!all.has(sel))all.set(sel,{id:sel,name:schTrack(sel)?.name||sel});
+  const list=[...all.values()].sort((a,b)=>a.id.localeCompare(b.id));
+  return list.map(t=>`<option value="${esc(t.id)}"${t.id===sel?' selected':''}>${esc(t.id)}</option>`).join('')+(list.length?'':'<option disabled>Load track files to add races</option>')+`<option disabled>──────────</option><option value="test"${sel==='test'?' selected':''}>Test week</option><option value="private"${sel==='private'?' selected':''}>Private test</option>`;
+}
+function renderSchedule(){
+  const host=$('schBody');if(!host||!state?.raw)return;
+  const raw=state.raw,list=Array.isArray(raw[schKey])?raw[schKey]:null;
+  TPControls.renderChoices($('schSeasonRow'),{options:[{value:'schedule',label:'This season'},{value:'next_season_schedule',label:'Next season'}].filter(o=>Array.isArray(raw[o.value])),selected:schKey,className:'tp-control-action',onSelect:v=>{schKey=v;renderSchedule();}});
+  if(!list||list.length!==SCH_WEEKS){host.innerHTML='<div class="panel"><div class="empty">No 52-week schedule in this save.</div></div>';return;}
+  const lock=schLock(),races=list.filter(v=>v&&!SCH_SPECIAL[v]),tests=list.filter(v=>SCH_SPECIAL[v]).length;
+  const used=new Map();races.forEach(v=>used.set(v,(used.get(v)||0)+1));
+  const missing=[...new Set(races.filter(v=>!schTrack(v)))];
+  let round=0;
+  const card=(v,i)=>{
+    const isRace=v&&!SCH_SPECIAL[v];if(isRace)round++;
+    const t=isRace?schTrack(v):null,r=isRace?`<span class="sch-r">R${round}</span>`:'';
+    if(i<lock)return `<div class="sch-wk locked${isRace?' race':''}" title="Already played"><div class="sch-top">${r}<span class="sch-n">Week ${i+1}</span><span class="sch-lock">Played</span></div>${v?`<div class="sch-name">${esc(SCH_SPECIAL[v]||(t?t.name:v))}</div>`:''}</div>`;
+    const head=`<div class="sch-top">${r}<span class="sch-n">Week ${i+1}</span>${v?`<button class="sch-x" type="button" data-sch-x="${i}" title="Clear this week" aria-label="Clear week ${i+1}">×</button>`:''}</div>`;
+    if(!v)return `<div class="sch-wk empty" data-sch-w="${i}">${head}<select class="sch-sel" data-sch-a="${i}" aria-label="Add a race in week ${i+1}"><option value="">Add race</option>${schOptions(null)}</select></div>`;
+    const chg=`<select class="sch-sel" data-sch-a="${i}" aria-label="Change week ${i+1}"><option value="" disabled>Change race</option>${schOptions(v)}</select>`;
+    if(SCH_SPECIAL[v])return `<div class="sch-wk special" data-sch-w="${i}" draggable="true">${head}<div class="sch-name">${SCH_SPECIAL[v]}</div>${chg}</div>`;
+    return `<div class="sch-wk race${t?'':' missing'}" data-sch-w="${i}" draggable="true">${head}<div class="sch-name">${esc(t?t.name:v)}</div><div class="sch-meta">${t&&t.km!=null?t.km+' km':(t?'':'Track not loaded')}</div>${chg}<div class="sch-id">${esc(v)}</div></div>`;
+  };
+  host.innerHTML=`<div class="panel"><div class="sch-sum"><strong>${races.length} races</strong><span>${tests?tests+' test weeks · ':''}${SCH_WEEKS-races.length-tests} empty weeks${lock?` · weeks 1-${lock} played`:''}</span></div>${missing.length?`<div class="sch-note">${missing.length} track${missing.length===1?' is':'s are'} in this schedule but not loaded: ${missing.map(esc).join(', ')}. Showing the file name; load the track file for the full name.</div>`:''}<div class="sch-weeks">${list.map(card).join('')}</div></div>`;
+  if($('schClear'))$('schClear').disabled=!schTracks.size;
+  $('schTCount').textContent=schTracks.size?`${schTracks.size} loaded · ${used.size} used`:'none loaded';
+  $('schTracks').innerHTML=[...schTracks.values()].sort((a,b)=>a.name.localeCompare(b.name)).map(t=>`<span class="sch-chip${used.get(t.id)?' on':''}" title="${esc(t.id)}">${esc(t.name)}${used.get(t.id)>1?` <b>x${used.get(t.id)}</b>`:''}</span>`).join('');
+}
+function schEdit(desc,fn){
+  const before=beginEditorMutation();fn(state.raw[schKey]);
+  commitEditorMutation(desc,before);renderSchedule();
+}
+function schName(v){return v?(SCH_SPECIAL[v]||schTrack(v)?.name||v):'empty';}
+async function schAddFiles(files){
+  let n=0,bad=0;
+  for(const f of files){
+    if(!/\.json$/i.test(f.name)){bad++;continue;}
+    try{const o=JSON.parse(await f.text());
+      if(!o||typeof o.name!=='string'||!('length_km' in o||'micro_sectors' in o||'lap_modifier' in o)){bad++;continue;}
+      schTracks.set(f.name.replace(/\.json$/i,''),{id:f.name.replace(/\.json$/i,''),name:o.name,km:typeof o.length_km==='number'?o.length_km:null});n++;
+    }catch(e){bad++;}
+  }
+  schSaveTracks();renderSchedule();
+  if(editSummary)editSummary.textContent=n?`${n} track file${n===1?'':'s'} loaded${bad?`, ${bad} skipped`:''}.`:'No track files found in that selection.';
+}
+let schTOpen=schTracks.size===0;
+function schApplyOpen(){const p=$('schTrackPanel');if(!p)return;p.classList.toggle('closed',!schTOpen);$('schTh').setAttribute('aria-expanded',schTOpen);$('schTh').querySelector('.sch-caret').textContent=schTOpen?'▾':'▸';}
+$('schTh')?.addEventListener('click',()=>{schTOpen=!schTOpen;schApplyOpen();});
+$('schTh')?.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();schTOpen=!schTOpen;schApplyOpen();}});
+schApplyOpen();
+$('schClear')?.addEventListener('click',()=>{schTracks.clear();schSaveTracks();renderSchedule();if(editSummary)editSummary.textContent='Track files cleared.';});
+$('schPick')?.addEventListener('click',()=>$('schFiles').click());
+$('schFiles')?.addEventListener('change',e=>{const f=[...e.target.files];e.target.value='';schAddFiles(f);});
+const schDrop=$('schDrop');
+if(schDrop){
+  schDrop.addEventListener('dragover',e=>{e.preventDefault();schDrop.classList.add('over');});
+  schDrop.addEventListener('dragleave',()=>schDrop.classList.remove('over'));
+  schDrop.addEventListener('drop',e=>{e.preventDefault();schDrop.classList.remove('over');schAddFiles([...e.dataTransfer.files]);});
+}
+$('schBody')?.addEventListener('change',e=>{
+  const sel=e.target.closest('[data-sch-a]');if(!sel||!state?.raw)return;
+  const i=+sel.dataset.schA,v=sel.value||null,list=state.raw[schKey];if(list[i]===v)return;
+  schEdit(`Schedule: week ${i+1} set to ${schName(v)}`,l=>{editorSet(l,i,v);});
+});
+$('schBody')?.addEventListener('click',e=>{
+  const x=e.target.closest('[data-sch-x]');if(!x||!state?.raw)return;
+  const i=+x.dataset.schX,old=state.raw[schKey][i];
+  schEdit(`Schedule: cleared week ${i+1} (${schName(old)})`,l=>{editorSet(l,i,null);});
+});
+$('schBody')?.addEventListener('dragstart',e=>{const w=e.target.closest('[data-sch-w]');if(!w)return;schDrag=+w.dataset.schW;w.classList.add('dragging');e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',String(schDrag));});
+$('schBody')?.addEventListener('dragend',()=>{schDrag=null;document.querySelectorAll('.sch-wk').forEach(w=>w.classList.remove('dragging','over'));});
+$('schBody')?.addEventListener('dragover',e=>{const w=e.target.closest('[data-sch-w]');if(!w||schDrag==null||+w.dataset.schW===schDrag)return;e.preventDefault();document.querySelectorAll('.sch-wk.over').forEach(x=>x.classList.remove('over'));w.classList.add('over');});
+$('schBody')?.addEventListener('drop',e=>{
+  const w=e.target.closest('[data-sch-w]');if(!w||schDrag==null||!state?.raw)return;
+  e.preventDefault();const a=schDrag,b=+w.dataset.schW;schDrag=null;if(a===b)return;
+  const l=state.raw[schKey],va=l[a],vb=l[b];
+  schEdit(vb?`Schedule: swapped week ${a+1} (${schName(va)}) and week ${b+1} (${schName(vb)})`:`Schedule: moved ${schName(va)} from week ${a+1} to week ${b+1}`,l=>{editorSet(l,a,vb);editorSet(l,b,va);});
+});
 
 function regEdit(desc,fn){
   if(!state?.raw?.formula_regulation_governance)return;
@@ -19699,8 +20049,28 @@ function regSetUpcoming(raw,r,key){
   raw.pending_regulation_rules=raw.pending_regulation_rules||{};
   if(key&&key!==rec.current){rec.upcoming=key;raw.pending_regulation_rules[r]=key}
   else{rec.upcoming=null;delete raw.pending_regulation_rules[r]}
+  const dsev=raw.formula_regulation_governance?.definition_snapshot?.[r];
+  if(dsev?.severities){rec.upcoming_severity=rec.upcoming?(rec.upcoming_severity||dsev.default_severity||Object.keys(dsev.severities)[0]):null;}
 }
 $('regBody')?.addEventListener('click',e=>{
+  const sv=e.target.closest('[data-reg-sev]');
+  if(sv&&state?.raw){
+    const [r,key]=sv.dataset.regSev.split('|'),rec=state.raw.regulations?.[r],d=state.raw.formula_regulation_governance?.definition_snapshot?.[r];
+    if(!rec?.upcoming||!d||rec.upcoming_severity===key)return;
+    regEdit(`Regulations: ${d.label||r} severity for next season set to ${d.severities?.[key]?.name||key}`,raw=>{raw.regulations[r].upcoming_severity=key;});
+    return;
+  }
+  const eg=e.target.closest('[data-reg-eng]');
+  if(eg&&state?.raw&&(Number(state.raw.week_index)||0)+1>=41){
+    const k=eg.dataset.regEng,cur=(state.raw.pending_reg_changes||[]).find(x=>/^engine_(minor|major|drastic)$/.test(x))?.slice(7)||'stable';
+    if(k===cur)return;
+    regEdit(k==='stable'?'Regulations: removed the engine rule change for next season':`Regulations: engine rule change for next season set to ${k}`,raw=>{
+      const keepList=(Array.isArray(raw.pending_reg_changes)?raw.pending_reg_changes:[]).filter(x=>!/^engine_/.test(x));
+      if(k!=='stable')keepList.push('engine_'+k);
+      raw.pending_reg_changes=keepList;
+    });
+    return;
+  }
   const g=state?.raw?.formula_regulation_governance;if(!g)return;
   const nw=e.target.closest('[data-reg-now]'),up=e.target.closest('[data-reg-up]'),md=e.target.closest('[data-reg-mode]'),ac=e.target.closest('[data-reg-act]');
   if(nw){
@@ -19729,7 +20099,7 @@ $('regBody')?.addEventListener('click',e=>{
     const rules=Object.entries(state.raw.regulations||{}).filter(([,v])=>v&&v.upcoming).map(([k])=>k);
     if(!rules.length)return;
     regEdit(apply?`Regulations: applied ${rules.length} upcoming change${rules.length===1?'':'s'} now`:`Regulations: cleared ${rules.length} upcoming change${rules.length===1?'':'s'}`,raw=>{
-      for(const r of rules){const rec=raw.regulations[r];if(apply)rec.current=rec.upcoming;rec.upcoming=null;if(raw.pending_regulation_rules)delete raw.pending_regulation_rules[r]}
+      for(const r of rules){const rec=raw.regulations[r];if(apply){rec.current=rec.upcoming;if(rec.upcoming_severity)rec.current_severity=rec.upcoming_severity;}rec.upcoming=null;if('upcoming_severity' in rec)rec.upcoming_severity=null;if(raw.pending_regulation_rules)delete raw.pending_regulation_rules[r]}
     });
   }
 });
