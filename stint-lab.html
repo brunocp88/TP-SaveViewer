@@ -90,6 +90,8 @@ label.chk[hidden]{display:none}
 .setrow .sw{width:12px;height:12px;border-radius:50%}
 .setrow .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;font-weight:600}
 .setrow button{padding:4px 8px;font-size:9.5px}
+#trackList:empty{display:none}
+#trackList .lp{font-family:var(--mono);font-size:11px;color:var(--mid)}
 .tablewrap{overflow-x:auto}
 table.cmp{width:100%;border-collapse:collapse;font-size:11px;table-layout:fixed}
 table.cmp col.k{width:166px}
@@ -313,9 +315,10 @@ a.tool-card.blue:hover,a.tool-card.blue:focus-visible{box-shadow:inset 3px 0 0 #
 
       <details class="panel fields" open>
         <summary><h2>Track</h2></summary>
-        <div class="drop need" id="dropTrack" tabindex="0" role="button">Track file required: drop a track .json here, or click to choose</div>
-        <input type="file" id="fileTrack" accept=".json,application/json" hidden>
+        <div class="drop need" id="dropTrack" tabindex="0" role="button">Track file required: drop one or more track .json files here, or click to choose</div>
+        <input type="file" id="fileTrack" accept=".json,application/json" multiple hidden>
         <div class="trackline" id="trackName"></div>
+        <div class="sets" id="trackList"></div>
         <div class="toast" id="trackMsg"></div>
         <label class="f"><span>Race laps</span><input type="number" id="laps" step="1"></label>
         <label class="f"><span>Length (km)</span><input type="number" data-dec="2" id="tlen" step="0.01"></label>
@@ -323,11 +326,9 @@ a.tool-card.blue:hover,a.tool-card.blue:focus-visible{box-shadow:inset 3px 0 0 #
         <label class="f"><span>fuel_consumption</span><input type="number" data-dec="2" id="tfc" step="0.01"></label>
         <label class="f"><span>Pit lane loss (s)</span><input type="number" data-dec="1" id="pit" step="0.1"></label>
         <div class="sect">Derived from the track file and game code</div>
-        <label class="f"><span>Lap time at 800 kg, grip 1.00 (s)</span><input type="number" data-dec="1" id="base" step="0.5" readonly tabindex="-1" class="ro"></label>
-        <label class="f"><span>Share of lap in corners (%)</span><input type="number" id="shC" step="1" readonly tabindex="-1" class="ro"></label>
-        <label class="f"><span>Share accelerating (%)</span><input type="number" id="shA" step="1" readonly tabindex="-1" class="ro"></label>
-        <label class="f"><span>Share braking (%)</span><input type="number" id="shB" step="1" readonly tabindex="-1" class="ro"></label>
-        <button id="avgTrack">Reset to default track values</button>
+        <label class="f"><span>Lap time, 50-rated car at 800 kg, grip 1.00 (s)</span><input type="number" data-dec="2" id="base" step="0.01" readonly tabindex="-1" class="ro"></label>
+        <label class="f"><span>Soft vs hard, new tyres, empty car (s)</span><input type="number" data-dec="2" id="gripGap" step="0.01" readonly tabindex="-1" class="ro"></label>
+        <button id="avgTrack">Remove all tracks</button>
       </details>
 
       <details class="panel fields" open>
@@ -341,6 +342,9 @@ a.tool-card.blue:hover,a.tool-card.blue:focus-visible{box-shadow:inset 3px 0 0 #
         <div class="note" id="fplOut"></div>
         <label class="chk"><input type="checkbox" id="refuel"><span class="ck"></span><span>Refuelling allowed</span></label>
         <label class="f"><span>Refuel time per 10 kg (s), game value</span><input type="number" data-dec="1" id="ref" step="0.1" readonly tabindex="-1" class="ro"></label>
+        <label class="f"><span>Chief mechanic pit-stop skill (1-20)</span><input type="number" id="mech" step="1" min="1" max="20"></label>
+        <div class="note" id="pitOut"></div>
+        <label class="f"><span>Car faster than a 50-rated car by (s per lap)</span><input type="number" data-dec="2" id="pace" step="0.1"></label>
         <label class="f"><span>AI pits at wear</span><input type="number" data-dec="2" id="th" step="0.05"></label>
         <label class="f"><span>tyre_profile wear multiplier</span><input type="number" data-dec="2" id="prof" step="0.1"></label>
         <label class="f"><span>Stint lengths</span><select id="split"><option value="opt">Optimal split</option><option value="eq">Equal stints</option></select></label>
@@ -385,9 +389,13 @@ a.tool-card.blue:hover,a.tool-card.blue:focus-visible{box-shadow:inset 3px 0 0 #
         <summary><h2>How the simulator calculates</h2></summary>
         <ul>
           <li>Wear per lap = wear_rate_base x track tyre_wear_mult x tyre_profile multiplier. Supplier durability and driver tyre management also scale wear in the game; here they are neutral.</li>
-          <li>Grip = grip_base x (1 - grip_loss x wear) for lateral and longitudinal separately, never below half of grip_base. Past wear_cliff_onset_pct, wear counts wear_cliff_mult times faster. As in the game's tyre_model.py, during a race the tyre effect of the first lap in each wear_quantum step (default 0.02 = 2% of tyre life) is reused until wear reaches the next step, so lap times fall in small steps for every compound; a compound without a cliff also rounds wear to the nearest step. Fuel still changes every lap.</li>
-          <li>Fuel is mass only, as in the game's realistic_physics.py: acceleration x [1 + (800/total - 1) x 0.5], clamped 0.70-1.25; corner speed x [1 + (sqrt(800/total) - 1) x 0.5], clamped 0.84-1.08. Braking ignores mass.</li>
-          <li>Lap time = corner share / (corner speed x sqrt(lateral grip)) + accelerating share / sqrt(acceleration) + braking share / sqrt(longitudinal grip). The shares and the grip-to-speed link are estimates, not game code.</li>
+          <li>Grip = grip_base x (1 - grip_loss x wear) for lateral and longitudinal separately; the wear factor never goes below 0.55 (lateral) or 0.50 (longitudinal). Past wear_cliff_onset_pct, wear counts wear_cliff_mult times faster. As in the game's tyre_model.py, during a race the tyre effect of the first lap in each wear_quantum step (default 0.02 = 2% of tyre life) is reused until wear reaches the next step, so lap times fall in small steps for every compound; a compound without a cliff also rounds wear to the nearest step. Fuel still changes every lap.</li>
+          <li>Lap time comes from the game's own lap solver (realistic_physics.py), run on the track's micro-sectors for a car with every rating at 50. Each corner zone's speed cap is its target_speed_kmh x lateral grip x a mass factor; straights keep their target speed. Braking and acceleration rates (12 and 7 m/s2 at rating 50) are multiplied by longitudinal grip. The solver then accelerates out of each zone along the game's power curve with drag, brakes at the last moment for the next zone, and adds up the time in 1 m steps. Grip therefore changes corner speed one for one, not by its square root.</li>
+          <li>Fuel is mass only: acceleration x [1 + (800/total - 1) x 0.5], clamped 0.70-1.25; corner speed x [1 + (sqrt(800/total) - 1) x 0.5], clamped 0.84-1.08. Braking ignores mass. Total = dry chassis + engine + fuel.</li>
+          <li>"Car faster than a 50-rated car" is taken off every lap. It moves race totals, not the choice of strategy.</li>
+          <li>Race laps = 50 x lap_modifier rounded the way the game rounds (Python round: a half goes to the even number, so 80.5 is 80).</li>
+          <li>With several track files loaded, the app races one average track: race laps, length, tyre_wear_mult, fuel_consumption and pit loss are the mean of the tracks, and each lap time is the mean of every track's own game lap time for the same tyres and fuel. Use it to find a strategy that works across a season or a group of tracks.</li>
+          <li>Each stop costs the pit lane loss plus tyre service: on average 5.0 - 0.1316 x (chief mechanic pit-stop skill - 1) seconds, which the game rolls between 75% and 125% of that. Refuelling adds 0.15 s per kg. Crew mistakes (a few seconds, now and then) are left out.</li>
           <li>Fuel per lap = fuel_consumption x FUEL_PER_LAP_CONSTANT / FUEL_REFERENCE_EFFICIENCY, for an engine with fuel efficiency 50 (the game multiplies by 1 - 0.25 x (efficiency - 50) / 50). A track file without fuel_consumption uses the game's estimate: 1 + (straight share - 0.25) x 0.6 + (1 - lap_modifier / 3.5) x 0.2.</li>
           <li>Each plan is a sequence of dry compounds, one per stint, in any order. With "Optimal split" the stint lengths are searched exhaustively for the fastest legal race; "Equal stints" splits the laps evenly, as earlier versions did. A plan needs as many different dry compounds as the model's mandatory_compound_count.</li>
           <li> With refuelling each stint starts with its own fuel and pays refuel time at the stop; without it the car starts with the fuel for the whole race, whatever the tank size, and stops are for tyres only. Traffic and track position are not modelled, so multi-stop gains are best case.</li>
@@ -407,14 +415,16 @@ const comp=(a)=>Object.fromEntries(FIELDS.map((f,i)=>[f,a[i]??null]));
 const BUILTIN=[
   {name:"Vanilla 0.99.5",mandatory:1,wearQuantum:0.02,defaultCompound:"medium",startProb:{soft:0.35,medium:0.4,hard:0.2,intermediate:0.04,wet:0.01},compounds:{soft:comp([1.0175,1.0165,0.036,0.06,0.1,35,2.0,2.0]),medium:comp([1.01,1.01,0.025,0.055,0.085,45,1.85,1.85]),hard:comp([1.002,1.002,0.018,0.05,0.075,65,1.6,1.6])}}
 ];
-const AVG={name:"No track file loaded: using default track values",laps:60,len:5,twm:1,tfc:1,pit:20,base:85,shC:40,shA:45,shB:15};
+// Generic 5 km layout used until a track file is loaded.
+const AVG_MS=[["straight",12,300],["low",3,100],["straight",10,260],["med",4,160],["straight",8,250],["high",5,220],["straight",10,280],["low",3,90],["straight",9,240],["med",5,170],["high",6,230],["straight",12,300],["low",3,110],["med",4,150],["straight",6,230]].map(([type,length_pct,target_speed_kmh])=>({type,length_pct,target_speed_kmh}));
+const AVG={name:"No track file loaded: using a generic 5 km layout",laps:60,len:5,twm:1,tfc:1,pit:20,ms:AVG_MS};
 let topAll=false,sets=BUILTIN.map(s=>({...structuredClone(s),builtin:true})),active=0,trackLabel=AVG.name;
 const ORDER=["soft","medium","hard"];
 const dryNames=s=>ORDER.filter(c=>s.compounds[c]);
 
 function setTrack(t){
   $("laps").value=t.laps;$("tlen").value=t.len;$("twm").value=t.twm;$("tfc").value=t.tfc;$("pit").value=t.pit;
-  $("base").value=t.base;$("shC").value=t.shC;$("shA").value=t.shA;$("shB").value=t.shB;trackLabel=t.name;
+  trackSet=(t.multi||[t]).map(x=>({ms:normMS(x.ms),len:x.len}));lapCache.clear();trackLabel=t.name;
   $("trackName").textContent=t.name;
   fmtDec();const none=t===AVG;$("trackName").classList.toggle("none",none);$("dropTrack").classList.toggle("need",none);
 }
@@ -425,7 +435,7 @@ function fmtDec(){document.querySelectorAll("input[data-dec]").forEach(el=>{if(e
 document.addEventListener("change",e=>{const el=e.target;if(el.dataset&&el.dataset.dec&&el.value!=="")el.value=(+el.value).toFixed(+el.dataset.dec)});
 function defaults(){
   setTrack(AVG);
-  $("chassis").value=600;$("engine").value=115;$("fpc").value=100;$("fre").value=50;$("refuel").checked=true;$("ref").value=1.5;$("tank").value=120;$("th").value=0.75;$("prof").value=1.0;
+  $("chassis").value=600;$("engine").value=115;$("fpc").value=100;$("fre").value=50;$("refuel").checked=true;$("ref").value=1.5;$("tank").value=120;$("th").value=0.75;$("prof").value=1.0;$("mech").value=10;$("pace").value=0;
 }
 
 /* ---------- uploads ---------- */
@@ -460,18 +470,35 @@ async function addTyreFiles(files){
 }
 // Game estimate when a track has no fuel_consumption (lap_modifier limited to 0.5-3.5).
 function estFc(j){const sh=j.micro_sectors.filter(m=>m.type==="straight").reduce((a,m)=>a+m.length_pct,0)/100,lm=Math.min(3.5,Math.max(0.5,j.lap_modifier??1));return 1+(sh-0.25)*0.6+(1-lm/3.5)*0.2}
+// Loaded track files. With two or more, the app races one average track: race laps, length, wear, fuel and pit loss are the
+// mean of the tracks, and every lap time is the mean of each track's own game lap time for the same tyre and fuel.
+let tracks=[];
+const mean=a=>a.reduce((x,y)=>x+y,0)/a.length;
+function applyTracks(){
+  if(!tracks.length){setTrack(AVG)}
+  else if(tracks.length===1)setTrack(tracks[0]);
+  else setTrack({name:`Average of ${tracks.length} tracks`,laps:pyRound(mean(tracks.map(t=>t.laps))),len:+mean(tracks.map(t=>t.len)).toFixed(3),
+    twm:+mean(tracks.map(t=>t.twm)).toFixed(3),tfc:+mean(tracks.map(t=>t.tfc)).toFixed(3),pit:+mean(tracks.map(t=>t.pit)).toFixed(2),multi:tracks});
+  renderTracks();
+}
+function renderTracks(){
+  $("trackList").innerHTML=tracks.length<2?"":tracks.map((t,i)=>`<div class="setrow"><span class="sw" style="background:var(--accent)"></span><span class="nm" title="${t.name}">${t.name}</span><span class="lp">${t.laps} laps</span><button data-tr="${i}">Remove</button></div>`).join("");
+}
 async function addTrackFile(files){
-  const f=files[0];if(!f)return;
-  try{
-    const j=JSON.parse(await readText(f));
-    if(!j.length_km||!Array.isArray(j.micro_sectors))throw new Error("needs length_km and micro_sectors");
-    const L=j.length_km*1000;let ct=0,st=0;
-    for(const m of j.micro_sectors){const d=L*m.length_pct/100;if(m.type==="straight")st+=d/(270/3.6);else ct+=d/(m.target_speed_kmh/3.6)}
-    const corner=Math.round(100*ct/(ct+st));
-    setTrack({name:j.name?j.name+" ("+f.name+")":f.name,laps:j.lap_modifier?Math.round(50*j.lap_modifier):Math.ceil(305/j.length_km),len:+j.length_km.toFixed(3),twm:j.tyre_wear_mult??1,tfc:j.fuel_consumption??+estFc(j).toFixed(2),
-      pit:j.pit_lane_loss_s??AVG.pit,base:Math.round((ct+st)*1.11),shC:corner,shA:Math.max(0,85-corner),shB:15});
-    msg($("trackMsg"),(j.lap_modifier?"Loaded. Race laps = 50 x lap_modifier":"Loaded. No lap_modifier, so laps are set for a 305 km race")+"; corner share and lap time estimated from micro-sectors.");
-  }catch(e){msg($("trackMsg"),f.name+": "+e.message,true)}
+  let added=0,errs=[];
+  for(const f of files){
+    try{
+      const j=JSON.parse(await readText(f));
+      if(!j.length_km||!Array.isArray(j.micro_sectors))throw new Error("needs length_km and micro_sectors");
+      if(!normMS(j.micro_sectors).length)throw new Error("no usable micro_sectors");
+      tracks.push({name:j.name?j.name+" ("+f.name+")":f.name,laps:j.lap_modifier?pyRound(50*j.lap_modifier):Math.ceil(305/j.length_km),len:+j.length_km.toFixed(3),twm:j.tyre_wear_mult??1,tfc:j.fuel_consumption??+estFc(j).toFixed(2),
+        pit:j.pit_lane_loss_s??AVG.pit,ms:j.micro_sectors});added++;
+    }catch(e){errs.push(f.name+": "+e.message)}
+  }
+  if(added)applyTracks();
+  const ok=tracks.length>1?`Averaging ${tracks.length} tracks: race laps, length, wear, fuel and pit loss are the track means, and each lap time is the mean of every track's game lap time.`
+    :"Loaded. Race laps = 50 x lap_modifier, rounded as the game does; lap times come from the game's lap solver on this track's micro-sectors.";
+  msg($("trackMsg"),errs.length?errs.join("; "):ok,errs.length>0);
   update();
 }
 
@@ -610,8 +637,12 @@ function S(){
   const dryKg=+$("chassis").value+ +$("engine").value,tankKg=+$("tank").value,startKg=dryKg+($("refuel").checked?tankKg:fpl*laps),pc=x=>(x>=1?"+":"")+((x-1)*100).toFixed(1)+"%";
   $("massOut").innerHTML=`Empty, ${dryKg} kg: acceleration ${pc(accelMult(dryKg))}, corner speed ${pc(cornerMult(dryKg))}<br>${$("refuel").checked?"Full tank":"Race start, full race fuel"}, ${startKg.toFixed(0)} kg: acceleration ${pc(accelMult(startKg))}, corner speed ${pc(cornerMult(startKg))}`;
   $("tank").disabled=!$("refuel").checked; // without refuelling the tank size is ignored
-  return {laps,fpl,base:+$("base").value,shC:+$("shC").value/100,shA:+$("shA").value/100,shB:+$("shB").value/100,
-    dry:+$("chassis").value+ +$("engine").value,refuel:$("refuel").checked,ref:+$("ref").value/10,tank:+$("tank").value,pit:+$("pit").value,
+  const mech=clamp(Math.round(+$("mech").value||10),1,20),service=5.0-(mech-1)*0.13157894736842105;
+  $("pitOut").textContent=`= ${service.toFixed(2)} s tyre service on average, ${(+$("pit").value+service).toFixed(1)} s per stop with the pit lane`;
+  const chassisKg=+$("chassis").value,engineKg=+$("engine").value;
+  $("base").value=gameLapTime(len,1,1,650,150,0).toFixed(2);
+  return {laps,fpl,len,chassisKg,engineKg,pace:+$("pace").value||0,
+    dry:chassisKg+engineKg,refuel:$("refuel").checked,ref:+$("ref").value/10,tank:+$("tank").value,pit:+$("pit").value+service,
     th:+$("th").value,optimal:$("split").value==="opt",wm:(+$("twm").value||1)*(+$("prof").value||1)};
 }
 // q = the model's wear_quantum (game tyre_model.py: default 0.02, lowest 0.001).
@@ -626,12 +657,97 @@ function grips(c,n){
   let w=Math.min(n0*c.rate,1);
   if(c.on==null)w=Math.round(w/c.q)*c.q;
   const eff=m=>(c.on!=null&&w>c.on/100)?c.on/100+(w-c.on/100)*m:w;
-  const f=(loss,m)=>Math.max(0.5,1-loss*eff(m));
-  return [c.lat_grip_base*f(c.wear_grip_loss_lat,c.ml),c.long_grip_base*f(c.wear_grip_loss_long,c.mg)];
+  const f=(loss,m,floor)=>Math.max(floor,1-loss*eff(m));
+  return [clamp(c.lat_grip_base*f(c.wear_grip_loss_lat,c.ml,0.55),0.35,1.25),clamp(c.long_grip_base*f(c.wear_grip_loss_long,c.mg,0.5),0.3,1.25)];
 }
 function lapTime(c,n,fuel,P){
-  const [gl,gg]=grips(c,n),tot=P.dry+fuel;
-  return P.base*(P.shC/(cornerMult(tot)*Math.sqrt(gl))+P.shA/Math.sqrt(accelMult(tot))+P.shB/Math.sqrt(gg));
+  const [gl,gg]=grips(c,n);
+  return gameLapTimeFuel(P.len,gl,gg,P.chassisKg,P.engineKg,Math.max(0,fuel))-P.pace;
+}
+
+/* ---------- game lap solver (TeamPrincipal 5.exe, managers/realistic_physics.py) ---------- */
+// Python round(): halves go to the even number (80.5 -> 80, 81.5 -> 82).
+const pyRound=x=>{const r=Math.round(x);return Math.abs(x%1)===0.5&&r%2!==0?r-1:r};
+const ZONE_DEF={low:115,med:175,high:225,corner:220,straight:300};
+const ZONE_BOUNDS={low:[40,220],med:[70,280],high:[95,340],corner:[40,400],straight:[120,420]};
+const STEADY=Object.keys(ZONE_DEF),ALL_ZONES=[...STEADY,"braking","acceleration"];
+const ACX=[0,50,100,150,200,250,300,330,350],ACY=[1.75,1.6,1.45,1.25,0.95,0.75,0.4,0.2,0.05];
+let trackSet=[];const lapCache=new Map();
+// normalize_micro_sectors: drop unknown/empty zones, clamp targets, rescale lengths to 100%.
+function normMS(raw){
+  const out=[];
+  for(const m of raw||[]){
+    if(!m||typeof m!=="object")continue;
+    const type=String(m.type||"low").trim().toLowerCase();if(!ALL_ZONES.includes(type))continue;
+    const pct=+(m.length_pct??m.length_percent??0);if(!(pct>0))continue;
+    let tgt=0;
+    if(STEADY.includes(type)){tgt=+(m.target_speed_kmh??m.target_speed??ZONE_DEF[type]);if(!(tgt>0))tgt=ZONE_DEF[type];tgt=clamp(tgt,...ZONE_BOUNDS[type])}
+    out.push({type,pct,tgt});
+  }
+  const tot=out.reduce((a,m)=>a+m.pct,0);if(tot<=0)return [];
+  out.forEach(m=>m.pct*=100/tot);return out;
+}
+function accelCurve(kmh){
+  if(kmh<=ACX[0])return Math.max(0.05,ACY[0]);
+  let i=ACX.findIndex(x=>x>kmh);if(i<0)return Math.max(0.05,ACY[ACY.length-1]);
+  return Math.max(0.05,ACY[i-1]+(ACY[i]-ACY[i-1])*(kmh-ACX[i-1])/(ACX[i]-ACX[i-1]));
+}
+// One lap for a car with every rating at 50, standard car profile, dry, no wind/DRS.
+// Several tracks: the mean of each track's lap; an edited Length scales every track by the same factor.
+function gameLapTime(lenKm,lat,lng,carKg,engKg,fuelKg){
+  if(!trackSet.length)return 0;
+  const k=lenKm/mean(trackSet.map(t=>t.len));
+  return mean(trackSet.map(t=>solveLap(t.ms,t.len*k,lat,lng,carKg,engKg,fuelKg)));
+}
+function solveLap(ms,lenKm,lat,lng,carKg,engKg,fuelKg){
+  const n=ms.length,L=Math.max(0,lenKm)*1000;if(!n||L<=0)return 0;
+  const total=Math.max(300,carKg+engKg+Math.max(0,fuelKg)),ref=800;
+  const cornerMassMult=clamp(1+(Math.sqrt(ref/total)-1)*0.5,0.84,1.08),accelMassMult=clamp(1+(ref/total-1)*0.5,0.7,1.25);
+  const brake=clamp(12*clamp(lng,0.25,1.5),3,16),accelBase=clamp(7*clamp(lng,0.25,1.5),1,10)*accelMassMult,drag=0.00018;
+  const effAcc=v=>Math.max(0.05,accelBase*accelCurve(v*3.6)-drag*v*v);
+  // _steady_zone_speed: corner zones x mass factor x lateral grip; straights unchanged.
+  const steady=ms.map(m=>{if(!STEADY.includes(m.type))return null;let s=m.tgt;
+    if(m.type!=="straight")s=s*cornerMassMult*clamp(lat,0.3,1.4);return clamp(s,...ZONE_BOUNDS[m.type])});
+  const targets=ms.map((m,i)=>{let t=steady[i];if(t==null){let nx=null,pv=null;
+      for(let j=i+1;j<n;j++)if(steady[j]!=null){nx=steady[j];break}
+      for(let j=i-1;j>=0;j--)if(steady[j]!=null){pv=steady[j];break}
+      t=nx!=null&&pv!=null?Math.max(nx,pv):nx??pv??(ZONE_DEF[m.type]??200)}
+    return Math.max(5,t)});
+  const caps=targets.map(t=>Math.max(0.5,t/3.6)),dist=ms.map(m=>L*m.pct/100);
+  let start=0;for(let i=1;i<n;i++)if(caps[i]<caps[start])start=i;
+  const order=[...Array(n).keys()].map(k=>(k+start)%n),cr=order.map(k=>caps[k]),dr=order.map(k=>dist[k]);
+  const fwd=(v,d,cap)=>{if(d<=1e-9)return Math.max(0.5,Math.min(v,cap));v=Math.max(0.5,v);cap=Math.max(0.5,cap);let x=0;
+    while(x<d-1e-9){if(v>=cap-1e-9)return cap;const st=Math.min(1,d-x);v=Math.min(cap,Math.sqrt(Math.max(v*v+2*effAcc(v)*st,0)));x+=st}
+    return Math.max(0.5,Math.min(v,cap))};
+  const node=new Array(n+1).fill(cr[0]);
+  for(let pass=0;pass<12;pass++){
+    const before=node.join();  // a pass that changes nothing would repeat itself, so stop early (same result)
+    node[0]=Math.min(node[0],cr[0]);
+    for(let k=0;k<n;k++)node[k+1]=Math.min(cr[k],fwd(Math.min(node[k],cr[k]),dr[k],cr[k]));
+    node[n]=Math.min(node[n],node[0],cr[0]);
+    for(let k=n-1;k>=0;k--){const vo=Math.min(node[k+1],cr[k]);node[k]=Math.min(node[k],cr[k],Math.sqrt(Math.max(vo*vo+2*brake*dr[k],0)))}
+    node[n]=Math.min(node[n],node[0]);
+    if(node.join()===before)break;
+  }
+  let t=0;
+  for(let r=0;r<n;r++){
+    const d=dr[r];if(d<=1e-9){t+=0.001;continue}
+    let v=Math.max(0.5,node[r]);const vx=Math.max(0.5,node[r+1]),cap=Math.max(0.5,cr[r]);let x=0,ts=0;
+    while(x<d-1e-9){const st=Math.min(1,d-x),rem=d-x,need=Math.max(0,(v*v-vx*vx)/(2*brake));
+      const a=need>=Math.max(0,rem-st*0.5)?-brake:(v>=cap-1e-9?0:effAcc(v));
+      let vn=Math.sqrt(Math.max(v*v+2*a*st,0));if(a>=0&&vn>cap)vn=cap;
+      ts+=st/Math.max(0.1,0.5*(v+vn));x+=st;v=Math.max(0.5,vn)}
+    t+=Math.max(0.001,ts);
+  }
+  return t;
+}
+// Fuel changes every lap, so each grip level is solved at 10 kg fuel steps and interpolated between them.
+function gameLapTimeFuel(lenKm,lat,lng,carKg,engKg,fuelKg){
+  const key=[lenKm,lat.toFixed(6),lng.toFixed(6),carKg,engKg].join("|");let row=lapCache.get(key);
+  if(!row){row=[];lapCache.set(key,row);if(lapCache.size>20000)lapCache.clear()}
+  const i=Math.floor(fuelKg/10),w=fuelKg/10-i;
+  const at=k=>row[k]??(row[k]=gameLapTime(lenKm,lat,lng,carKg,engKg,k*10));
+  return w<1e-9?at(i):at(i)*(1-w)+at(i+1)*w;
 }
 const CODE={soft:"S",medium:"M",hard:"H"};
 const seqName=seq=>seq.map(c=>CODE[c]).join("-");
@@ -731,6 +847,9 @@ function draw(key,el,type,data,o){if(charts[key]){charts[key].data=data;charts[k
 const fmt=x=>(x>=0?"+":"")+x.toFixed(1);
 function update(){
   const P=S();
+  {const ns=dryNames(sets[active]),q=sets[active].wearQuantum,lt=cn=>lapTime(prep(cn,sets[active].compounds[cn],P,q),0,0,P);
+   $("gripGap").value=ns.length>1?(lt(ns[ns.length-1])-lt(ns[0])).toFixed(2):"";
+   $("gripGap").previousElementSibling.textContent=ns.length>1?`${cap(ns[0])} vs ${ns[ns.length-1]}, new tyres, empty car (s)`:"Softest vs hardest compound (s)"}
   const results=sets.map(s=>runSet(s,P));
   const ccol=c=>`var(--${c==="medium"?"med":c})`;
   const TAG=w=>w==="wear"?"WEAR":w==="tank"?"TANK":w==="empty stint"?"EMPTY":w.replace(/needs (\d) compounds/,"$1 COMPOUNDS");
@@ -894,7 +1013,8 @@ $("stintChart").addEventListener("click",e=>{const row=e.target.closest(".st-row
 
 wireDrop($("dropTyre"),$("fileTyre"),addTyreFiles);
 wireDrop($("dropTrack"),$("fileTrack"),addTrackFile);
-$("avgTrack").addEventListener("click",()=>{setTrack(AVG);msg($("trackMsg"),"");update()});
+$("avgTrack").addEventListener("click",()=>{tracks=[];applyTracks();msg($("trackMsg"),"");update()});
+$("trackList").addEventListener("click",e=>{const b=e.target.closest("[data-tr]");if(!b)return;tracks.splice(+b.dataset.tr,1);applyTracks();msg($("trackMsg"),tracks.length>1?`Averaging ${tracks.length} tracks.`:"");update()});
 document.querySelectorAll("input[type=number]:not([data-c])").forEach(el=>{el.min=el.min||"0";el.dataset.last=el.value});
 // Guard runs in the capture phase so a rejected value never reaches the simulation.
 // Value guard: an invalid entry is ignored while typing (no partial revert) and the last good value comes back when the field is left.

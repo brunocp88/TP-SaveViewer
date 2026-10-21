@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>TP Save Lab — Team Principal v0.55_working</title>
+<title>TP Save Lab — Team Principal v0.58</title>
 
 <style>
 :root{
@@ -254,6 +254,10 @@ svg{display:block;min-width:800px;width:100%;height:525px}
 /* maximize Development graph area */
 .topbar{min-height:56px;padding:7px 12px;}
 .brand{gap:11px;}
+#brandHome{cursor:pointer;border-radius:6px}
+#brandHome:hover .brand-title,#brandHome:focus-visible .brand-title{color:#fff}
+#brandHome:hover .brand-mark{filter:brightness(1.15)}
+#brandHome:focus-visible{outline:2px solid #c0392b;outline-offset:4px}
 .brand-mark{width:40px;height:40px;font-size:14px;border-radius:5px;}
 .brand-title{font-size:17px;line-height:1.05;letter-spacing:.07em;}
 .brand-sub{font-size:9.5px;line-height:1.15;letter-spacing:.08em;margin-top:4px;}
@@ -3186,6 +3190,7 @@ font-size:11px;
 .standings-series-toolbar>div:first-child{display:grid;gap:4px;min-width:180px}
 .standings-series-toolbar select{min-width:180px}
 .standings-series-meta{flex:1;min-width:280px}
+.standings-export-block{margin-left:auto;display:grid;gap:4px}
 #juniorStandingsView[hidden],#f1StandingsView[hidden]{display:none!important}
 
 .junior-contract-chart-head{justify-content:flex-start}
@@ -5401,12 +5406,8 @@ input.cbar-val:focus{outline:none;border-color:var(--accent)}
 .grid-step-wide{width:auto;min-width:34px;height:28px;padding:0 4px;font-size:10px}
 /* Grid editors (car, engine, next-year chassis): space between the number box and its buttons */
 .grid-step .grid-edit-input{margin:0 8px}
-.nextyear-edit-dialog .grid-edit-table td{padding-left:12px;padding-right:12px}
 /* Popup editors: 12px between the number box and its buttons, as in the grid editors (4px gap + 8px margin) */
 .cbar-dialog .cbar:not(.seg-bar){grid-template-columns:auto auto auto;justify-content:center;column-gap:12px}
-.nextyear-edit-dialog{width:fit-content;min-width:min(480px,calc(100vw - 32px));max-width:calc(100vw - 32px)}
-.nextyear-edit-dialog .grid-edit-table{width:auto;margin:4px auto 12px}
-.nextyear-edit-dialog .grid-edit-table tbody th{padding-right:14px}
 
 .driver-drop-seat{cursor:pointer}
 .driver-drop-seat.seat-pending{border-color:var(--accent,#e10600)!important;border-style:solid!important;box-shadow:0 0 0 1px var(--accent,#e10600) inset}
@@ -5473,6 +5474,8 @@ input.cbar-val:focus{outline:none;border-color:var(--accent)}
 .sch-id{font-size:10.5px;color:var(--muted);font-family:ui-monospace,Menlo,monospace;overflow-wrap:anywhere}
 .sch-sel{margin-top:auto;width:100%;background:#0a0c0f;color:#9aa1ab;border:1px solid var(--border2);border-radius:4px;padding:5px 6px;font:inherit;font-size:13px;cursor:pointer}
 .sch-sel:hover,.sch-sel:focus{border-color:var(--accent);color:var(--text)}
+.tyre-view-row{margin:2px 0 10px}
+.relcell.dflt{opacity:.55;font-style:italic}
 .fin-box-title{font-size:14px;font-weight:900;letter-spacing:.09em;text-transform:uppercase;color:#c9ced5}
 .fin-box-meta{font-size:11px;color:var(--muted);margin:2px 0 6px}
 .fin-legend{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:10px;color:#aab0b8;margin:2px 0 4px}
@@ -5514,6 +5517,24 @@ input.cbar-val:focus{outline:none;border-color:var(--accent)}
 .reg-mode{border:1px solid var(--border);border-radius:4px;background:var(--panel3);padding:8px 12px;align-self:center}.reg-mode .k{font-size:10px;font-weight:900;letter-spacing:.07em;text-transform:uppercase;color:#8090a1;margin-bottom:5px}
 .reg-btn{align-self:center;border:1px solid #48515a;background:#252b31;color:#e8edf2;border-radius:3px;padding:9px 14px;font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.04em;cursor:pointer}
 .reg-btn.go{background:#17643e;border-color:#2f8b5d}
+.reg-rh-r{display:flex;gap:8px;align-items:baseline}
+.reg-add{border:1px dashed #48515a;border-radius:3px;background:transparent;color:#8f9aa6;padding:2px 8px;font-size:10px;font-weight:900;letter-spacing:.05em;text-transform:uppercase;cursor:pointer}
+.reg-add:hover{color:#fff;border-color:#2f8b5d}
+.reg-add-dialog{width:min(520px,calc(100vw - 32px));max-width:520px;padding:0}
+.reg-add-dialog .grid-edit-table th{text-align:left;font-size:12px;font-weight:800;color:#aab5c0;padding:5px 10px 5px 0;white-space:nowrap}
+.reg-add-dialog .grid-edit-table td{padding:5px 0}
+.reg-add-dialog .grid-edit-input.wide{width:100%;text-align:left;padding:5px 8px;box-sizing:border-box}
+.reg-add-dialog .reg-add-key{font-size:12px;color:#8f9aa6}
+.reg-add-dialog .grid-edit-input.bad{border-color:#ff6b6b}.reg-add-dialog .project-edit-apply:disabled{opacity:.45;cursor:not-allowed}
+.reg-add-dialog .reg-add-err{font-size:12px;color:#ff6b6b;min-height:16px;margin:0 0 6px}
+.reg-add-dialog .grid-edit-actions{display:flex!important;justify-content:flex-end;gap:8px;margin-top:6px}.reg-add-dialog .grid-edit-actions button{width:auto!important;min-width:120px;margin:0!important}
+.reg-add-after{display:flex;gap:4px}.reg-add-after.wrap{flex-wrap:wrap}
+.reg-null{display:inline-flex;gap:8px;align-items:center}
+.reg-places{display:flex;flex-wrap:wrap;gap:6px 5px;align-items:flex-start}
+.reg-pl{display:flex;flex-direction:column;align-items:center;gap:2px}.reg-pl>span{font-size:10px;font-weight:900;color:#6f7c89}
+.reg-pl-b{display:flex;gap:2px}.reg-pl .grid-edit-input{width:42px;padding:5px 2px}
+.reg-pl-s{display:flex;flex-direction:column;gap:2px}.reg-pl-s .grid-step-btn{width:18px;height:17px;min-width:0;padding:0;font-size:12px;line-height:1}
+.reg-pl-act{display:flex;flex-direction:column;gap:4px;margin-left:6px;align-self:center}.reg-pl-act .grid-step-btn{width:auto;padding:3px 9px;font-size:11px;height:auto}
 .reg-note{font-size:12px;color:var(--muted);margin:4px 0 8px}
 .reg-h{font-size:12px;font-weight:950;letter-spacing:.07em;text-transform:uppercase;color:#aab5c0;margin:16px 0 8px;border-bottom:1px solid var(--border);padding-bottom:5px}
 .reg-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;align-items:start}
@@ -5602,6 +5623,12 @@ input.cbar-val:focus{outline:none;border-color:var(--accent)}
 .tech-info{display:flex;flex-wrap:wrap;gap:6px 22px;align-items:center;font-size:12px;color:#b7c3cf}.tech-info b{color:#e7edf3}
 .tech-legend{display:flex;gap:14px;margin-left:auto;font-size:11px;color:#a9b6c3;align-items:center}.tech-legend i{display:inline-block;width:12px;height:12px;margin-right:5px;vertical-align:-2px;border:1px solid;border-radius:2px}
 
+#engineMatrix th.tyre-grp{text-align:center}
+#engineMatrix thead tr:nth-child(2) th{text-align:center}
+.tyre-edit-wide{width:min(760px,calc(100vw - 32px));max-width:760px}
+.grid-leave-table{width:auto;margin:0 auto 8px;border-top:1px solid #1b242d}
+#engineMatrix th.tyre-grp-start,#engineMatrix td.tyre-grp-start{border-left:1px solid #1b242d}
+
 /* ---- Consistency tool ---- */
 #consistencytool .cons-card{margin-bottom:12px}
 #consistencytool .cons-head{font-size:12px;letter-spacing:.12em;font-weight:800;color:#a9b6c3;margin:0 0 10px}
@@ -5627,6 +5654,14 @@ input.cbar-val:focus{outline:none;border-color:var(--accent)}
 #consistencytool .cons-apply:disabled{opacity:.4;cursor:default}
 @media(max-width:1000px){#consistencytool .cons-two{grid-template-columns:1fr}}
 
+#consistencytool .cons-card.cons-age-card{width:520px!important;max-width:100%!important;box-sizing:border-box}
+#consistencytool .cons-age-card .cons-desc{max-width:none}
+#consistencytool .cons-age-stats{display:block;margin:12px 0 8px;font-size:12px;color:#cbd6e0}
+#consistencytool .cons-age-stats b{color:#e7edf3}
+#consistencytool .cons-age-scroll{max-height:300px}
+#consistencytool #consAgeTable th,#consistencytool #consAgeTable td{padding:4px 10px}
+#consistencytool #consAgeTable th:nth-child(2),#consistencytool #consAgeTable td:nth-child(2){text-align:left;width:100%}
+#consistencytool .cons-up{color:#5dbb88;font-weight:700}
 #consistencytool .cons-age-btn{border-color:#c0392b;color:#e5574a}
 #consistencytool .cons-age-btn:disabled{opacity:.4;cursor:default}
 #drivers .chart-head>div:first-child{display:flex;align-items:baseline;gap:28px;flex-wrap:wrap}
@@ -5661,7 +5696,7 @@ a.tool-card.green:hover,a.tool-card.green:focus-visible{box-shadow:inset 3px 0 0
 <body>
 <div class="app-shell">
 <header class="topbar">
-  <div class="brand">
+  <div class="brand" id="brandHome" role="button" tabindex="0" title="Restart the app">
     <div class="brand-mark">TP</div>
     <div class="brand-copy">
       <div class="brand-title">TP Save Lab</div>
@@ -5669,7 +5704,7 @@ a.tool-card.green:hover,a.tool-card.green:focus-visible{box-shadow:inset 3px 0 0
     </div>
   </div>
   <div class="top-meta">
-    <span class="version-pill">v0.55_working</span>
+    <span class="version-pill">v0.58</span>
   </div>
 </header>
 <div class="app-accent-line"></div>
@@ -5942,6 +5977,7 @@ a.tool-card.green:hover,a.tool-card.green:focus-visible{box-shadow:inset 3px 0 0
         </div>
       </div>
 
+      <div id="tyreViewRow" class="tp-control-group tp-control-wrap tyre-view-row" role="group" aria-label="Tyre table view" hidden></div>
       <div class="table-scroll">
         <table id="engineMatrix" class="grid-compare"></table>
       </div>
@@ -6036,15 +6072,11 @@ a.tool-card.green:hover,a.tool-card.green:focus-visible{box-shadow:inset 3px 0 0
             <span>FREE AGENTS ONLY</span>
           </label>
           <label class="driver-filter-check tp-check">
-            <input id="driverInfoShowRetired" type="checkbox">
-            <span>SHOW RETIRED DRIVERS</span>
-          </label>
-        </div>
-        <div class="driver-filter-row driver-filter-row-bottom">
-          <label class="driver-filter-check tp-check">
             <input id="driverInfoGeneratedOnly" type="checkbox">
             <span>GENERATED DRIVERS ONLY</span>
           </label>
+        </div>
+        <div class="driver-filter-row driver-filter-row-bottom">
           <label class="driver-filter-check tp-check">
             <input id="driverInfoAge18Only" type="checkbox" data-driver-age-filter>
             <span>≤18</span>
@@ -6096,10 +6128,12 @@ a.tool-card.green:hover,a.tool-card.green:focus-visible{box-shadow:inset 3px 0 0
         <button id="consApply" class="perf-mode-btn tp-control-btn tp-control-action cons-apply" type="button">APPLY CHANGES</button>
       </div>
     </div>
-    <div class="panel cons-card">
+    <div class="panel cons-card cons-age-card">
       <div class="cons-head">GENERATED DRIVER AGE TOOL</div>
       <p class="cons-desc">Sets the age of every generated driver younger than the minimum to the minimum. Real database drivers and generated drivers already at or above it are not changed.</p>
       <div class="cons-krow"><span>Minimum age</span><span id="consAge"></span><button id="driverInfoMinAge16" class="perf-mode-btn tp-control-btn tp-control-action cons-age-btn" type="button">Set minimum age</button></div>
+      <div id="consAgeStats" class="cons-stats cons-age-stats"></div>
+      <div class="table-scroll cons-scroll cons-age-scroll"><table id="consAgeTable" class="cons-table"></table></div>
     </div>
   </section>
 
@@ -6324,6 +6358,7 @@ a.tool-card.green:hover,a.tool-card.green:focus-visible{box-shadow:inset 3px 0 0
         <div id="juniorResultsTitle" class="chart-title"></div>
         <div id="juniorResultsMeta" class="chart-meta"></div>
       </div>
+      <div class="selector-block standings-export-block"><label class="title">Export this page</label><div class="tp-control-group" role="group" aria-label="Export standings"><button id="standingsExportCsv" class="perf-mode-btn tp-control-btn tp-control-action" type="button">Full CSV</button><button id="standingsExportPng" class="perf-mode-btn tp-control-btn tp-control-action" type="button">PNG image</button></div></div>
     </div>
 
     <div id="f1StandingsView">
@@ -6370,6 +6405,9 @@ a.tool-card.green:hover,a.tool-card.green:focus-visible{box-shadow:inset 3px 0 0
     </div>
 
     <div id="juniorStandingsView" hidden>
+<div class="panel toolbar champ-season-bar" id="juniorSeasonBar" hidden>
+      <div class="selector-block"><label class="title">Season</label><div id="juniorSeasonRail" class="selector-rail tp-control-group tp-control-scroll series-selector-rail" role="group" aria-label="Junior standings season"></div></div>
+    </div>
       <div class="standings-top">
       <div class="panel">
       <div class="chart-head">
@@ -6551,6 +6589,10 @@ let perfSort={key:'calculated_overall',dir:'desc'};
 let perfDisplayMode='absolute';
 let perfSourceMode='developed';
 let engineDisplayMode='absolute';
+let tyreView=null;
+const TYRE_COMPOUNDS=['soft','medium','hard','intermediate','wet'];
+// Tyre table groups: [rating key, heading, compounds]; each group is one column group with a column per compound.
+const TYRE_GROUPS={dry:[['grip','Grip',['soft','medium','hard']],['dur','Durability',['soft','medium','hard']],['tmp','Temperature tolerance',['soft','medium','hard']]]};
 let engineSort={key:'engine_power',dir:'desc'};
 let contractsMode='current';
 let driverNegotiationsFilter='ongoing';
@@ -10628,15 +10670,18 @@ function openGridEditor({eyebrow='',title='',sub='',note='',columns=[],rows=[],e
       if(td)td.innerHTML=html;
     }
   };
+  // How far the field is from the value the save was loaded with (r.base[col], when given; else the value the window opened with), shown to the right of its + button.
+  const paintDelta=input=>{
+    if(!deltas)return;
+    const r=rowByKey[input.dataset.gridRow],col=input.dataset.gridCol,ref=Number.isFinite(finiteNumber(r.base?.[col]))?r.base[col]:r.values[col];
+    const host=input.closest('.grid-step')||input.closest('td'),d=roundTo(Number(input.value)-roundTo(ref,r),r);
+    host?.querySelector('.grid-edit-delta')?.remove();
+    if(host&&Math.abs(d)>1e-9)host.insertAdjacentHTML('beforeend',`<span class="grid-edit-delta ${d>0?'pos':'neg'}" title="Change since the save was loaded">${d>0?'+':'−'}${Math.abs(d).toFixed(dpOf(r))}</span>`);
+  };
   const markChanged=input=>{
     const r=rowByKey[input.dataset.gridRow],orig=r.values[input.dataset.gridCol];
     input.classList.toggle('changed',Math.abs(Number(input.value)-roundTo(orig,r))>1e-9);
-    if(deltas){
-      // how far the field moved from the saved value, shown to the right of its + button
-      const host=input.closest('.grid-step')||input.closest('td'),d=roundTo(Number(input.value)-roundTo(orig,r),r);
-      host?.querySelector('.grid-edit-delta')?.remove();
-      if(host&&Math.abs(d)>1e-9)host.insertAdjacentHTML('beforeend',`<span class="grid-edit-delta ${d>0?'pos':'neg'}" title="Change from the saved value">${d>0?'+':'−'}${Math.abs(d).toFixed(dpOf(r))}</span>`);
-    }
+    paintDelta(input);
   };
   for(const input of dialog.querySelectorAll('.grid-edit-input')){
     input.addEventListener('change',()=>{
@@ -10660,7 +10705,7 @@ function openGridEditor({eyebrow='',title='',sub='',note='',columns=[],rows=[],e
       const r=rowByKey[input.dataset.gridRow];
       input.value=Number(r.values[input.dataset.gridCol]).toFixed(dpOf(r));
       input.classList.remove('changed');
-      (input.closest('.grid-step')||input.closest('td'))?.querySelector('.grid-edit-delta')?.remove();
+      paintDelta(input);
     }
     for(const t of toggles){toggleState[t.key]=t.value;paintToggle(t);}
     refreshLive();
@@ -10699,6 +10744,8 @@ function openGridEditor({eyebrow='',title='',sub='',note='',columns=[],rows=[],e
     }
     dialog.close();
   });
+  dialog.querySelectorAll('.grid-edit-input').forEach(paintDelta);
+  if(live&&rows.some(r=>r.base))refreshLive();
   if(onReady)onReady(dialog);
   dialog.showModal();
   refreshLive();
@@ -10844,20 +10891,29 @@ function openNextYearChassisEditor(row){
   const start=finished?target.effect.baseline_targets:target.project.prototype.baseline.targets;
   const cap=finished?target.effect.potential:target.project.concept.projection.potential_targets;
   const rows=CHASSIS_GRID_STATS.filter(k=>Number.isFinite(finiteNumber(start?.[k]))||Number.isFinite(finiteNumber(cap?.[k]))).map(k=>({
-    key:k,label:devEffectLabel(k),min:0,max:100,steps:[0.1,0.5],
+    key:k,label:devEffectLabel(k),min:0,max:100,step:0.5,dp:2,
     values:{start:finiteNumber(start?.[k]),cap:finiteNumber(cap?.[k])}
   }));
+  // The values the save was loaded with, for the +/− beside a field.
+  const t0=loadedSaveBaseline?.teams?.[row.team];
+  let start0=null,cap0=null;
+  if(t0){
+    if(finished){const d0=(t0.chassis_designs||[]).find(d=>String(d?.name||'')===String(row.editRef.designName||''));start0=d0?.effect?.baseline_targets;cap0=d0?.effect?.potential;}
+    else{const p0=t0?.development?.projects?.future;start0=p0?.prototype?.baseline?.targets;cap0=p0?.concept?.projection?.potential_targets;}
+  }
+  for(const r of rows)r.base={start:finiteNumber(start0?.[r.key]),cap:finiteNumber(cap0?.[r.key])};
   const force=finished?null:forceCompleteInfo(target);
   const progress=finished?1:Math.max(0,Math.min(1,n(projectProgress(target.project))));
   openGridEditor({
     eyebrow:`Next-year chassis · ${finished?'completed design':'in '+(String(target.project.phase||'').toLowerCase()||'design')} · ${teamLabel(row.team)}`,
-    dialogClass:'nextyear-edit-dialog',
+    dialogClass:'car-edit-dialog nextyear-edit-dialog',
+    deltas:true,
     title:row.name,
     sub:row.result||'',
     note:finished
       ? "Start = the stats next season's car starts with. Cap = its chassis potential. The season change copies both exactly (tested in-game). Chassis parts already built from this design are updated too."
       : "Start = the stats next season's car starts with. Cap = its chassis potential. The game copies both when the design finishes. A rules announcement for next season rewrites projects still running, which would replace these edits.",
-    columns:[{key:'start',label:'Start'},{key:'cap',label:'Cap (potential)'}],
+    columns:[{key:'start',label:'Baseline (week 0)'},{key:'cap',label:'Cap (potential)'}],
     rows,
     extraHtml:finished?'':`<div class="project-edit-progress"><div class="pl"><span>${esc(contractRoleLabel(target.project.phase)||'Design')}</span><b>${Math.round(progress*100)}%</b></div><div class="tr"><span style="width:${(progress*100).toFixed(1)}%"></span></div></div>`,
     confirm:{title:"Apply next season's chassis changes?",message:finished
@@ -11050,6 +11106,13 @@ function openCarBaselineEditor(teamName){
   }));
   const mass0=baselineMass(t);
   if(Number.isFinite(mass0))rows.push({key:'car_mass_kg',label:'Car Mass',unit:'kg',min:400,max:900,step:0.5,dp:1,values:{base:mass0,pot:NaN,dev:finiteNumber(dev.car_mass_kg)}});
+  // The values the save was loaded with, so the +/− beside a field also shows after the window is reopened.
+  const t0=loadedSaveBaseline?.teams?.[teamName];
+  if(t0?.chassis_profile?.actual){
+    const src0=chassisBaselineSource(t0),pot0=t0.chassis_profile?.potential||{};
+    let dev0={};try{dev0=buildSeries(teamName,t0,state.currentWeek,Number(state.raw?.season_no)||1)?.developedCurrent||{};}catch(err){}
+    for(const r of rows)r.base={base:finiteNumber(r.key==='car_mass_kg'?baselineMass(t0):src0.values[r.key]),pot:finiteNumber(pot0[r.key]),dev:finiteNumber(dev0[r.key])};
+  }
   const first=seasonFirstChassisDesign(t);
   const devCell=(v,orig,dp,capped)=>{
     if(!Number.isFinite(v))return '—';
@@ -11075,7 +11138,7 @@ function openCarBaselineEditor(teamName){
         const v=finiteNumber(s?.developedCurrent?.[r.key]);
         const cap=finiteNumber(potNow[r.key]);
         const capped=!!s?.developedCapNotes?.[r.key]||(Number.isFinite(cap)&&Number.isFinite(v)&&Math.abs(v-cap)<0.005);
-        out[r.key]=devCell(v,r.values.dev,r.dp,r.key!=='car_mass_kg'&&capped);
+        out[r.key]=devCell(v,Number.isFinite(r.base?.dev)?r.base.dev:r.values.dev,r.dp,r.key!=='car_mass_kg'&&capped);
       }
       return out;
     }},
@@ -12312,21 +12375,33 @@ function openSupplierEditor(k,name){
   const others=Object.entries(SaveAccess.supplierCatalog(k)).filter(([,r])=>r&&typeof r==='object'&&supplierRawActive(r));
   if(k==='tyres'){
     const C=[['soft','Soft'],['medium','Medium'],['hard','Hard'],['intermediate','Intermediate'],['wet','Wet']];
-    const best=(f,c)=>{const v=others.map(([,r])=>finiteNumber(r?.[f]?.[c])).filter(Number.isFinite);return v.length?Math.max(...v):NaN;};
-    const gap=(f,c)=>{const v=finiteNumber(rec?.[f]?.[c]),b=best(f,c);return Number.isFinite(v)&&Number.isFinite(b)?v-b:NaN;};
-    const compounds=C.filter(([c])=>Number.isFinite(finiteNumber(rec?.pace?.[c]))||Number.isFinite(finiteNumber(rec?.durability?.[c])));
+    // New game builds store lateral and longitudinal grip and temperature tolerance instead of pace; a compound with no stored value is the game's default 50.
+    // Saves from the new game build only: grip and temperature are stored per compound (a missing value is the game default 50).
+    if(!('lateral_grip' in rec)){showEditBlocked('Not supported','The tyre editor supports saves from the new game build only. This save has no lateral or longitudinal grip for its tyre suppliers.');return;}
+    const compounds=C;
+    const val=(f,c)=>{const v=finiteNumber(rec?.[f]?.[c]);return Number.isFinite(v)?v:50;};
     openGridEditor({
-      eyebrow:'Tyres · tyre supplier',dialogClass:'engine-edit-dialog supplier-edit-dialog',title:label,sub:supplierEditSub(k,name),
-      note:'Pace and durability per compound, as the save stores them. Durability is also written to base_durability where the save has it. Gap = this value minus the best active tyre supplier for that compound.\n\nA compound value the save does not store shows — and cannot be edited.',
-      columns:[{key:'pace',label:'Pace'},{key:'pgap',label:'Gap',readOnly:true},{key:'dur',label:'Durability'},{key:'dgap',label:'Gap',readOnly:true}],
-      rows:compounds.map(([c,l])=>({key:c,label:l,step:0.5,dp:2,min:0,max:100,values:{pace:finiteNumber(rec?.pace?.[c]),pgap:gap('pace',c),dur:finiteNumber(rec?.durability?.[c]),dgap:gap('durability',c)}})),
+      eyebrow:'Tyres · tyre supplier',dialogClass:`engine-edit-dialog supplier-edit-dialog tyre-edit-wide`,title:label,sub:supplierEditSub(k,name),
+      note:'Lateral grip, longitudinal grip, durability and temperature tolerance per compound, as the save stores them. A value the save does not store yet shows the game default 50; changing it writes it. Leave chance is the chance per season that the supplier leaves.',
+      columns:[{key:'lat',label:'Lateral grip'},{key:'lon',label:'Longitudinal grip'},{key:'dur',label:'Durability'},{key:'tmp',label:'Temperature'}],
+      rows:[...compounds.map(([c,l])=>({key:c,label:l,step:0.5,dp:2,min:0,max:100,values:{lat:val('lateral_grip',c),lon:val('longitudinal_grip',c),dur:val('durability',c),tmp:val('temperature_tolerance',c)}})),
+        ...(Number.isFinite(finiteNumber(rec?.leave_chance))?[{key:'leave',label:'Leave chance',unit:'% per season',step:0.5,dp:2,min:0,max:100,values:{dur:Math.round(finiteNumber(rec.leave_chance)*10000)/100}}]:[])],
+      // The leave chance sits in its own small table under the compound table.
+      onReady:dialog=>{
+        const tr=dialog.querySelector('tr[data-grid-tr="leave"]');if(!tr)return;
+        tr.querySelectorAll('td.grid-edit-ro').forEach(x=>x.remove());
+        const t=document.createElement('table');t.className='grid-edit-table grid-leave-table';t.innerHTML='<tbody></tbody>';t.firstChild.appendChild(tr);
+        dialog.querySelector('.grid-edit-table').after(t);
+      },
       toggles:supplierToggleDefs(k,name),
       onApply:(changes,toggleChanges)=>{
         if(toggleChanges?.length)return applySupplierToggle(k,name,toggleChanges[0]);
         const r=supplierCatalogRecord(k,name);if(!r)return null;
         for(const ch of changes){
-          if(ch.col==='pace'){r.pace=r.pace||{};r.pace[ch.row]=ch.value;}
-          else if(ch.col==='dur'){
+          if(ch.row==='leave'){r.leave_chance=Math.round(ch.value*100)/10000;continue;}
+          const NF={lat:'lateral_grip',lon:'longitudinal_grip',tmp:'temperature_tolerance'}[ch.col];
+          if(NF){r[NF]=r[NF]||{};r[NF][ch.row]=ch.value;}
+          if(ch.col==='dur'){
             r.durability=r.durability||{};r.durability[ch.row]=ch.value;
             if(r.base_durability&&typeof r.base_durability==='object'&&ch.row in r.base_durability)r.base_durability[ch.row]=ch.value;
           }
@@ -12386,25 +12461,68 @@ function supplierMatrixRows(k){
       // The game's own engine overall (fitted on a game save, exact on 12 engines): reliability has no weight.
       raw.overall=0.6*raw.power+0.2*raw.efficiency-0.2*raw.mass+40;
     }else if(k==='tyres'){
-      const pace=compounds.map(c=>finiteNumber(r?.pace?.[c])).filter(Number.isFinite);
-      const dur=compounds.map(c=>finiteNumber(r?.durability?.[c])).filter(Number.isFinite);
-      raw.avg_pace=pace.length?pace.reduce((a,b)=>a+b,0)/pace.length:NaN;
-      raw.avg_durability=dur.length?dur.reduce((a,b)=>a+b,0)/dur.length:NaN;
-      for(const c of compounds){raw[`${c}_pace`]=finiteNumber(r?.pace?.[c]);raw[`${c}_durability`]=finiteNumber(r?.durability?.[c]);}
+      // Per compound, as stored: grip (lateral, longitudinal), durability, temperature tolerance; older saves hold pace instead of grip.
+      const src={lat:r?.lateral_grip,lon:r?.longitudinal_grip,dur:r?.durability,tmp:r?.temperature_tolerance,pace:r?.pace};
+      // A missing value is the game's default 50 (the grip and temperature tables are empty until the first season change, and Bridgestone has no stored medium durability); the game shows 50 there.
+      const newB=!!r&&('lateral_grip' in r);
+      for(const [p,o] of Object.entries(src)){
+        const dflt=newB&&p!=='pace';
+        const own=TYRE_COMPOUNDS.map(c=>finiteNumber(o?.[c]));
+        const vals=own.map(x=>Number.isFinite(x)?x:(dflt?50:NaN)),ok=vals.filter(Number.isFinite);
+        raw['avg_'+p]=ok.length?ok.reduce((a,b)=>a+b,0)/ok.length:NaN;
+        TYRE_COMPOUNDS.forEach((c,i)=>{raw[`${p}_${c}`]=vals[i];raw[`d_${p}_${c}`]=dflt&&!Number.isFinite(own[i])?1:0;});
+      }
+      // Grip = the average of lateral and longitudinal grip, per compound.
+      for(const c of TYRE_COMPOUNDS){const a=raw[`lat_${c}`],b=raw[`lon_${c}`];if(Number.isFinite(a)&&Number.isFinite(b)){raw[`grip_${c}`]=(a+b)/2;raw[`d_grip_${c}`]=raw[`d_lat_${c}`]&&raw[`d_lon_${c}`]?1:0;}}
     }else{
       // The save stores only an offset per parts supplier; the base rating lives in
       // the data pack, so the offset is shown as stored.
       raw.pace_offset=finiteNumber(r.pace_offset);
       raw.reliability_offset=finiteNumber(r.reliability_offset);
     }
-    return {name,active:supplierMatrixActive(k,name,r),nationality:String(r.nationality||ex.nationality||'—').toUpperCase(),teams:supplierMatrixTeams(k,name),raw};
+    return {name,rec:r,active:supplierMatrixActive(k,name,r),nationality:String(r.nationality||ex.nationality||'—').toUpperCase(),teams:supplierMatrixTeams(k,name),raw};
   });
+}
+function tyreInfoTable(rows){
+  const raw=state.raw,season=String(raw.season_no),devAll=raw.tyre_manager?.development?.seasons||{};
+  const devSeasons=Object.keys(devAll).map(Number).filter(Number.isFinite).sort((a,b)=>b-a).slice(0,2);
+  const sg=(v,dp=2)=>Number.isFinite(v)?`${v>=0?'+':'\u2212'}${Math.abs(v).toFixed(dp)}`:'\u2014';
+  const pct=v=>Number.isFinite(Number(v))?`${+(Number(v)*100).toFixed(1)}%`:'\u2014';
+  const num=v=>Number.isFinite(Number(v))?`${+Number(v).toFixed(2)}`:'\u2014';
+  const AW={lateral_grip:'lateral grip',longitudinal_grip:'longitudinal grip',durability:'durability',temperature_tolerance:'temperature tolerance'};
+  const award=name=>devSeasons.map(sn=>{
+    const d=devAll[sn]?.[name];if(!d)return '';
+    const out=[];
+    out.push(`<strong>S${sn}</strong> ${d.passive?esc(humanToken(d.passive)):''}`);
+    const gains=Object.entries(d.passive_award||{}).map(([m,o])=>{const v=Object.values(o||{}).map(Number).filter(Number.isFinite);return v.length?`${sg(v.reduce((a,b)=>a+b,0)/v.length)} ${AW[m]||humanToken(m)}`:'';}).filter(Boolean);
+    out.push(d.applied?(gains.length?esc(gains.join(', '))+' avg':'applied'):'pending');
+    if(d.works)out.push(`Works programme: ${esc(d.works.team||'\u2014')} \u00b7 ${esc(humanToken(d.works.program||''))}${d.works.completed?'':' (in progress)'}`);
+    return out.join(' \u00b7 ');
+  }).filter(Boolean).join('<br>')||'\u2014';
+  const seasonNo=Number(raw.season_no);
+  const teamsOf=name=>{
+    const works=[],cust=[];
+    for(const [tn,t] of Object.entries(raw.teams||{})){const c=t?.tyre_contract;if(!c||c.supplier!==name)continue;
+      if(c.type==='works')works.push(teamLabel(tn));else cust.push(`${esc(teamLabel(tn))}${Number.isFinite(Number(c.expires_season))?` (${Math.max(1,Number(c.expires_season)-seasonNo+1)}y)`:''}`);}
+    return `${works.length?`Works: ${esc(works.join(', '))}<br>`:''}${cust.length?`${cust.length} customer${cust.length===1?'':'s'}: ${cust.join(', ')}`:(works.length?'':'\u2014')}`;
+  };
+  const nameCell=r=>{
+    const rec=r.rec||{},editable=supplierEditable('tyres',r.name),tag=r.active?(rec.departing?'(DEPARTING)':''):'(INACTIVE)';
+    return `<td><div class="supplier-name-cell"><span><strong>${esc(supplierDisplayName(r.name,'tyres'))}</strong>${tag?` <span class="supplier-inactive-tag">${tag}</span>`:''}</span><button type="button" class="supplier-edit-btn" data-supplier-edit="${esc(r.name)}" ${editable?'':'disabled'}>Edit</button></div></td>`;
+  };
+  let h='<thead><tr><th>Supplier</th><th>Nationality</th><th>Focus</th><th>Prices ($M)</th><th>Trend per season</th><th>Variance</th><th>Development</th><th>Teams</th><th>Market</th></tr></thead><tbody>';
+  for(const r of rows){
+    const q=r.rec||{},p=q.prices||{},t=q.trend||{},v=q.variance||{};
+    h+=`<tr class="${r.active?'':'supplier-inactive-row'}">${nameCell(r)}<td><strong>${esc(r.nationality)}</strong></td><td>${q.development_preference?esc(humanToken(q.development_preference)):'\u2014'}</td><td>Works ${num(p.works)} \u00b7 Partner ${num(p.partner)} \u00b7 Customer ${num(p.customer)}</td><td>${(t.pace!=null||t.durability!=null)?`Pace ${sg(Number(t.pace),3)}<br>Durability ${sg(Number(t.durability),3)}`:'\u2014'}</td><td>${(v.pace!=null||v.durability!=null)?`Pace \u00b1${num(v.pace)}<br>Durability \u00b1${num(v.durability)}`:'\u2014'}</td><td>${award(r.name)}</td><td>${teamsOf(r.name)}</td><td>Join ${pct(q.join_chance)} \u00b7 leave ${pct(q.leave_chance)}<br>from season ${q.min_join_season??'\u2014'}</td></tr>`;
+  }
+  return h+'</tbody>';
 }
 function renderEngineMatrix(){
   if(!engineMatrix||!state)return;
   const k=supplierPerformanceType?.value||supplierCategoryKeys()[0]||'engine';
   const label=supplierCategoryLabel(k);
-  let columns=[];
+  const tyreRow=$('tyreViewRow');if(tyreRow)tyreRow.hidden=k!=='tyres';
+  let columns=[],tyreGroups=null;
   if(k==='engine')columns=[
     {key:'overall',label:'Overall'},
     {key:'power',label:'Power'},
@@ -12412,14 +12530,13 @@ function renderEngineMatrix(){
     {key:'efficiency',label:'Fuel efficiency'},
     {key:'mass',label:'Mass',lowerBetter:true,absoluteOnly:true,unit:' kg'}
   ];
-  else if(k==='tyres')columns=[
-    {key:'avg_pace',label:'Avg pace'},{key:'avg_durability',label:'Avg durability'},
-    {key:'soft_pace',label:'Soft pace'},{key:'soft_durability',label:'Soft dur.'},
-    {key:'medium_pace',label:'Medium pace'},{key:'medium_durability',label:'Medium dur.'},
-    {key:'hard_pace',label:'Hard pace'},{key:'hard_durability',label:'Hard dur.'},
-    {key:'intermediate_pace',label:'Inter pace'},{key:'intermediate_durability',label:'Inter dur.'},
-    {key:'wet_pace',label:'Wet pace'},{key:'wet_durability',label:'Wet dur.'}
-  ];
+  else if(k==='tyres'){
+    const views=[['dry','Ratings'],['info','Development and prices']];
+    if(!views.some(v=>v[0]===tyreView))tyreView=views[0][0];
+    TPControls.renderChoices($('tyreViewRow'),{options:views.map(([value,label])=>({value,label})),selected:tyreView,className:'tp-control-action',onSelect:v=>{tyreView=v;renderEngineMatrix();scheduleUiPrefs();}});
+    if(tyreView==='dry'){tyreGroups=TYRE_GROUPS[tyreView];columns=tyreGroups.flatMap(g=>g[2].map((c,i)=>({key:`${g[0]}_${c}`,label:c[0].toUpperCase()+c.slice(1),grp:i===0})));}
+    else if(tyreView!=='info')columns=[{key:`avg_${tyreView}`,label:'Average'},...TYRE_COMPOUNDS.map(c=>({key:`${tyreView}_${c}`,label:c[0].toUpperCase()+c.slice(1)}))];
+  }
   else columns=[{key:'pace_offset',label:'Pace offset',signed:true},{key:'reliability_offset',label:'Reliability offset',signed:true}];
 
   let rows=supplierMatrixRows(k);
@@ -12435,6 +12552,7 @@ function renderEngineMatrix(){
   }
   if(!engineSort?.key || !columns.some(c=>c.key===engineSort.key)) engineSort={key:columns[0]?.key||'name',dir:'desc'};
   rows.sort((a,b)=>{
+    if(k==='tyres')return Number(b.active)-Number(a.active)||a.name.localeCompare(b.name);
     if(engineSort.key==='name'){const d=String(a.name).localeCompare(String(b.name));return engineSort.dir==='asc'?d:-d;}
     if(engineSort.key==='active'){const d=Number(a.active)-Number(b.active);return engineSort.dir==='asc'?d:-d;}
     if(engineSort.key==='nationality'){const d=a.nationality.localeCompare(b.nationality);return engineSort.dir==='asc'?d:-d;}
@@ -12446,11 +12564,21 @@ function renderEngineMatrix(){
   const relative=engineDisplayMode==='relative';
   engineMatrixTitle.textContent=`Supplier performance — ${label.toLowerCase()} · ${relative?'relative':'absolute'}`;
   engineMatrixMeta.textContent=`${activeCount} active supplier${activeCount===1?'':'s'} · ${inactiveCount} inactive supplier${inactiveCount===1?'':'s'}`;
-  const sortableHead=(key,text)=>{const active=engineSort.key===key,arrow=active?`<span class="sort-arrow">${engineSort.dir==='desc'?'▼':'▲'}</span>`:'';return `<th class="sortable ${active?'active-sort':''}" data-engine-sort-key="${key}">${esc(text)}${arrow}</th>`;};
-  const equalCols=k!=='tyres';
+  if(k==='tyres'&&tyreView==='info'){
+    engineMatrix.classList.remove('equal-stat-cols');
+    engineMatrix.innerHTML=tyreInfoTable(rows.slice().sort((a,b)=>Number(b.active)-Number(a.active)||a.name.localeCompare(b.name)));
+    engineMatrix.querySelectorAll('[data-supplier-edit]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();openSupplierEditor(k,b.dataset.supplierEdit);}));
+    return;
+  }
+  if(k==='tyres'&&rows.some(r=>columns.some(c=>r.raw['d_'+c.key]))){
+    engineMatrixMeta.textContent+=' · dim italic values are the default 50 shown by the game: the save has no value yet (it is written at the first season change)';
+  }
+  const sortableHead=(key,text,attr='',cls='')=>{if(k==='tyres')return `<th class="${cls}"${attr}>${esc(text)}</th>`;const active=engineSort.key===key,arrow=active?`<span class="sort-arrow">${engineSort.dir==='desc'?'▼':'▲'}</span>`:'';return `<th class="sortable ${active?'active-sort':''} ${cls}" data-engine-sort-key="${key}"${attr}>${esc(text)}${arrow}</th>`;};
+  const equalCols=k!=='tyres'||!!tyreGroups;
   engineMatrix.classList.toggle('equal-stat-cols',equalCols);
-  let html=(equalCols?`<colgroup><col style="width:250px"><col style="width:130px"><col>${columns.map(()=>'<col style="width:120px">').join('')}</colgroup>`:'')+'<thead><tr>'+sortableHead('name','Supplier')+sortableHead('nationality','Nationality')+'<th>Current teams</th>';
-  for(const c of columns)html+=sortableHead(c.key,c.label);
+  let html=(equalCols?`<colgroup><col style="width:250px"><col style="width:130px"><col>${columns.map(()=>`<col style="width:${tyreGroups?92:120}px">`).join('')}</colgroup>`:'')+'<thead><tr>'+sortableHead('name','Supplier',tyreGroups?' rowspan="2"':'')+sortableHead('nationality','Nationality',tyreGroups?' rowspan="2"':'')+`<th${tyreGroups?' rowspan="2"':''}>Current teams</th>`;
+  if(tyreGroups)html+=tyreGroups.map(g=>`<th colspan="${g[2].length}" class="tyre-grp tyre-grp-start">${esc(g[1])}</th>`).join('')+'</tr><tr>';
+  for(const c of columns)html+=sortableHead(c.key,c.label,'',c.grp?'tyre-grp-start':'');
   html+='</tr></thead><tbody>';
   for(const r of rows){
     const rec=supplierStateRecord(k,r.name),editable=supplierEditable(k,r.name),tag=k==='engine'&&rec?.acquired?'(ACQUIRED)':r.active?(rec?.departing?'(DEPARTING)':''):'(INACTIVE)';
@@ -12467,7 +12595,8 @@ function renderEngineMatrix(){
         else if(!st.vary)cell='<span class="relcell r100">100.0</span>';
         else cell=Number.isFinite(rv)?`<span class="relcell ${colorClass}" title="Stored value: ${raw.toFixed(3)}">${rv.toFixed(1)}</span>`:'—';
       }
-      html+=`<td>${cell}</td>`;
+      if(k==='tyres'&&r.raw['d_'+c.key])cell=cell.replace('class="relcell','class="relcell dflt').replace(/title="[^"]*"/,'title="Game default 50: no value stored in this save yet"');
+      html+=`<td${c.grp?' class="tyre-grp-start"':''}>${cell}</td>`;
     }
     html+='</tr>';
   }
@@ -12514,7 +12643,7 @@ async function setGeneratedDriversMinimumAge(){
   if(commitEditorMutation(`Set minimum generated-driver age to ${minAge} (${count} driver${count===1?'':'s'})`,before)){
     if(editSummary)editSummary.textContent=`Updated ${count} generated driver${count===1?'':'s'} to a minimum age of ${minAge}.`;
     statusEl.textContent=`Updated ${count} generated driver${count===1?'':'s'} to a minimum age of ${minAge}.`;
-    renderDriverInfo();
+    renderDriverInfo();renderAgeList();
   }
 }
 // ---------------- Consistency tool ----------------
@@ -12544,7 +12673,7 @@ function renderConsistencyTool(){
   const ageBox=document.getElementById('consAge');
   if(ageBox&&!ageBox.dataset.ready){
     ageBox.innerHTML=edStepper('minage',16,{min:10,max:99,step:1,dp:0,label:'Minimum age'});
-    edWireSteppers(ageBox,renderDriverInfo);
+    edWireSteppers(ageBox,()=>{renderDriverInfo();renderAgeList();});
     ageBox.dataset.ready='1';
   }
   const k=consistencyK,sum=consistencySummary(k),fmt=x=>x.toFixed(2);
@@ -12566,8 +12695,22 @@ function renderConsistencyTool(){
     cmp+=`<tr${Math.abs(kk-k)<1e-9?' class="cons-on"':''}><td>${kk.toFixed(2)}</td><td>${s.changed.length} of ${s.count}</td><td>${fmt(s.before)} → ${fmt(s.after)}</td></tr>`;
   }
   document.getElementById('consCompare').innerHTML=cmp+'</tbody>';
+  renderAgeList();
   const btn=document.getElementById('consApply'),n=sum.changed.length;
   btn.disabled=n===0;btn.textContent=n?`APPLY ${n} CHANGE${n===1?'':'S'}`:'APPLY CHANGES';
+}
+function renderAgeList(){
+  const tbl=document.getElementById('consAgeTable'),st=document.getElementById('consAgeStats');
+  if(!tbl||!st||!state)return;
+  const min=selectedGeneratedDriverMinimumAge(),all=driverInfoAll().filter(driverInfoGenerated),rows=generatedDriversBelowAge(min).map(d=>{const s=SaveAccess.driverStatus(d);return {d,team:s.currentTeam||s.juniorPrimary?.team||''};});
+  rows.sort((a,b)=>finiteNumber(a.d.age)-finiteNumber(b.d.age)||String(a.d.name).localeCompare(String(b.d.name)));
+  st.innerHTML=`<b>${rows.length}</b> of ${all.length} generated drivers will change to ${min}`;
+  let html='<thead><tr><th>Driver</th><th>Team</th><th>Age</th></tr></thead><tbody>';
+  for(const r of rows){
+    const color=r.team&&state.teams?.[r.team]?teamColor(state.teams[r.team]):'#454b54',a=finiteNumber(r.d.age);
+    html+=`<tr><td>${esc(r.d.name||'—')}</td><td><span class="swatch swatch-color swatch-gap" style="--swatch-color:${color}"></span>${r.team?esc(teamLabel(r.team)):'FREE AGENT'}</td><td>${a} → <span class="cons-up">${min}</span></td></tr>`;
+  }
+  tbl.innerHTML=html+'</tbody>';
 }
 function applyConsistencyTool(){
   if(!SHOW_CONSISTENCY_TOOL)return;
@@ -14141,8 +14284,8 @@ function renderDriverInfo(){
   // Short labels keep the table within the panel; the full name shows on hover and goes into the CSV.
   const head=(key,label,full='')=>{const a=driverInfoSort.key===key,arrow=a?`<span class="sort-arrow">${driverInfoSort.dir==='desc'?'▼':'▲'}</span>`:'';return `<th class="sortable ${a?'active-sort':''}" data-driver-info-sort="${key}"${full?` title="${full}" data-csv="${full.toUpperCase()}"`:''}>${label}${arrow}</th>`;};
   // Fixed column widths, so filters never change them (Bruno 2026-10-09).
-  const driverInfoCols='<colgroup>'+[170,165,66,42,86,32,78,52,52,52,52,52,62,108,150,170,92].map(w=>`<col style="width:${w}px">`).join('')+'</colgroup>';
-  let html=driverInfoCols+'<thead><tr>'+head('name','Driver')+head('team','Team / role')+head('status','Status')+head('age','Age')+head('nationality','Nation','Nationality')+'<th>#</th>'+head('overall','Overall')+head('cornering','Corn.','Cornering')+head('braking','Brak.','Braking')+head('consistency','Cons.','Consistency')+head('smoothness','Smth.','Smoothness')+head('control','Ctrl.','Control')+head('talent','Talent')+'<th>Career stage</th><th>Traits</th><th>Personality</th><th>Future team</th></tr></thead><tbody>';
+  const driverInfoCols='<colgroup>'+[170,165,66,42,86,32,78,52,52,52,52,52,62,108,150,170].map(w=>`<col style="width:${w}px">`).join('')+'</colgroup>';
+  let html=driverInfoCols+'<thead><tr>'+head('name','Driver')+head('team','Team / role')+head('status','Status')+head('age','Age')+head('nationality','Nation','Nationality')+'<th>#</th>'+head('overall','Overall')+head('cornering','Corn.','Cornering')+head('braking','Brak.','Braking')+head('consistency','Cons.','Consistency')+head('smoothness','Smth.','Smoothness')+head('control','Ctrl.','Control')+head('talent','Talent')+'<th>Career stage</th><th>Traits</th><th>Personality</th></tr></thead><tbody>';
   const driverStatKeys=['overall','talent','cornering','braking','consistency','smoothness','control'];
   const driverRanges={};
   for(const key of driverStatKeys){
@@ -14162,7 +14305,7 @@ function renderDriverInfo(){
       : r.juniorTeam
         ? `${esc(r.juniorTeam)} · ${esc(r.juniorSeries)}`
         : 'FREE AGENT';
-    html+=`<tr><td><div class="driver-name-cell"><strong>${injuryMark(d)}${esc(d.name||'—')}</strong><button type="button" class="supplier-edit-btn" data-driver-edit="${esc(d.name||'')}">Edit</button></div></td><td><span class="swatch swatch-color swatch-gap" style="--swatch-color:${color}"></span>${currentTeamLabel}</td><td>${esc(driverInfoStatus(d))}</td><td>${esc(d.age??'—')}</td><td>${esc(String(d.nationality||'—').toUpperCase())}</td><td>${esc(d.number??'—')}</td><td>${statChip('overall',r.overall,0)}</td><td>${statChip('cornering',d.cornering)}</td><td>${statChip('braking',d.braking)}</td><td>${statChip('consistency',d.consistency)}</td><td>${statChip('smoothness',d.smoothness)}</td><td>${statChip('control',d.control)}</td><td>${statChip('talent',d.talent)}</td><td>${esc(humanToken(d.career_stage))}</td><td>${esc((d.traits||[]).map(humanToken).join(', ')||'—')}</td><td>${esc((d.personalities||[d.personality]).filter(Boolean).map(humanToken).join(', ')||'—')}</td><td>${esc(r.futureTeam?teamLabel(r.futureTeam):'—')}</td></tr>`;
+    html+=`<tr><td><div class="driver-name-cell"><strong>${injuryMark(d)}${esc(d.name||'—')}</strong><button type="button" class="supplier-edit-btn" data-driver-edit="${esc(d.name||'')}">Edit</button></div></td><td><span class="swatch swatch-color swatch-gap" style="--swatch-color:${color}"></span>${currentTeamLabel}</td><td>${esc(driverInfoStatus(d))}</td><td>${esc(d.age??'—')}</td><td>${esc(String(d.nationality||'—').toUpperCase())}</td><td>${esc(d.number??'—')}</td><td>${statChip('overall',r.overall,0)}</td><td>${statChip('cornering',d.cornering)}</td><td>${statChip('braking',d.braking)}</td><td>${statChip('consistency',d.consistency)}</td><td>${statChip('smoothness',d.smoothness)}</td><td>${statChip('control',d.control)}</td><td>${statChip('talent',d.talent)}</td><td>${esc(humanToken(d.career_stage))}</td><td>${esc((d.traits||[]).map(humanToken).join(', ')||'—')}</td><td>${esc((d.personalities||[d.personality]).filter(Boolean).map(humanToken).join(', ')||'—')}</td></tr>`;
   }
   html+='</tbody>';driverInfoTable.innerHTML=html;
   driverInfoTable.querySelectorAll('[data-driver-edit]').forEach(b=>b.addEventListener('click',()=>openDriverEditor(b.dataset.driverEdit)));
@@ -18572,21 +18715,21 @@ function champCellClass(v,table){
   const paying=(table||[]).filter(x=>finiteNumber(x)>0).length;
   return paying&&pos<=paying?'points-finish':'nonpoints-finish';
 }
-function renderPastStandings(S){
+function renderPastStandings(S,driverEl=driverStandings,teamEl=teamStandings){
   const h=S.h,races=Array.isArray(h.race_results)?h.race_results:[],sched=Array.isArray(h.schedule)?h.schedule:[];
   const n=Math.max(sched.length,Number(h.rounds)||0,...(h.driver_table||[]).map(d=>(d.results||[]).length));
   const heads=Array.from({length:n},(_,i)=>`<th class="race-head" title="Round ${i+1} · ${esc(sched[i]||'')}"><span>R${i+1}</span><small>${esc(raceAbbr(sched[i]||''))}</small></th>`).join('');
   const mark=(rr,d)=>{let o='';if(rr?.pole?.driver===d)o+='<sup class="race-marker">P</sup>';if(rr?.fastest_lap?.driver===d)o+='<sup class="race-marker">F</sup>';return o;};
   const rows=(h.driver_table||[]).slice().sort((a,b)=>(Number(b.points)||0)-(Number(a.points)||0));
   const lead=Number(rows[0]?.points)||0;
-  if(driverStandings){
-    driverStandings.innerHTML=`<thead><tr><th class="pos-head">Pos</th><th class="name-head">Driver</th><th class="team-head">Team</th>${heads}<th class="points-head">Pts</th></tr></thead><tbody>${rows.map((r,i)=>{
+  if(driverEl){
+    driverEl.innerHTML=`<thead><tr><th class="pos-head">Pos</th><th class="name-head">Driver</th><th class="team-head">Team</th>${heads}<th class="points-head">Pts</th></tr></thead><tbody>${rows.map((r,i)=>{
       const c=champTeamColor(S,r.team);
       return `<tr style="--team-color:${c}"><td class="stand-pos">${i+1}</td><td class="stand-name">${esc(r.name)}</td><td class="stand-team"><span class="swatch swatch-color swatch-gap" style="--swatch-color:${c}"></span>${esc(champTeamName(S,r.team))}</td>${Array.from({length:n},(_,k)=>{const v=(r.results||[])[k];return v==null||v===''?'<td class="race-cell"></td>':`<td class="race-cell ${champCellClass(v,h.points_table)}">${esc(normalizedRaceResult(v))}${mark(races[k],r.name)}</td>`;}).join('')}<td class="stand-points stand-points-with-gap"><strong>${Number(r.points)||0}</strong>${i===0?'':` <span class="stand-points-gap">(-${Math.max(0,lead-(Number(r.points)||0))})</span>`}</td></tr>`;}).join('')}</tbody>`;
   }
-  if(teamStandings){
+  if(teamEl){
     const trows=(h.constructor_table||[]).slice().sort((a,b)=>(Number(b.points)||0)-(Number(a.points)||0));
-    teamStandings.innerHTML=`<thead><tr><th class="pos-head">Pos</th><th class="name-head">Team</th>${heads}<th class="points-head">Pts</th></tr></thead><tbody>${trows.map((r,i)=>{
+    teamEl.innerHTML=`<thead><tr><th class="pos-head">Pos</th><th class="name-head">Team</th>${heads}<th class="points-head">Pts</th></tr></thead><tbody>${trows.map((r,i)=>{
       const c=champTeamColor(S,r.team);
       return `<tr style="--team-color:${c}"><td class="stand-pos">${i+1}</td><td class="stand-name stand-team-name"><span class="swatch swatch-color swatch-gap" style="--swatch-color:${c}"></span>${esc(r.name||champTeamName(S,r.team))}</td>${Array.from({length:n},(_,k)=>{const v=(r.results||[])[k];return Array.isArray(v)?`<td class="race-cell constructor-cell">${v.filter(x=>x!=null&&x!=='').map(x=>`<span class="constructor-result-badge ${champCellClass(x,h.points_table)}">${esc(normalizedRaceResult(x))}</span>`).join('')}</td>`:'<td class="race-cell constructor-cell"></td>';}).join('')}<td class="stand-points"><strong>${Number(r.points)||0}</strong></td></tr>`;}).join('')}</tbody>`;
   }
@@ -19028,6 +19171,73 @@ function exportRenderedTable(tableId,baseName){
   a.download=`${baseName||tableId}.csv`;
   document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
 }
+/* Standings export: the whole visible standings page (drivers by round, constructors, season overview) as one CSV or one PNG, for the selected series and season. */
+function standingsPageParts(){
+  const jr=!document.getElementById('juniorStandingsView')?.hidden&&document.getElementById('juniorStandingsView');
+  const view=jr||document.getElementById('f1StandingsView');
+  const ids=jr?{d:'juniorDriverStandings',t:'juniorTeamStandings',o:'juniorSeasonOverview',rail:'juniorSeasonRail'}:{d:'driverStandings',t:'teamStandings',o:'seasonOverview',rail:'standingsSeasonRail'};
+  const sel=document.querySelector('#juniorResultsSeriesRail .active,#juniorResultsSeriesRail [aria-pressed="true"]')?.textContent.trim()||'';
+  const seasonBtn=document.querySelector(`#${ids.rail} .active,#${ids.rail} [aria-pressed="true"]`);
+  const season=seasonBtn?seasonBtn.textContent.trim():'Current season';
+  const meta=(document.getElementById('juniorResultsTitle')?.textContent||'').trim();
+  const series=(sel||meta.split(' · ')[0]||'Main').replace(/\s+/g,' ').replace(/^./,c=>c.toUpperCase());
+  return {view,ids,series,season,title:`${series} · ${season}${/current/i.test(season)&&state?.raw?.season_no?` · season ${state.raw.season_no}`:''}`};
+}
+function standingsTableRows(table){
+  if(!table)return [];
+  return [...table.querySelectorAll('tr')].map(row=>[...row.querySelectorAll('th,td')].map(cell=>{if(cell.dataset.csv)return csvEscape(cell.dataset.csv);if(!cell.querySelector('button'))return csvEscape(cell.innerText.replace(/\\s+/g,' ').trim());const c=cell.cloneNode(true);c.querySelectorAll('button').forEach(b=>b.remove());return csvEscape(c.textContent.replace(/\\s+/g,' ').trim());}).join(',')).filter(Boolean);
+}
+function exportStandingsCsv(){
+  const p=standingsPageParts(),out=[csvEscape(p.title),''];
+  out.push('DRIVER CHAMPIONSHIP',...standingsTableRows(document.getElementById(p.ids.d)),'');
+  out.push('CONSTRUCTOR CHAMPIONSHIP',...standingsTableRows(document.getElementById(p.ids.t)),'');
+  const ov=document.getElementById(p.ids.o);
+  if(ov&&!ov.hidden){
+    out.push('SEASON OVERVIEW');
+    ov.querySelectorAll('.so-card').forEach(card=>{
+      out.push('',csvEscape(card.querySelector('h4')?.textContent||''));
+      const rows=card.querySelectorAll('.so-row');
+      if(!rows.length)out.push(csvEscape(card.querySelector('.so-empty')?.textContent.trim()||''));
+      rows.forEach(r=>out.push([r.querySelector('.so-n')?.textContent,r.querySelector('.so-name')?.textContent,r.querySelector('.so-v')?.textContent,r.querySelector('.so-sub')?.textContent||''].map(x=>csvEscape(String(x||'').trim())).join(',')));
+    });
+  }
+  const blob=new Blob(['﻿'+out.join('\r\n')],{type:'text/csv;charset=utf-8'}),a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);a.download=`standings_${p.title.replace(/[^A-Za-z0-9]+/g,'_').replace(/^_|_$/g,'')}.csv`;
+  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+// Colour properties that follow `color`: copying their resolved values would pin them to the inherited colour.
+const SKIP_PNG_PROPS=new Set(['-webkit-text-fill-color','-webkit-text-stroke-color','caret-color','text-emphasis-color']);
+async function exportStandingsPng(){
+  const p=standingsPageParts(),btn=document.getElementById('standingsExportPng');
+  if(btn)btn.disabled=true;
+  const host=document.createElement('div');
+  try{
+    const clone=p.view.cloneNode(true);clone.hidden=false;
+    clone.querySelectorAll('.export-csv-btn,[data-driver-edit],.ed-head-actions,#standingsSeasonBar,#juniorSeasonBar').forEach(x=>x.remove());
+    clone.querySelectorAll('.chart-title').forEach(x=>{x.style.whiteSpace='nowrap';});
+    clone.querySelectorAll('.standings-scroll').forEach(x=>{x.style.overflow='visible';x.style.maxWidth='none';});
+    const head=document.createElement('div');head.textContent=p.title;head.style.cssText='font-size:22px;font-weight:900;color:#fff;margin:0 0 12px;letter-spacing:.02em';
+    host.style.cssText=`position:fixed;left:-30000px;top:0;width:${p.view.offsetWidth}px;padding:18px;background:#050607;color:#e6edf3;box-sizing:content-box`;
+    host.append(head,clone);(p.view.parentElement||document.body).appendChild(host);
+    host.style.width=Math.max(p.view.offsetWidth,host.scrollWidth-36)+'px';
+    await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+    const w=Math.ceil(host.scrollWidth),h=Math.ceil(host.scrollHeight);
+    const walk=(n)=>{if(n.nodeType!==1)return;const cs=getComputedStyle(n);let t='';for(let i=0;i<cs.length;i++){const k=cs[i];if(SKIP_PNG_PROPS.has(k))continue;t+=k+':'+cs.getPropertyValue(k)+';';}n.setAttribute('style',t);for(const c of n.children)walk(c);};
+    walk(host);host.style.position='static';host.style.left='0';host.style.width=w+'px';host.style.height=h+'px';
+    host.setAttribute('xmlns','http://www.w3.org/1999/xhtml');
+    const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><foreignObject x="0" y="0" width="${w}" height="${h}">${new XMLSerializer().serializeToString(host)}</foreignObject></svg>`;
+    const img=new Image();
+    await new Promise((ok,bad)=>{img.onload=ok;img.onerror=()=>bad(new Error('image'));img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);});
+    const sc=Math.min(2,16000/Math.max(w,h)),cv=document.createElement('canvas');cv.width=Math.round(w*sc);cv.height=Math.round(h*sc);
+    const cx=cv.getContext('2d');cx.fillStyle='#050607';cx.fillRect(0,0,cv.width,cv.height);cx.scale(sc,sc);cx.drawImage(img,0,0);
+    const blob=await new Promise(r=>cv.toBlob(r,'image/png')),a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);a.download=`standings_${p.title.replace(/[^A-Za-z0-9]+/g,'_').replace(/^_|_$/g,'')}.png`;
+    document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  }catch(e){console.error(e);showEditBlocked('PNG export failed','The standings could not be turned into an image in this browser. The full CSV still works.');}
+  finally{host.remove();if(btn)btn.disabled=false;}
+}
+document.getElementById('standingsExportCsv')?.addEventListener('click',exportStandingsCsv);
+document.getElementById('standingsExportPng')?.addEventListener('click',exportStandingsPng);
 function bindCsvExports(){
   document.querySelectorAll('[data-export-table]').forEach(button=>{
     if(button.dataset.exportBound==='1')return;
@@ -19256,6 +19466,15 @@ function renderJuniorTeamStandings(series,races){
   html+='</tbody>';
   juniorTeamStandings.innerHTML=html;
 }
+// Finished seasons of a junior series: the save keeps each one in season_history_by_series, in the same shape as the main series.
+const juniorUi={season:null};
+function juniorSeasonList(seriesName){
+  const raw=state?.raw||{},out=[];
+  if(Number.isFinite(Number(raw.season_no)))out.push({key:'cur',no:Number(raw.season_no),current:true});
+  const hist=Array.isArray(raw.season_history_by_series?.[seriesName])?raw.season_history_by_series[seriesName]:[];
+  for(const h of hist.slice().sort((a,b)=>Number(b.season_no)-Number(a.season_no)))out.push({key:`s${h.season_no}`,no:Number(h.season_no),current:false,h});
+  return out;
+}
 function renderJuniorResults(){
   if(!state||!juniorResultsSeries)return;
   populateJuniorResultsSeries();
@@ -19273,6 +19492,20 @@ function renderJuniorResults(){
   if(f1StandingsView)f1StandingsView.hidden=true;
   if(juniorStandingsView)juniorStandingsView.hidden=false;
 
+  const jbar=document.getElementById('juniorSeasonBar'),jrail=document.getElementById('juniorSeasonRail');
+  const jlist=juniorSeasonList(seriesName);
+  if(jbar)jbar.hidden=jlist.length<2;
+  if(juniorUi.season&&!jlist.some(x=>x.key===juniorUi.season))juniorUi.season=null;
+  if(jrail)TPControls.renderChoices(jrail,{options:jlist.map(x=>({value:x.key,label:champSeasonName(x)})),selected:juniorUi.season||'cur',className:'selector-rail-btn',onSelect:v=>{juniorUi.season=v==='cur'?null:v;renderJuniorResults();}});
+  const jpast=jlist.find(x=>x.key===juniorUi.season&&!x.current);
+  if(jpast){
+    const h=jpast.h,tbl=h.driver_table||[],len=Math.max(0,...tbl.map(d=>(d.results||[]).length)),rounds=Math.max(Number(h.rounds)||0,len);
+    if(juniorResultsTitle)juniorResultsTitle.textContent=`${seriesName||'Junior Series'} · ${seasonLabel(jpast.no)}`;
+    if(juniorResultsMeta)juniorResultsMeta.textContent=`Final standings after ${rounds} round${rounds===1?'':'s'} · ${tbl.length} drivers · ${(h.constructor_table||[]).length} teams${h.driver_champion?` · champion ${h.driver_champion}`:''}`;
+    renderPastStandings(jpast,juniorDriverStandings,juniorTeamStandings);
+    renderSeasonOverview('juniorSeasonOverview','juniorDriverStandings',{races:Array.from({length:len},(_,k)=>({drivers:Object.fromEntries(tbl.map(d=>[d.name,(d.results||[])[k]]).filter(x=>x[1]!=null))})),total:rounds,finished:true},true);
+    return;
+  }
   const series=juniorResultsSeriesMap()?.[seriesName];
   const races=juniorRaceCalendar(series);
   if(juniorResultsTitle)juniorResultsTitle.textContent=seriesName||'Junior Series';
@@ -19641,6 +19874,18 @@ $('tpHelpClose')?.addEventListener('click',()=>$('tpHelpDialog')?.close());
 $('tpHelpOk')?.addEventListener('click',()=>$('tpHelpDialog')?.close());
 installContextHelp();
 bindCsvExports();
+// Clicking the TP Save Lab name or logo restarts the app (reloads the page); unsaved edits ask first.
+async function restartApp(){
+  if(saveDirty){
+    const n=editorHistory.editCount;
+    const ok=await askConfirmation({title:'Restart the app?',message:`${n?`You have ${n} unsaved change${n===1?'':'s'} in the loaded save.`:'You have unsaved changes in the loaded save.'} Restarting closes the save and loses them unless you download the edited save first.\n\nRestart anyway?`,confirmText:'Restart',danger:true});
+    if(!ok)return;
+  }
+  saveDirty=false;
+  location.reload();
+}
+$('brandHome')?.addEventListener('click',restartApp);
+$('brandHome')?.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();restartApp();}});
 window.addEventListener('beforeunload',e=>{
   if(!saveDirty)return;
   e.preventDefault();
@@ -19729,10 +19974,23 @@ function finProjects(name){
 function finHqRows(t,w){
   const paid=+w.expense_items?.['HQ Construction']||0;if(paid<=0)return '';
   const near=(a,b)=>Number.isFinite(+a)&&Math.abs(+a-b)<0.006;
-  const p=[t?.hq_construction_project,t?.last_hq_construction].find(x=>x&&x.building&&(near(x.weekly_cost_m,paid)||near(x.deposit_m,paid)));
-  if(!p)return '';
-  const b=HQ_FACILITIES.find(x=>x.key===p.building)?.label||humanToken(p.building);
-  return `<tr class="mut"><td colspan="2" style="padding-left:14px;white-space:normal">${esc(b)} · L${+p.from_level} → L${+p.to_level} · ${finF(+p.total_cost_m||0)} over ${+p.duration_weeks||'?'} weeks${p.status==='completed'?' · finished':''}</td></tr>`;
+  const cands=[t?.hq_construction_project,t?.last_hq_construction].filter(x=>x&&x.building);
+  const row=(p,amt,kind)=>{
+    const b=HQ_FACILITIES.find(x=>x.key===p.building)?.label||humanToken(p.building);
+    return `<tr class="mut"><td colspan="2" style="padding-left:14px;white-space:normal">${esc(b)} · L${+p.from_level} → L${+p.to_level} · ${kind} ${finF(amt)} · ${finF(+p.total_cost_m||0)} over ${+p.duration_weeks||'?'} weeks${p.status==='completed'?' · finished':''}</td></tr>`;
+  };
+  // One upgrade explains the whole charge: its weekly payment or its deposit.
+  for(const p of cands){
+    if(near(p.weekly_cost_m,paid))return row(p,+p.weekly_cost_m,'weekly');
+    if(near(p.deposit_m,paid))return row(p,+p.deposit_m,'deposit');
+  }
+  // Two upgrades paid in the same week (for example the deposit of a new one plus the last payment of the previous one).
+  for(const a of cands)for(const b of cands){
+    if(a===b)continue;
+    for(const [ka,x] of [['weekly',a.weekly_cost_m],['deposit',a.deposit_m]])for(const [kb,y] of [['weekly',b.weekly_cost_m],['deposit',b.deposit_m]])
+      if(Number.isFinite(+x)&&Number.isFinite(+y)&&near(+x+(+y),paid))return row(a,+x,ka)+row(b,+y,kb);
+  }
+  return '';
 }
 function finProjRows(list,ytd){
   if(!list.length&&!(ytd>0.05))return '';
@@ -19806,9 +20064,9 @@ function renderFinancials(){
   const TT0=FIN_G.reduce((a,g)=>a+finItemsOf(g,ex).reduce((b,q)=>b+(ex[q]||0),0),0),IT0=Object.values(inc).reduce((a,b)=>a+b,0);let SB=TT0;
   const fm=x=>finF(x);
   const row=(cls,l,v,proj=v*k)=>`<tr class="${cls}"><td>${l}</td><td class="num">${fm(v/n)}</td><td class="num">${fm(v)}</td><td class="num">${proj==null?'—':fm(proj)}</td><td class="num">${SB>0?(v/SB*100).toFixed(1)+'%':'—'}</td></tr>`;
-  let h='<thead><tr><th>Type</th><th class="num">Per week</th><th class="num">YTD</th><th class="num">Week 52'+(done?'':' (est.)')+'</th><th class="num">Share</th></tr></thead><tbody>',T=0,IT=0;
+  let h='<thead><tr><th>Type</th><th class="num">Per week</th><th class="num">YTD</th><th class="num">Week 52'+(done?'':' (est.)')+'</th><th class="num">Share</th></tr></thead><tbody>',T=0,IT=0,ITP=0;
   FIN_G.forEach(g=>{const it=finItemsOf(g,ex),v=it.reduce((a,q)=>a+(ex[q]||0),0);T+=v;h+=row('grp',finSw(g[2])+g[0],v);if(it.length>1)it.forEach(q=>{if(ex[q])h+=row('it',q,ex[q])})});
-  h+=row('grp','All spending',T);SB=IT0;for(const q in inc){IT+=inc[q];h+=row('it',q,inc[q],q==='Loan Proceeds'?inc[q]:inc[q]*k)}h+=row('grp','All income',IT,null);
+  h+=row('grp','All spending',T);SB=IT0;for(const q in inc){const pj=q==='Loan Proceeds'?inc[q]:inc[q]*k;IT+=inc[q];ITP+=pj;h+=row('it',q,inc[q],pj)}h+=row('grp','All income',IT,ITP);
   $('finEst').innerHTML=h+'</tbody>';
   finRenderSponsors(t);
 }
@@ -19916,7 +20174,7 @@ function renderRegulations(){
     const sevInfo=k=>{const v=d.severities?.[k];if(!v)return '';const ret=Number.isFinite(+v.retention)?`Carries ${Math.round(v.retention*100)}% into the new season`:'',cs=Number.isFinite(+v.concept_strength)?`concept strength \u00d7${+v.concept_strength}`:'';return [v.summary,[ret,cs].filter(Boolean).join(' \u00b7 ')].filter(Boolean).join(' ');};
     const sevBox=sevs.length?`<div class="reg-rl">Severity next season</div><div class="reg-seg">${sevs.map(([k,v])=>chip(v.name||k,(k===upSev?'on up':'')+(up?'':' dis'),up?`data-reg-sev="${r}|${k}"`:'',sevInfo(k))).join('')}</div><div class="reg-why">${up?esc(sevInfo(upSev)):'Set a next-season era to choose its severity.'}</div>`:'';
     const nowSev=sevs.length&&curSev?` <span class="reg-sev-now" title="${esc(sevInfo(curSev))}">${esc(d.severities?.[curSev]?.name||curSev)} severity</span>`:'';
-    return `<div class="reg-rule"><div class="reg-rh"><b>${esc(d.label||r)}</b>${appr}</div><div class="reg-rl">Now${nowSev}</div><div class="reg-seg">${now}</div><div class="reg-rl">Next season</div><div class="reg-seg">${nxt}${nx}</div>${sevBox}</div>`;
+    return `<div class="reg-rule"><div class="reg-rh"><b>${esc(d.label||r)}</b><span class="reg-rh-r">${appr}${regCanAdd(d,r)?`<button class="reg-add" type="button" data-reg-add="${r}" title="Add a new option to this rule">+ Add option</button>`:''}</span></div><div class="reg-rl">Now${nowSev}</div><div class="reg-seg">${now}</div><div class="reg-rl">Next season</div><div class="reg-seg">${nxt}${nx}</div>${sevBox}</div>`;
   };
   const groups=REG_GROUPS.map(([t,rs])=>`<h3 class="reg-h">${t}</h3><div class="reg-grid">${rs.map(ruleBox).join('')}</div>`).join('');
   // Engine rule for next season: the game rolls it at week 41 and stores it in the top-level pending_reg_changes.
@@ -20052,7 +20310,109 @@ function regSetUpcoming(raw,r,key){
   const dsev=raw.formula_regulation_governance?.definition_snapshot?.[r];
   if(dsev?.severities){rec.upcoming_severity=rec.upcoming?(rec.upcoming_severity||dsev.default_severity||Object.keys(dsev.severities)[0]):null;}
 }
+// Only rules whose options are set by numbers or lists can take a new option; on/off rules and rules keyed by name only have nothing for a new option to change.
+function regCanAdd(d,r){return r!=='technical_regulation_era'&&(d.options||[]).some(o=>Object.entries(o).some(([k,v])=>!(['id','weight'].includes(k))&&(Array.isArray(v)||(typeof v==='number'))));}
+function regAddOption(r){
+  const raw=state?.raw,d=raw?.formula_regulation_governance?.definition_snapshot?.[r];
+  if(!d||!(d.options||[]).length)return;
+  const opts=d.options;
+  // Start from the option with the most fields, so every field the rule can carry is offered.
+  const tpl=opts.reduce((a,o)=>Object.keys(o).length>=Object.keys(a).length?o:a,opts[0]);
+  const hasId=opts.some(o=>'id' in o),nid=Math.max(0,...opts.map(o=>+o.id||0))+1;
+  const TEXT=new Set(['summary','description']);
+  const fields=Object.keys(tpl).filter(k=>!['id','key','name'].includes(k)&&!TEXT.has(k)&&!(tpl[k]&&typeof tpl[k]==='object'&&!Array.isArray(tpl[k])));
+  const all=k=>opts.map(o=>o[k]).filter(v=>v!==undefined);
+  const kind=k=>{const v=tpl[k];if(typeof v==='boolean')return 'bool';if(Array.isArray(v))return v.every(x=>typeof x==='number')?'nums':'tags';if(typeof v==='string')return 'str';if(v===null||typeof v==='number')return all(k).some(x=>x===null)&&all(k).some(x=>typeof x==='number')?'nullnum':'num';return 'keep';};
+  const dpOf=k=>Math.min(4,Math.max(0,...all(k).flat().filter(x=>typeof x==='number').map(x=>((String(x).split('.')[1])||'').length)));
+  const stepOf=k=>k==='weight'?0.05:(dpOf(k)?Math.pow(10,-dpOf(k)):1);
+  const labelOf=k=>({weight:'Vote weight',points:'Points per place',payouts:'Payout per place',banned_aids:'Banned aids'}[k]||k.replace(/_/g,' ').replace(/\bkg\b|\bkmh\b|\bms2\b|\bmj\b/gi,m=>'('+m+')').replace(/^./,c=>c.toUpperCase()));
+  const vocab=k=>[...new Set(all(k).flat())];
+  const val={};for(const k of fields)val[k]=Array.isArray(tpl[k])?tpl[k].slice():tpl[k];
+  const oneDec=k=>String(Math.round(val[k]*1e4)/1e4);
+  const rnd=(x,k)=>{const p=Math.pow(10,k?dpOf(k):4);return Math.round((x+Number.EPSILON)*p)/p;};
+  // Different values, in the same style: a number continues the rule's own spacing above its highest value, a list of places is scaled up.
+  for(const k of fields){
+    const kd=kind(k);
+    if(kd==='num'&&k!=='weight'){const u=[...new Set(all(k).filter(x=>typeof x==='number'))].sort((p,q)=>p-q),df=u.slice(1).map((x,i)=>x-u[i]).filter(x=>x>0).sort((p,q)=>p-q),gap=df.length?df[Math.floor(df.length/2)]:stepOf(k);if(u.length>1||new RegExp('(^|[^0-9.])'+String(tpl[k]).replace('.','\\.')+'([^0-9]|$)').test(tpl.name+' '+tpl.key))val[k]=rnd(u[u.length-1]+gap,k);}
+    else if(kd==='nums'){const f=1.2;val[k]=val[k].map(x=>Math.max(x>0?1:0,Math.round(x*f)));}
+  }
+  const numFields=fields.filter(k=>kind(k)==='num'&&k!=='weight');
+  const escRe=t=>String(t).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  const swapNum=(t,from,to)=>from===to?t:String(t).replace(new RegExp('(^|[^0-9.])'+escRe(from)+'(?![0-9.]*[0-9])','g'),(m,p)=>p+to).replace(new RegExp('(^|[^0-9.])'+escRe(rnd(from*100))+'(?=%)','g'),(m,p)=>p+rnd(to*100));
+  const recompute=t=>{let x=String(t||'');
+    for(const k of numFields)x=swapNum(x,tpl[k],val[k]);
+    for(const k of fields)if(kind(k)==='nums'){const o=tpl[k].join('-'),n=val[k].join('-');x=x.split(o).join(n).replace(/\(\d+(?:-\d+)+\)/g,'('+n+')');if(tpl[k].length!==val[k].length)x=x.replace(new RegExp('(top\\s*)'+tpl[k].length,'ig'),(m,p)=>p+val[k].length);}
+    return x;};
+  let nameEdited=false,sumEdited=false,name='',summary='',desc='';
+  const autoText=()=>{if(!nameEdited){name=recompute(tpl.name);if(name===tpl.name)name=tpl.name+' 2';}if(!sumEdited){summary=recompute(tpl.summary);desc=recompute(tpl.description);}};
+  const mainK=fields.find(k=>kind(k)==='num'&&k!=='weight'&&new RegExp('(^|[^0-9.])'+String(tpl[k]).replace('.','\\.')+'([^0-9]|$)').test(tpl.name+' '+tpl.key));
+  let keyEdited=false,keyText='';
+  const keyOf=()=>{if(keyEdited)return keyText;
+    if(mainK!=null){const m=String(tpl.key).match(/^(.*?)([0-9.]+)(.*)$/);if(m&&+m[2]===+tpl[mainK])return m[1]+val[mainK]+m[3];}
+    return String(name).toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'')||(hasId?'option_'+nid:'option');
+  };
+  const dlg=document.createElement('dialog');dlg.className='tp-dialog reg-add-dialog';
+  const stepper=(k,x,attr,stp,disabled)=>`<span class="grid-step"><button type="button" class="grid-step-btn grid-step-minus" ${attr}="${k}|-1|${stp}" ${disabled?'disabled':''}>−</button><input class="grid-edit-input" data-f-num="${k}" value="${disabled?'':x}" ${disabled?'disabled':''}><button type="button" class="grid-step-btn grid-step-plus" ${attr}="${k}|1|${stp}" ${disabled?'disabled':''}>+</button></span>`;
+  const html=()=>{
+    const rowsH=fields.map(k=>{
+      const kd=kind(k),L=esc(labelOf(k));
+      if(kd==='bool')return `<tr><th>${L}</th><td><span class="reg-add-after">${[[true,'Yes'],[false,'No']].map(([b,t])=>`<span class="reg-o ${val[k]===b?'on':''}" data-f-bool="${k}|${b}">${t}</span>`).join('')}</span></td></tr>`;
+      if(kd==='str')return `<tr><th>${L}</th><td><input class="grid-edit-input wide" data-f-str="${k}" value="${esc(val[k])}"></td></tr>`;
+      if(kd==='tags')return `<tr><th>${L}</th><td><span class="reg-add-after wrap">${vocab(k).map(t=>`<span class="reg-o ${(val[k]||[]).includes(t)?'on':''}" data-f-tag="${k}|${esc(t)}">${esc(String(t).replace(/_/g,' '))}</span>`).join('')}</span></td></tr>`;
+      if(kd==='nums')return `<tr><th>${L}</th><td><div class="reg-places">${val[k].map((x,i)=>`<div class="reg-pl"><span>${i+1}</span><div class="reg-pl-b"><input class="grid-edit-input" data-f-pl="${k}|${i}" value="${x}"><span class="reg-pl-s"><button type="button" class="grid-step-btn grid-step-plus" data-f-pls="${k}|${i}|1">+</button><button type="button" class="grid-step-btn grid-step-minus" data-f-pls="${k}|${i}|-1">−</button></span></div></div>`).join('')}<div class="reg-pl-act"><button type="button" class="grid-step-btn grid-step-plus" data-f-pladd="${k}" title="Add a place">+ place</button><button type="button" class="grid-step-btn grid-step-minus" data-f-pldel="${k}" ${val[k].length<2?'disabled':''} title="Remove the last place">− place</button></div></div></td></tr>`;
+      if(kd==='nullnum')return `<tr><th>${L}</th><td><span class="reg-null">${stepper(k,val[k],'data-f-step',stepOf(k),val[k]===null)}<span class="reg-o ${val[k]===null?'on':''}" data-f-null="${k}">None</span></span></td></tr>`;
+      return `<tr><th>${L}</th><td>${stepper(k,oneDec(k),'data-f-step',stepOf(k),false)}</td></tr>`;
+    }).join('');
+    return `<div class="tp-dialog-head"><div class="project-edit-identity"><div class="project-edit-eyebrow">Regulations</div><button type="button" class="tp-dialog-close" aria-label="Close">×</button><div class="project-edit-title">Add option</div><div class="project-edit-sub">${esc(d.label||r)} · new choice saved in this save${hasId?` (id ${nid})`:''}</div></div></div>
+    <div class="grid-edit-form"><table class="grid-edit-table"><tbody>
+    <tr><th>Name</th><td><input class="grid-edit-input wide" data-f-name value="${esc(name)}" placeholder="Name of the new option"></td></tr>
+    ${rowsH}
+    <tr><th>Summary</th><td><input class="grid-edit-input wide" data-f-sum value="${esc(summary)}"></td></tr>
+    ${'description' in tpl?`<tr><th>Description</th><td><input class="grid-edit-input wide" data-f-desc value="${esc(desc)}"></td></tr>`:''}
+    <tr><th>Key</th><td><input class="grid-edit-input wide" data-f-key value="${esc(keyOf())}"></td></tr>
+    </tbody></table><div class="reg-add-err" data-f-err></div>
+    <div class="cbar-actions grid-edit-actions"><span></span><button type="button" class="project-edit-undo" data-f-cancel>Cancel</button><button type="button" class="project-edit-apply" data-f-ok>Add option</button></div></div>`;
+  };
+  const paint=()=>{const a=document.activeElement;const sel=a&&a.matches&&a.matches('input')?a.outerHTML.match(/data-f-[a-z]+(="[^"]*")?/)?.[0]:null;dlg.innerHTML=html();wire();
+    if(sel){const el=dlg.querySelector('['+sel+']');if(el){el.focus();try{el.setSelectionRange(el.value.length,el.value.length)}catch(_){}}}};
+  const setNum=(k,x)=>{x=Number(String(x).replace(',','.'));if(!Number.isFinite(x)||x<0){paint();return;}val[k]=rnd(x,k);autoText();paint();};
+  function wire(){
+    const q=(s,f)=>dlg.querySelectorAll(s).forEach(f);
+    dlg.querySelector('.tp-dialog-close').onclick=()=>dlg.close();
+    dlg.querySelector('[data-f-cancel]').onclick=()=>dlg.close();
+    q('[data-f-step]',b=>b.onclick=()=>{const [k,sg,st]=b.dataset.fStep.split('|');setNum(k,(+val[k]||0)+sg*st);});
+    q('[data-f-num]',i=>i.onchange=()=>setNum(i.dataset.fNum,i.value));
+    q('[data-f-str]',i=>i.oninput=()=>{val[i.dataset.fStr]=i.value;});
+    q('[data-f-bool]',b=>b.onclick=()=>{const [k,v]=b.dataset.fBool.split('|');val[k]=v==='true';paint();});
+    q('[data-f-tag]',b=>b.onclick=()=>{const [k,t]=b.dataset.fTag.split('|'),a=val[k];val[k]=a.includes(t)?a.filter(x=>x!==t):[...a,t];paint();});
+    q('[data-f-null]',b=>b.onclick=()=>{const k=b.dataset.fNull;val[k]=val[k]===null?(tpl[k]??1):null;paint();});
+    q('[data-f-pl]',i=>i.onchange=()=>{const [k,n]=i.dataset.fPl.split('|'),x=Number(String(i.value).replace(',','.'));if(Number.isFinite(x)&&x>=0)val[k][+n]=rnd(x);paint();});
+    q('[data-f-pls]',b=>b.onclick=()=>{const [k,n,sg]=b.dataset.fPls.split('|'),st=stepOf(k);val[k][+n]=Math.max(0,rnd(val[k][+n]+sg*st));paint();});
+    q('[data-f-pladd]',b=>b.onclick=()=>{const k=b.dataset.fPladd,a=val[k];a.push(Math.max(0,a[a.length-1]-(a.length>1?0:0)));paint();});
+    q('[data-f-pldel]',b=>b.onclick=()=>{val[b.dataset.fPldel].pop();paint();});
+    const check=()=>{const k=String(keyOf()).trim().toLowerCase(),dup=k&&opts.some(o=>String(o.key).toLowerCase()===k);dlg.querySelector('[data-f-err]').textContent=dup?`This rule already has an option with key ${String(keyOf()).trim()}. Change the key.`:'';dlg.querySelector('[data-f-key]').classList.toggle('bad',!!dup);dlg.querySelector('[data-f-ok]').disabled=!!dup;};
+    dlg.querySelector('[data-f-name]').oninput=e=>{name=e.target.value;nameEdited=true;if(!keyEdited)dlg.querySelector('[data-f-key]').value=keyOf();check();};
+    dlg.querySelector('[data-f-key]').oninput=e=>{keyText=e.target.value;keyEdited=true;check();};
+    check();
+    dlg.querySelector('[data-f-sum]').oninput=e=>{summary=e.target.value;sumEdited=true;};
+    const de=dlg.querySelector('[data-f-desc]');if(de)de.oninput=e=>{desc=e.target.value;sumEdited=true;};
+    dlg.querySelector('[data-f-ok]').onclick=()=>{
+      const err=dlg.querySelector('[data-f-err]'),key=String(keyOf()).trim();if(!key){err.textContent='Give the option a key.';return;}
+      if(!String(name).trim()){err.textContent='Give the option a name.';return;}
+      if(opts.some(o=>String(o.key).toLowerCase()===key.toLowerCase())){err.textContent=`This rule already has an option with key ${key}. Change the name or the value.`;return;}
+      const opt={};
+      if(hasId)opt.id=nid;opt.key=key;opt.name=String(name).trim();
+      for(const k of Object.keys(tpl)){if(k==='id'||k==='key'||k==='name')continue;opt[k]=k==='summary'?summary:k==='description'?desc:(k in val?val[k]:JSON.parse(JSON.stringify(tpl[k])));}
+      dlg.close();
+      regEdit(`Regulations: added option "${opt.name}" to ${d.label||r}`,rw=>{rw.formula_regulation_governance.definition_snapshot[r].options.push(opt);});
+    };
+  }
+  autoText();dlg.innerHTML=html();document.body.appendChild(dlg);wire();
+  dlg.addEventListener('close',()=>dlg.remove(),{once:true});dlg.showModal();
+}
 $('regBody')?.addEventListener('click',e=>{
+  const ad=e.target.closest('[data-reg-add]');
+  if(ad){regAddOption(ad.dataset.regAdd);return;}
   const sv=e.target.closest('[data-reg-sev]');
   if(sv&&state?.raw){
     const [r,key]=sv.dataset.regSev.split('|'),rec=state.raw.regulations?.[r],d=state.raw.formula_regulation_governance?.definition_snapshot?.[r];

@@ -1,0 +1,35 @@
+# TP Save Lab v0.58: what was added since v0.54 (condensed)
+
+File: `TP_Save_Lab_v0.58.html`
+
+## New tabs and features
+- **Schedule:** schedule generator, for current and next season. Load tracks .json files and edit/create schedules within the Lab.
+- **Create and Edit Suppliers:** upload your engines.json, parts.json and tyre_suppliers.json, and create/edit/delete engines/parts/tyre suppliers.
+- **Regulations:** change regulations, create new regulations options (no json upload necessary) where applicable.
+- **Load Another Save:**  load another save, re-loading a save without needing to refresh the page.
+
+## Drivers
+- **Contracts:** seats share each team row's width equally (halves, thirds or quarters by entries); junior teams always show three seats; click or drag a driver into an empty seat to move the contract, drag onto another driver to swap (short confirmation, undoable); injury marker on seats; EDIT DRIVER button in the driver panel.
+- **Driver status pairing:** a team's two main drivers are Equal + Equal or No.1 + No.2; changing one makes the other follow; Save Health warns about clashes.
+- **Driver editor:** Create driver works with the new `personalities` field.
+- **Database:** filters (Contracted only, Free agents only, Generated drivers only / ≤18, ≤21, ≤23).
+- **Negotiations:** "Hide reserve" filter for drivers; sortable Role column and per-role filter buttons for staff.
+
+## Championship
+- **Standings:** driver table keeps its width across seasons; junior series have a Season selector with past seasons and their Season overview.
+- **Export this page:** Full CSV and PNG image of the visible series and season, season overview included.
+- **Results:** improved logic for race abbreviations for tracks MonteCarlo, MagnyCours, Estoril.
+
+## Regulations and rules
+- **Regulations tab:** current rules editable, no header, Engine rules row (week 41), era severity under Next season, **+ Add option** on rules with numbers or lists (starts from a similar option with different values, editable key, duplicate key blocked; confirmed in the game with the 150 kg tank).
+- **Edits and events:** full editor for the Engine regulation change event (chance, up-to-roll limits, power threshold).
+
+## Money and cars
+- **Finances:** collapsible windows; All income shows its Week 52 estimate correctly (finally!); HQ upgrades tooltip names the exact upgrade.
+- **Warehouse:** unassigned parts hidden; base chassis shows Baseline; year-old chassis shows its −5 malus.
+- **Projects and cars:** car baseline and next-year chassis editors use red − / green + steppers and show the change since the save was loaded, kept after Apply.
+- **Technology tab** (was Electronics): all teams in one grid, 10 driver aids and ERS, allowed/banned by the save's rules.
+- **Suppliers > Performance:** Active only on by default; Tyres table with Grip, Durability and Temperature (Soft/Medium/Hard) and a Development and prices view; tyre supplier editor (grip, durability, temperature, leave chance).
+
+## General
+- Row hover on data tables; clicking the TP Save Lab logo restarts the app (asks first with unsaved edits); landing page links to TP Stint Lab and TP Finance Lab.
