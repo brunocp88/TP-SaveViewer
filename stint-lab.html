@@ -12,7 +12,7 @@
 :root{
   --bg:#050607; --shell:#08090b; --panel:#0f1114; --panel2:#13161a; --panel3:#0b0d10; --field:#090b0e;
   --ink:#f4f4f5; --muted:#8b9098; --label:#777e88; --line:#24282e; --line2:#31363d; --grid:#20242a; --chip:#0a0c0f;
-  --soft:#ef3b33; --med:#e6b84d; --hard:#d7dbe0; --good:#36c98f; --mid:#e6b84d; --bad:#ef6461; --accent:#00c94a; --accent2:#2ee070;
+  --soft:#ef3b33; --med:#e6b84d; --hard:#d7dbe0; --intermediate:#43b02a; --wet:#2f7fd6; --good:#36c98f; --mid:#e6b84d; --bad:#ef6461; --accent:#00c94a; --accent2:#2ee070;
   --body:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
   --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
   color-scheme:dark;
@@ -33,6 +33,20 @@ button,input,select{font:inherit}
 .brand-copy{min-width:0}
 .brand-title{font-size:17px;line-height:1.05;letter-spacing:.07em;font-weight:900;text-transform:uppercase;white-space:nowrap}
 .brand-sub{font-size:9.5px;line-height:1.15;letter-spacing:.08em;margin-top:4px;color:var(--muted);text-transform:uppercase}
+#brandHome{cursor:pointer;border-radius:6px}
+#brandHome:hover .brand-title,#brandHome:focus-visible .brand-title{color:#fff}
+#brandHome:hover .brand-mark{filter:brightness(1.15)}
+#brandHome:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+.tp-dialog{border:1px solid #394754;border-radius:6px;background:#0d1116;color:#e6ebf0;padding:0;max-width:440px;width:min(440px,calc(100vw - 32px));box-shadow:0 18px 60px #000b}
+.tp-dialog::backdrop{background:#000a}
+.tp-dialog-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line);background:#10151b}
+.tp-dialog-title{font-size:12px;font-weight:900}.tp-dialog-close{border:0;background:transparent;color:var(--muted);font-size:18px;cursor:pointer}
+.tp-dialog-body{padding:15px 16px;font-size:12px;line-height:1.6;color:#c7d0d9;white-space:pre-line}
+.tp-dialog-actions{display:flex;justify-content:flex-end;gap:8px;padding:11px 14px;border-top:1px solid var(--line)}
+.tp-dialog-btn{border:1px solid #35424f;background:#141b22;color:#d7e0e8;padding:7px 11px;border-radius:4px;font:900 9px inherit;font-family:inherit;cursor:pointer;text-transform:uppercase;letter-spacing:.05em}
+.tp-dialog-btn.danger{border-color:#8e4e4e;background:#3a1818;color:#ffdada}
+.tp-dialog-btn:hover{filter:brightness(1.12)}
+.cmp tr.wsect th{padding-top:12px}.cmp td.wst{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#c7cbd1;text-align:center}
 .accent-line{height:2px;background:linear-gradient(90deg,var(--accent),var(--accent) 33%,transparent 33%);opacity:.95}
 .wrap{max-width:1360px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:12px}
 .hero{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:end;padding:18px 0 4px}
@@ -95,6 +109,7 @@ label.chk[hidden]{display:none}
 .tablewrap{overflow-x:auto}
 table.cmp{width:100%;border-collapse:collapse;font-size:11px;table-layout:fixed}
 table.cmp col.k{width:166px}
+table.cmp.five col.k{width:128px}table.cmp.five input{padding:5px 2px 5px 4px}table.cmp th{white-space:nowrap}table.cmp.five th{letter-spacing:.03em}
 table.cmp th,table.cmp td{padding:3px 3px;text-align:left}
 table.cmp th{font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--label);font-weight:900}
 table.cmp td:first-child{font-family:var(--mono);font-size:10.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -131,6 +146,8 @@ table.race button{width:100%;padding:5px 4px;font-size:10px;display:flex;align-i
 .viewsw{display:flex;gap:4px;flex:none}.viewsw button{padding:5px 9px;font-size:10px}
 .viewsw button.on{background:#15181d;color:#fff;border-color:var(--accent);box-shadow:inset 0 -2px 0 var(--accent)}
 .chart[hidden]{display:none}
+.edhead{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-top:8px}.edhead .sect{margin-top:0}
+#wetTable[hidden],#wetHead[hidden]{display:none}
 table.race button.on{background:#15181d;color:#fff;border-color:var(--accent);box-shadow:inset 0 -2px 0 var(--accent)}
 
 input.bad{border-color:var(--bad)!important;animation:badflash .6s}
@@ -143,7 +160,7 @@ textarea{width:100%;font-family:var(--mono);font-size:11px;background:var(--fiel
 .st-name{font-family:var(--mono);font-size:12px;color:#e7eaee;font-weight:500;white-space:nowrap}
 .st-track{position:relative;height:30px}
 .st-seg{position:absolute;top:2px;height:16px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:800;overflow:hidden;white-space:nowrap}
-.st-seg.soft{background:var(--soft);color:#fff}.st-seg.medium{background:var(--med);color:#14171b}.st-seg.hard{background:var(--hard);color:#14171b}
+.st-seg.soft{background:var(--soft);color:#fff}.st-seg.medium{background:var(--med);color:#14171b}.st-seg.hard{background:var(--hard);color:#14171b}.st-seg.intermediate{background:var(--intermediate);color:#fff}.st-seg.wet{background:var(--wet);color:#fff}
 .st-pit{position:absolute;top:20px;transform:translateX(-50%);font-size:9.5px;color:var(--muted);font-weight:700}
 .st-gap{text-align:right;font-size:12px;font-weight:700;color:#c7cbd1}
 .st-gap.best{color:#fff}
@@ -180,7 +197,7 @@ textarea{width:100%;font-family:var(--mono);font-size:11px;background:var(--fiel
 .pseg{position:absolute;top:4px;display:flex;justify-content:center;gap:3px;padding:0 2px;box-sizing:border-box}
 .pseg button{padding:3px 0;width:30px;font-size:10px;line-height:1.3;opacity:.55}
 .pseg button.on{opacity:1;color:#14171b;border-color:transparent}
-.pseg button.on.soft{background:var(--soft);color:#fff}.pseg button.on.medium{background:var(--med)}.pseg button.on.hard{background:var(--hard)}
+.pseg button.on.soft{background:var(--soft);color:#fff}.pseg button.on.medium{background:var(--med)}.pseg button.on.hard{background:var(--hard)}.pseg button.on.intermediate{background:var(--intermediate);color:#fff}.pseg button.on.wet{background:var(--wet);color:#fff}
 .pseg button:hover{opacity:1}
 .pstop{position:absolute;transform:translateX(-50%);display:inline-flex;align-items:center;gap:2px;background:var(--panel3);padding:0 2px;z-index:2}
 .pstop b{font-family:var(--mono);font-size:11px;color:#fff;min-width:18px;text-align:center}
@@ -235,7 +252,7 @@ td.best .mg{color:#fff;font-weight:800}
 .tag{font-size:8.5px;font-weight:900;letter-spacing:.08em;color:var(--bad);border:1px solid var(--bad);border-radius:3px;padding:1px 4px}
 .mb{position:relative;height:15px}
 .mbs{position:absolute;top:0;height:15px;border-radius:2px;font-size:9.5px;font-weight:800;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.mbs.soft{background:var(--soft);color:#fff}.mbs.medium{background:var(--med);color:#14171b}.mbs.hard{background:var(--hard);color:#14171b}
+.mbs.soft{background:var(--soft);color:#fff}.mbs.medium{background:var(--med);color:#14171b}.mbs.hard{background:var(--hard);color:#14171b}.mbs.intermediate{background:var(--intermediate);color:#fff}.mbs.wet{background:var(--wet);color:#fff}
 table.res td.mc.illegal{text-decoration:none}
 td.illegal .mb,td.illegal .mg,td.illegal .mn{opacity:.4}
 td.illegal .mg{text-decoration:line-through}
@@ -258,7 +275,7 @@ a.tool-card.blue:hover,a.tool-card.blue:focus-visible{box-shadow:inset 3px 0 0 #
 </head>
 <body>
 <header class="topbar">
-  <div class="brand">
+  <div class="brand" id="brandHome" role="button" tabindex="0" title="Restart the app">
     <div class="brand-mark">TP</div>
     <div class="brand-copy">
       <div class="brand-title">TP Stint Lab</div>
@@ -283,9 +300,9 @@ a.tool-card.blue:hover,a.tool-card.blue:focus-visible{box-shadow:inset 3px 0 0 #
         <span><span class="tool-title">TP Save Lab</span><span class="tool-sub">Analyze, compare and edit your Team Principal career save.</span></span>
         <span class="tool-go">Open →</span>
       </a>
-      <a class="tool-card blue" href="https://brunocp88.github.io/TP-SaveViewer/finance-lab.html">
+      <a class="tool-card blue" href="https://brunocp88.github.io/TP-SaveViewer/mod-workshop.html">
         <span class="tool-icon"><svg style="min-width:0;width:22px;height:22px;display:block" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="6" cy="6.2" rx="3.8" ry="1.3"/><path d="M2.2 6.2v7c0 .7 1.5 1.3 3.3 1.3M2.2 9.4c0 .7 1.5 1.3 3.3 1.3"/><ellipse cx="18" cy="4.6" rx="3.8" ry="1.3"/><path d="M21.8 4.6v7c0 .7-1.5 1.3-3.3 1.3M21.8 7.8c0 .7-1.5 1.3-3.3 1.3"/><ellipse cx="12" cy="10" rx="4.8" ry="1.7"/><path d="M7.2 10v9c0 .9 2.1 1.7 4.8 1.7s4.8-.8 4.8-1.7v-9M7.2 13c0 .9 2.1 1.7 4.8 1.7s4.8-.8 4.8-1.7M7.2 16c0 .9 2.1 1.7 4.8 1.7s4.8-.8 4.8-1.7"/></svg></span>
-        <span><span class="tool-title">TP Finance Lab</span><span class="tool-sub">Rebalance every money value in a data pack: load constants.py and the JSON files, scale each finance category with sliders, download the edited files.</span></span>
+        <span><span class="tool-title">TP Mod Workshop</span><span class="tool-sub">Mod a Team Principal data pack: finances, racecraft, schedules, teams, drivers, regulations, events and junior series, then download the edited files.</span></span>
         <span class="tool-go">Open →</span>
       </a>
   </div>
@@ -299,8 +316,10 @@ a.tool-card.blue:hover,a.tool-card.blue:focus-visible{box-shadow:inset 3px 0 0 #
         <div class="sets" id="sets"></div>
         <div class="btnrow setbtns"><label class="chk" id="cmpWrap"><input type="checkbox" id="cmpOn"><span class="ck"></span><span>Compare models</span></label><button id="addVan">Add Vanilla 0.99.5</button></div>
         <div class="toast" id="tyreMsg"></div>
-        <div class="sect">Editing: <span id="editName"></span></div>
+        <div class="edhead"><div class="sect">Editing: <span id="editName"></span></div><div class="viewsw" id="tyreView"><button type="button" data-tv="dry" class="on">Dry</button><button type="button" data-tv="wet">Wet</button></div></div>
         <div class="tablewrap"><table class="cmp" id="cmpTable"></table></div>
+        <div class="sect" id="wetHead"></div>
+        <div class="tablewrap"><table class="cmp five" id="wetTable"></table></div>
         <div class="sect">Race settings in the file</div>
         <div class="tablewrap"><table class="cmp race" id="raceTable"><colgroup id="raceCols"></colgroup><tbody>
           <tr><td>mandatory_compound_count</td><td><input type="number" id="mand" min="1" max="3" step="1" aria-label="mandatory_compound_count"></td></tr>
@@ -325,6 +344,8 @@ a.tool-card.blue:hover,a.tool-card.blue:focus-visible{box-shadow:inset 3px 0 0 #
         <label class="f"><span>tyre_wear_mult</span><input type="number" data-dec="2" id="twm" step="0.01"></label>
         <label class="f"><span>fuel_consumption</span><input type="number" data-dec="2" id="tfc" step="0.01"></label>
         <label class="f"><span>Pit lane loss (s)</span><input type="number" data-dec="1" id="pit" step="0.1"></label>
+        <label class="f"><span>Track water (mm), whole race</span><input type="number" data-dec="1" id="water" step="0.1" min="0" max="5"></label>
+        <div class="note" id="waterOut"></div>
         <div class="sect">Derived from the track file and game code</div>
         <label class="f"><span>Lap time, 50-rated car at 800 kg, grip 1.00 (s)</span><input type="number" data-dec="2" id="base" step="0.01" readonly tabindex="-1" class="ro"></label>
         <label class="f"><span>Soft vs hard, new tyres, empty car (s)</span><input type="number" data-dec="2" id="gripGap" step="0.01" readonly tabindex="-1" class="ro"></label>
@@ -397,13 +418,21 @@ a.tool-card.blue:hover,a.tool-card.blue:focus-visible{box-shadow:inset 3px 0 0 #
           <li>With several track files loaded, the app races one average track: race laps, length, tyre_wear_mult, fuel_consumption and pit loss are the mean of the tracks, and each lap time is the mean of every track's own game lap time for the same tyres and fuel. Use it to find a strategy that works across a season or a group of tracks.</li>
           <li>Each stop costs the pit lane loss plus tyre service: on average 5.0 - 0.1316 x (chief mechanic pit-stop skill - 1) seconds, which the game rolls between 75% and 125% of that. Refuelling adds 0.15 s per kg. Crew mistakes (a few seconds, now and then) are left out.</li>
           <li>Fuel per lap = fuel_consumption x FUEL_PER_LAP_CONSTANT / FUEL_REFERENCE_EFFICIENCY, for an engine with fuel efficiency 50 (the game multiplies by 1 - 0.25 x (efficiency - 50) / 50). A track file without fuel_consumption uses the game's estimate: 1 + (straight share - 0.25) x 0.6 + (1 - lap_modifier / 3.5) x 0.2.</li>
-          <li>Each plan is a sequence of dry compounds, one per stint, in any order. With "Optimal split" the stint lengths are searched exhaustively for the fastest legal race; "Equal stints" splits the laps evenly, as earlier versions did. A plan needs as many different dry compounds as the model's mandatory_compound_count.</li>
+          <li>Each plan is a sequence of compounds, one per stint, in any order. With "Optimal split" the stint lengths are searched exhaustively for the fastest legal race; "Equal stints" splits the laps evenly, as earlier versions did. A plan needs as many different dry compounds as the model's mandatory_compound_count.</li>
+          <li>Track water (mm) holds for the whole race. Each compound uses its wetness_states entry for that water level: grip base x lat_mult / long_mult and wear rate x wear_mult, as the game's tyre model does. Intermediate and wet tyres join the plans when the water is above 0. Assumed, not yet checked in the game code: a plan that uses an intermediate or wet tyre is exempt from mandatory_compound_count, and only dry compounds count towards it.</li>
           <li> With refuelling each stint starts with its own fuel and pays refuel time at the stop; without it the car starts with the fuel for the whole race, whatever the tank size, and stops are for tyres only. Traffic and track position are not modelled, so multi-stop gains are best case.</li>
         </ul>
       </details>
 
 </div>
 
+<dialog id="tpConfirmDialog" class="tp-dialog" aria-labelledby="tpConfirmTitle">
+  <div class="tp-dialog-head"><div id="tpConfirmTitle" class="tp-dialog-title">Restart the app?</div><button id="tpConfirmClose" class="tp-dialog-close" type="button" aria-label="Close">×</button></div>
+  <div id="tpConfirmBody" class="tp-dialog-body">You have loaded files or changed settings in this session. Restarting reloads the Stint Lab with its defaults and loses them.
+
+Restart anyway?</div>
+  <div class="tp-dialog-actions"><button id="tpConfirmCancel" class="tp-dialog-btn" type="button">Cancel</button><button id="tpConfirmOk" class="tp-dialog-btn danger" type="button">Restart</button></div>
+</dialog>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
 const $=id=>document.getElementById(id);
@@ -413,14 +442,25 @@ const DEFCLIFF={soft:[35,2.0,2.0],medium:[45,1.85,1.85],hard:[65,1.6,1.6]};
 const SET_COLORS=["#d6332b","#2f6fd6","#1f8a4c","#9a4fd0","#d97a00","#0e8f91"];
 const comp=(a)=>Object.fromEntries(FIELDS.map((f,i)=>[f,a[i]??null]));
 const BUILTIN=[
-  {name:"Vanilla 0.99.5",mandatory:1,wearQuantum:0.02,defaultCompound:"medium",startProb:{soft:0.35,medium:0.4,hard:0.2,intermediate:0.04,wet:0.01},compounds:{soft:comp([1.0175,1.0165,0.036,0.06,0.1,35,2.0,2.0]),medium:comp([1.01,1.01,0.025,0.055,0.085,45,1.85,1.85]),hard:comp([1.002,1.002,0.018,0.05,0.075,65,1.6,1.6])}}
+  {name:"Vanilla 0.99.5",mandatory:1,wearQuantum:0.02,defaultCompound:"medium",startProb:{soft:0.35,medium:0.4,hard:0.2,intermediate:0.04,wet:0.01},compounds:{soft:comp([1.0175,1.0165,0.036,0.06,0.1,35,2.0,2.0]),medium:comp([1.01,1.01,0.025,0.055,0.085,45,1.85,1.85]),hard:comp([1.002,1.002,0.018,0.05,0.075,65,1.6,1.6]),intermediate:comp([0.9,0.9,0.026,0.13,0.16]),wet:comp([0.84,0.84,0.03,0.12,0.14])}}
 ];
+// Vanilla wetness_states: [name, min_mm, max_mm, lat_mult, long_mult, wear_mult]
+const VAN_WS={soft:[["dry",0.0,0.3,1.0,1.0,1.0],["moist",0.3,0.8,0.96,0.95,1.04],["damp",0.8,1.5,0.88,0.84,1.06],["wet",1.5,3.0,0.72,0.68,1.08],["very_wet",3.0,5.0,0.56,0.52,1.12]],medium:[["dry",0.0,0.3,1.0,1.0,1.0],["moist",0.3,0.8,0.97,0.96,1.03],["damp",0.8,1.5,0.9,0.87,1.04],["wet",1.5,3.0,0.76,0.72,1.06],["very_wet",3.0,5.0,0.62,0.58,1.09]],hard:[["dry",0.0,0.3,1.0,1.0,1.0],["moist",0.3,0.8,0.98,0.97,1.02],["damp",0.8,1.5,0.92,0.89,1.03],["wet",1.5,3.0,0.8,0.76,1.05],["very_wet",3.0,5.0,0.66,0.62,1.07]],intermediate:[["dry",0.0,0.25,0.9,0.88,1.16],["moist",0.25,0.8,0.96,0.95,1.08],["crossover",0.8,1.8,1.03,1.02,1.0],["wet",1.8,3.2,1.0,0.99,0.98],["very_wet",3.2,5.0,0.9,0.88,1.04]],wet:[["dry",0.0,0.25,0.75,0.72,1.24],["moist",0.25,0.8,0.84,0.82,1.14],["damp",0.8,2.0,0.95,0.94,1.04],["wet",2.0,4.0,1.04,1.03,0.98],["very_wet",4.0,5.0,1.08,1.06,0.96]]};
+for(const [c,a] of Object.entries(VAN_WS))BUILTIN[0].compounds[c].ws=a.map(([name,min_mm,max_mm,lat_mult,long_mult,wear_mult])=>({name,min_mm,max_mm,lat_mult,long_mult,wear_mult}));
 // Generic 5 km layout used until a track file is loaded.
 const AVG_MS=[["straight",12,300],["low",3,100],["straight",10,260],["med",4,160],["straight",8,250],["high",5,220],["straight",10,280],["low",3,90],["straight",9,240],["med",5,170],["high",6,230],["straight",12,300],["low",3,110],["med",4,150],["straight",6,230]].map(([type,length_pct,target_speed_kmh])=>({type,length_pct,target_speed_kmh}));
 const AVG={name:"No track file loaded: using a generic 5 km layout",laps:60,len:5,twm:1,tfc:1,pit:20,ms:AVG_MS};
 let topAll=false,sets=BUILTIN.map(s=>({...structuredClone(s),builtin:true})),active=0,trackLabel=AVG.name;
-const ORDER=["soft","medium","hard"];
-const dryNames=s=>ORDER.filter(c=>s.compounds[c]);
+const ORDER=["soft","medium","hard","intermediate","wet"],WETC=["intermediate","wet"];
+const dryNames=s=>ORDER.filter(c=>s.compounds[c]&&!WETC.includes(c));
+const allNames=s=>ORDER.filter(c=>s.compounds[c]);
+// Compounds raced: dry ones always, intermediate and wet only when the track has water.
+let WATER=0;
+const useNames=s=>ORDER.filter(c=>s.compounds[c]&&(!WETC.includes(c)||WATER>0));
+// The compound's wetness state for this much water (first state whose range holds it; past the last range, the last state).
+const NOSTATE={name:"none",lat_mult:1,long_mult:1,wear_mult:1};
+function wetState(c,mm){const a=c.ws;if(!a||!a.length)return NOSTATE;
+  return a.find(w=>mm>=w.min_mm&&mm<w.max_mm)||(mm<a[0].min_mm?a[0]:a[a.length-1])}
 
 function setTrack(t){
   $("laps").value=t.laps;$("tlen").value=t.len;$("twm").value=t.twm;$("tfc").value=t.tfc;$("pit").value=t.pit;
@@ -435,7 +475,7 @@ function fmtDec(){document.querySelectorAll("input[data-dec]").forEach(el=>{if(e
 document.addEventListener("change",e=>{const el=e.target;if(el.dataset&&el.dataset.dec&&el.value!=="")el.value=(+el.value).toFixed(+el.dataset.dec)});
 function defaults(){
   setTrack(AVG);
-  $("chassis").value=600;$("engine").value=115;$("fpc").value=100;$("fre").value=50;$("refuel").checked=true;$("ref").value=1.5;$("tank").value=120;$("th").value=0.75;$("prof").value=1.0;$("mech").value=10;$("pace").value=0;
+  $("chassis").value=600;$("engine").value=115;$("fpc").value=100;$("fre").value=50;$("refuel").checked=true;$("ref").value=1.5;$("tank").value=120;$("th").value=0.75;$("prof").value=1.0;$("mech").value=10;$("pace").value=0;$("water").value=0;
 }
 
 /* ---------- uploads ---------- */
@@ -457,8 +497,9 @@ async function addTyreFiles(files){
     try{
       const j=JSON.parse(await readText(f));
       const cs=j.compounds||j;const out={};
-      for(const c of ORDER){if(cs[c]&&(cs[c].category??"dry")==="dry")out[c]=Object.fromEntries(FIELDS.map(k=>[k,cs[c][k]??GAME_DEFAULTS[k]??null]))}
-      if(!Object.keys(out).length)throw new Error("no soft, medium or hard compound found");
+      for(const c of ORDER){if(!cs[c])continue;out[c]=Object.fromEntries(FIELDS.map(k=>[k,cs[c][k]??GAME_DEFAULTS[k]??null]));
+        if(Array.isArray(cs[c].wetness_states))out[c].ws=cs[c].wetness_states.map(w=>({...w}))}
+      if(!dryNames({compounds:out}).length)throw new Error("no soft, medium or hard compound found");
       sets.push({name:f.name.replace(/\.json$/i,""),mandatory:j.mandatory_compound_count??1,wearQuantum:j.wear_quantum??null,defaultCompound:j.default_compound??null,startProb:{...(j.start_probabilities||{})},compounds:out,raw:j});added++;
       if(sets.length>SET_COLORS.length)sets.shift();
     }catch(e){errs.push(f.name+": "+e.message)}
@@ -522,17 +563,35 @@ $("sets").addEventListener("click",e=>{
   renderSets();renderTable();update();
 });
 const CLIFF=["wear_cliff_onset_pct","wear_cliff_mult_lat","wear_cliff_mult_long"];
-const hasCliff=s=>dryNames(s).some(c=>s.compounds[c].wear_cliff_onset_pct!=null);
+// The Dry/Wet switch picks the compounds shown in the editor; the Tyre cliff switch acts on those.
+const viewNames=s=>tyreView==="wet"&&WETC.some(c=>s.compounds[c])?WETC.filter(c=>s.compounds[c]):dryNames(s);
+const hasCliff=s=>viewNames(s).some(c=>s.compounds[c].wear_cliff_onset_pct!=null);
 // Cliff values kept aside when a cliff is removed, so it comes back as it was; vanilla values if there is nothing to restore.
 const stashCliff=(s,c)=>{const o=s.compounds[c];if(o.wear_cliff_onset_pct!=null||o.wear_cliff_mult_lat!=null){(s.cliffStash=s.cliffStash||{})[c]=CLIFF.map(f=>o[f])}};
 const restoreCliff=(s,c,onset)=>{const o=s.compounds[c],st=s.cliffStash?.[c]||DEFCLIFF[c]||[65,1.6,1.6];
   o.wear_cliff_onset_pct=onset??st[0];if(o.wear_cliff_mult_lat==null)o.wear_cliff_mult_lat=st[1];if(o.wear_cliff_mult_long==null)o.wear_cliff_mult_long=st[2]};
 const clearCliff=(s,c)=>{stashCliff(s,c);for(const f of CLIFF)s.compounds[c][f]=null};
 function renderTable(){
-  const s=sets[active],cs=dryNames(s);
-  $("cmpTable").innerHTML=`<colgroup><col class="k">${cs.map(()=>"<col>").join("")}</colgroup>`+"<thead><tr><th></th>"+cs.map(c=>`<th><span class="dot" style="background:var(--${c==="medium"?"med":c})"></span>${c[0].toUpperCase()+c.slice(1)}</th>`).join("")+"</tr></thead><tbody>"+
-    FIELDS.map((f,i)=>(f==="wear_cliff_onset_pct"?`<tr><td colspan="${cs.length+1}"><label class="chk"><input type="checkbox" id="cliffOn" ${hasCliff(s)?"checked":""}><span class="ck"></span><span>Tyre cliff</span></label></td></tr>`:"")+`<tr><td>${f}</td>`+cs.map(c=>`<td><input type="number" step="${STEPS[i]}" min="0" ${f==="wear_cliff_onset_pct"?'max="100"':""} data-c="${c}" data-f="${f}" value="${s.compounds[c][f]??""}" ${OPTIONAL.has(f)&&!hasCliff(s)?"disabled":""} placeholder="none" aria-label="${c} ${f}"></td>`).join("")+"</tr>").join("")+"</tbody>";
+  const s=sets[active],cs=dryNames(s),wc=WETC.filter(c=>s.compounds[c]),all=allNames(s),mm=WATER,cols=Math.max(cs.length,wc.length);
+  const head=list=>list.map(c=>`<th><span class="dot" style="background:var(--${c==="medium"?"med":c})"></span>${c==="intermediate"?"Inter":cap(c)}</th>`).join("")+"<th></th>".repeat(cols-list.length);
+  const cell=(c,f,i)=>`<td><input type="number" step="${STEPS[i]}" min="0" ${f==="wear_cliff_onset_pct"?'max="100"':""} data-c="${c}" data-f="${f}" value="${s.compounds[c][f]??""}" ${OPTIONAL.has(f)&&!hasCliff(s)?"disabled":""} placeholder="none" aria-label="${c} ${f}"></td>`;
+  const rows=(list,cliffRow)=>FIELDS.map((f,i)=>(cliffRow&&f==="wear_cliff_onset_pct"?`<tr><td colspan="${cols+1}"><label class="chk"><input type="checkbox" id="cliffOn" ${hasCliff(s)?"checked":""}><span class="ck"></span><span>Tyre cliff</span></label></td></tr>`:"")+`<tr><td>${f}</td>`+list.map(c=>cell(c,f,i)).join("")+"<td></td>".repeat(cols-list.length)+"</tr>").join("");
+  // Dry/Wet switch: the dry compounds, or intermediate and wet with the wetness table
+  const wet=tyreView==="wet"&&wc.length;
+  document.querySelectorAll("#tyreView button").forEach(b=>{b.classList.toggle("on",b.dataset.tv===(wet?"wet":"dry"));if(b.dataset.tv==="wet")b.disabled=!wc.length});
+  $("cmpTable").innerHTML=`<colgroup><col class="k">${"<col>".repeat(cols)}</colgroup><thead><tr><th></th>${head(wet?wc:cs)}</tr></thead><tbody>`+rows(wet?wc:cs,true)+"</tbody>";
+  // wetness_states: the state each compound is in at the race's track water, editable
+  $("wetHead").textContent=`Wetness at ${mm.toFixed(1)} mm track water`;
+  $("wetTable").innerHTML=`<colgroup><col class="k">${"<col>".repeat(all.length)}</colgroup><thead><tr><th></th>${all.map(c=>`<th><span class="dot" style="background:var(--${c==="medium"?"med":c})"></span>${{intermediate:"Inter",medium:"Med"}[c]??cap(c)}</th>`).join("")}</tr></thead><tbody><tr><td>state</td>`+all.map(c=>`<td class="wst">${wetState(s.compounds[c],mm).name.replace("_"," ")}</td>`).join("")+"</tr>"+
+    WFIELDS.map(f=>`<tr><td>${f}</td>`+all.map(c=>{const w=wetState(s.compounds[c],mm);return `<td><input type="number" step="0.01" min="0" data-wc="${c}" data-w="${f}" value="${w===NOSTATE?"":w[f]}" ${w===NOSTATE?"disabled":""} aria-label="${c} ${f}"></td>`}).join("")+"</tr>").join("")+"</tbody>";
 }
+const WFIELDS=["lat_mult","long_mult","wear_mult"];
+let tyreView="dry";
+$("tyreView").addEventListener("click",e=>{const b=e.target.closest("button");if(!b||b.disabled)return;tyreView=b.dataset.tv;renderTable()});
+$("wetTable").addEventListener("input",e=>{const t=e.target;if(!t.dataset.w)return;const v=+t.value;
+  if(t.value===""||!isFinite(v)||v<=0)return;wetState(sets[active].compounds[t.dataset.wc],WATER)[t.dataset.w]=v;update()});
+$("wetTable").addEventListener("change",e=>{const t=e.target;if(!t.dataset.w)return;t.value=wetState(sets[active].compounds[t.dataset.wc],WATER)[t.dataset.w]});
+$("water").addEventListener("input",()=>{S();renderTable()});
 // Value guards: no negatives, no invalid numbers. Grip and wear fields are required; cliff fields may be "none".
 const OPTIONAL=new Set(["wear_cliff_onset_pct","wear_cliff_mult_lat","wear_cliff_mult_long"]);
 const POSITIVE=new Set(["lat_grip_base","long_grip_base","wear_rate_base"]); // 0 here breaks the lap-time maths
@@ -572,7 +631,7 @@ function renderRace(){
   $("startProb").innerHTML="<td>start_probabilities</td>"+cs.map(c=>`<td><input type="number" min="0" max="1" step="0.05" data-sp="${c}" value="${(s.startProb?.[c]??0).toFixed(2)}" data-last="${(s.startProb?.[c]??0).toFixed(2)}" aria-label="${c} start probability"></td>`).join("");
   spTotal();
 }
-function spTotal(){const sp=sets[active].startProb||{},dry=dryNames(sets[active]).reduce((a,c)=>a+(+sp[c]||0),0),other=(+sp.intermediate||0)+(+sp.wet||0);
+function spTotal(){const sp=sets[active].startProb||{},dry=dryNames(sets[active]).reduce((a,c)=>a+(+sp[c]||0),0),other=WETC.reduce((a,c)=>a+(+sp[c]||0),0);
   const t=dry+other;$("spTotal").innerHTML=`Dry ${dry.toFixed(2)} + intermediate and wet ${other.toFixed(2)} = <b style="color:${Math.abs(t-1)<0.005?"var(--good)":"var(--bad)"}">${t.toFixed(2)}</b>`}
 $("defComp").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;sets[active].defaultCompound=b.dataset.dc;renderRace()});
 $("startProb").addEventListener("input",e=>{const t=e.target;if(!t.dataset.sp)return;const v=+t.value;
@@ -586,7 +645,7 @@ $("mand").addEventListener("input",()=>{const v=Math.round(+$("mand").value);if(
 $("split").addEventListener("change",update);
 // The Tyre cliff tick is redrawn with the table, so its handler sits on the table.
 $("cmpTable").addEventListener("change",e=>{if(e.target.id!=="cliffOn")return;const s=sets[active];
-  for(const c of dryNames(s)){if($("cliffOn").checked)restoreCliff(s,c);else clearCliff(s,c)}
+  for(const c of viewNames(s)){if($("cliffOn").checked)restoreCliff(s,c);else clearCliff(s,c)}
   renderTable();update()});
 $("cmpOn").addEventListener("change",update);
 $("topAll").addEventListener("click",()=>{topAll=!topAll;update()});
@@ -605,15 +664,16 @@ function exportModel(s){
   if(s.wearQuantum!=null)j.wear_quantum=s.wearQuantum;
   if(s.defaultCompound)j.default_compound=s.defaultCompound;
   if(s.startProb&&Object.keys(s.startProb).length){j.start_probabilities=j.start_probabilities||{};
-    for(const c of dryNames(s))if(s.startProb[c]!=null)j.start_probabilities[c]=s.startProb[c];
+    for(const c of allNames(s))if(s.startProb[c]!=null)j.start_probabilities[c]=s.startProb[c];
     if(!s.raw)for(const k of ["intermediate","wet"])if(s.startProb[k]!=null)j.start_probabilities[k]=s.startProb[k]}
-  for(const c of dryNames(s)){const o=cs[c]=cs[c]||{category:"dry"};
-    for(const f of FIELDS){const v=s.compounds[c][f];if(v==null)delete o[f];else o[f]=v}}
+  for(const c of allNames(s)){const o=cs[c]=cs[c]||{category:c==="intermediate"?"inter":c==="wet"?"wet":"dry"};
+    for(const f of FIELDS){const v=s.compounds[c][f];if(v==null)delete o[f];else o[f]=v}
+    if(s.compounds[c].ws)o.wetness_states=structuredClone(s.compounds[c].ws)}
   return j;
 }
 $("dlJson").addEventListener("click",()=>{
   const s=sets[active],txt=JSON.stringify(exportModel(s),null,2)+"\n";
-  const done=()=>msg($("copyMsg"),s.raw?"Downloaded. Every other part of the uploaded file is unchanged.":"Downloaded. Built-in model: the file holds only the dry compounds; start from an uploaded tyremodel.json to keep wet tyres and temperatures.");
+  const done=()=>msg($("copyMsg"),s.raw?"Downloaded. Every other part of the uploaded file is unchanged.":"Downloaded. Built-in model: the file holds grip, wear and wetness values; start from an uploaded tyremodel.json to keep temperatures.");
   // Inside claude.ai the viewer saves through the downloads capability; on a plain web page (GitHub) a normal download link is used.
   if(window.claude?.use){
     if(!dlCap){msg($("copyMsg"),"Download is not available in this view.");return}
@@ -641,14 +701,17 @@ function S(){
   $("pitOut").textContent=`= ${service.toFixed(2)} s tyre service on average, ${(+$("pit").value+service).toFixed(1)} s per stop with the pit lane`;
   const chassisKg=+$("chassis").value,engineKg=+$("engine").value;
   $("base").value=gameLapTime(len,1,1,650,150,0).toFixed(2);
-  return {laps,fpl,len,chassisKg,engineKg,pace:+$("pace").value||0,
+  WATER=clamp(+$("water").value||0,0,5);
+  return {laps,fpl,len,chassisKg,engineKg,pace:+$("pace").value||0,water:WATER,
     dry:chassisKg+engineKg,refuel:$("refuel").checked,ref:+$("ref").value/10,tank:+$("tank").value,pit:+$("pit").value+service,
     th:+$("th").value,optimal:$("split").value==="opt",wm:(+$("twm").value||1)*(+$("prof").value||1)};
 }
 // q = the model's wear_quantum (game tyre_model.py: default 0.02, lowest 0.001).
 function prep(cname,c,P,q){
   let on=c.wear_cliff_onset_pct,ml=c.wear_cliff_mult_lat,mg=c.wear_cliff_mult_long;
-  return {...c,rate:(c.wear_rate_base||0)*P.wm,on,ml:ml??1,mg:mg??ml??1,q:Math.max(0.001,q??0.02)};
+  const w=wetState(c,P.water||0); // game grip_multipliers: base grip x wetness lat/long mult; wear_rate x wetness wear mult
+  return {...c,lat_grip_base:c.lat_grip_base*w.lat_mult,long_grip_base:c.long_grip_base*w.long_mult,state:w.name,
+    rate:(c.wear_rate_base||0)*w.wear_mult*P.wm,on,ml:ml??1,mg:mg??ml??1,q:Math.max(0.001,q??0.02)};
 }
 // Game race_manager: the tyre result of the first lap in each wear_quantum step is reused until wear reaches the next step (all compounds).
 // Game wear_grip_factors: without a cliff, wear is also rounded to the nearest step; with a cliff the exact wear is used plus the cliff extra. Wear factor never below 0.5.
@@ -749,7 +812,7 @@ function gameLapTimeFuel(lenKm,lat,lng,carKg,engKg,fuelKg){
   const at=k=>row[k]??(row[k]=gameLapTime(lenKm,lat,lng,carKg,engKg,k*10));
   return w<1e-9?at(i):at(i)*(1-w)+at(i+1)*w;
 }
-const CODE={soft:"S",medium:"M",hard:"H"};
+const CODE={soft:"S",medium:"M",hard:"H",intermediate:"I",wet:"W"};
 const seqName=seq=>seq.map(c=>CODE[c]).join("-");
 const equalSplit=(laps,K)=>Array.from({length:K},(_,i)=>Math.floor(laps/K)+(i<laps%K?1:0));
 // Time a race for a compound sequence and stint lengths L. cs maps compound name to prep() output.
@@ -780,12 +843,14 @@ function stintCosts(c,P){
   return {run:(d,len)=>tab[d*W+len],stop:()=>P.pit};
 }
 // Every compound sequence for 1-3 stops. Optimal mode finds the fastest legal stint split by dynamic programming over laps completed.
+// Mandatory compounds count dry compounds only, and a race that uses an intermediate or wet tyre is exempt (assumed, as in F1).
+const mandNeed=(s,seq)=>seq.some(c=>WETC.includes(c))?0:Math.min(s.mandatory||1,dryNames(s).length);
 function runSet(s,P){
-  const N=P.laps,names=dryNames(s),cs={},costs={},out=[];
+  const N=P.laps,names=useNames(s),cs={},costs={},out=[];
   for(const cn of names){cs[cn]=prep(cn,s.compounds[cn],P,s.wearQuantum);if(P.optimal)costs[cn]=stintCosts(cs[cn],P)}
   const finish=(seq,L)=>{
-    const r=evalSplit(cs,seq,L,P),distinct=new Set(seq).size,need=Math.min(s.mandatory||1,names.length);
-    if(distinct<need){r.ok=false;r.why.push(`needs ${need} compounds`)}
+    const r=evalSplit(cs,seq,L,P),distinct=new Set(seq).size,need=mandNeed(s,seq);
+    if(new Set(seq.filter(c=>!WETC.includes(c))).size<need){r.ok=false;r.why.push(`needs ${need} compounds`)}
     return {seq,N:seq.length-1,name:seqName(seq),mixed:distinct>1,...r};
   };
   if(!P.optimal){
@@ -850,6 +915,9 @@ function update(){
   {const ns=dryNames(sets[active]),q=sets[active].wearQuantum,lt=cn=>lapTime(prep(cn,sets[active].compounds[cn],P,q),0,0,P);
    $("gripGap").value=ns.length>1?(lt(ns[ns.length-1])-lt(ns[0])).toFixed(2):"";
    $("gripGap").previousElementSibling.textContent=ns.length>1?`${cap(ns[0])} vs ${ns[ns.length-1]}, new tyres, empty car (s)`:"Softest vs hardest compound (s)"}
+  {const s=sets[active],pc=x=>"x"+x.toFixed(2);
+   $("waterOut").innerHTML=allNames(s).map(cn=>{const w=wetState(s.compounds[cn],P.water);return `<span class="dot" style="background:var(--${cn==="medium"?"med":cn})"></span>${cap(cn)}: ${w.name.replace("_"," ")}, grip ${pc(w.lat_mult)} / ${pc(w.long_mult)}, wear ${pc(w.wear_mult)}`}).join("<br>")+
+     (P.water>0?"":"<br>Intermediate and wet tyres join the strategies when the track has water.")}
   const results=sets.map(s=>runSet(s,P));
   const ccol=c=>`var(--${c==="medium"?"med":c})`;
   const TAG=w=>w==="wear"?"WEAR":w==="tank"?"TANK":w==="empty stint"?"EMPTY":w.replace(/needs (\d) compounds/,"$1 COMPOUNDS");
@@ -857,7 +925,7 @@ function update(){
   const V=shown(),vs=V.map(i=>sets[i]);
   // top strategies for active
   const R=results[active],bad=css("--bad"),RK=ranked(R),ALL=RK.slice(0,12),TOP=topAll?ALL:(()=>{const t=[1,2,3].map(n=>RK.find(o=>o.N===n&&o.ok)).filter(Boolean);for(const o of RK){if(t.length>=5)break;if(!t.includes(o))t.push(o)}return t.sort((a,b)=>(b.ok-a.ok)||(a.t-b.t))})();
-  $("aiStint").innerHTML="<b>Longest stint before AI pits</b>"+dryNames(sets[active]).map(cn=>`<span><span class="dot" style="background:${ccol(cn)}"></span>${cap(cn)} ${Math.floor(P.th/prep(cn,sets[active].compounds[cn],P).rate)} laps</span>`).join("");
+  $("aiStint").innerHTML="<b>Longest stint before AI pits</b>"+useNames(sets[active]).map(cn=>`<span><span class="dot" style="background:${ccol(cn)}"></span>${cap(cn)} ${Math.floor(P.th/prep(cn,sets[active].compounds[cn],P).rate)} laps</span>`).join("");
   $("topAll").textContent=topAll?"Show best per stop count":"Show all 12";
   $("topLead").textContent=topAll?"The 12 fastest plans.":"The fastest legal plan for each number of stops, filled up to 5 with the next fastest plans, numbered by rank among all plans.";
   const major=o=>{const m={};o.seq.forEach((c,i)=>m[c]=(m[c]||0)+o.L[i]);return Object.entries(m).sort((a,b)=>b[1]-a[1])[0][0]};
@@ -869,14 +937,14 @@ function update(){
     const top=o.ok&&Math.abs(o.gap)<1e-6;
     return `<div class="st-row pick ${o.ok?"":"illegal"}" data-k="${ri}" title="${o.ok?"Click to load into the Strategy planner":"Breaks "+o.why.join(", ")+". Click to load into the Strategy planner"}"><span class="st-rank">${RK.indexOf(o)+1}</span><span class="st-name">${o.name}</span><div class="st-track">${segs}</div><span class="st-gap ${top?"best":""}">${top?raceTime(o.t):fmt(o.gap)+" s"}</span></div>`}).join("")+
     `<div class="st-axis"><span></span><span></span><div class="ticks">${Array.from({length:Math.floor(N/step)+1},(_,k)=>`<span style="left:${pct(k*step)}">${k*step}</span>`).join("")}</div><span></span><div class="lbl">Lap</div></div>`+
-    `<div class="st-legend"><span><i style="background:var(--soft)"></i>Soft</span><span><i style="background:var(--med)"></i>Medium</span><span><i style="background:var(--hard)"></i>Hard</span></div>`;
+    `<div class="st-legend">${useNames(sets[active]).map(c=>`<span><i style="background:${ccol(c)}"></i>${cap(c)}</span>`).join("")}</div>`;
   // tyre loss overlay
-  const maxL=Math.min(80,Math.max(...vs.flatMap(s=>dryNames(s).map(cn=>Math.floor(P.th/prep(cn,s.compounds[cn],P).rate))))+5);
+  const maxL=Math.min(80,Math.max(...vs.flatMap(s=>useNames(s).map(cn=>Math.floor(P.th/prep(cn,s.compounds[cn],P).rate))))+5);
   const xs=[...Array(maxL+1).keys()];const ds=[];
   V.forEach(i=>{const s=sets[i];
     const href=s.compounds.hard?prep("hard",s.compounds.hard,P,s.wearQuantum):prep(dryNames(s)[0],s.compounds[dryNames(s)[0]],P,s.wearQuantum);
     const r0=lapTime(href,0,0,P);
-    dryNames(s).forEach(cn=>{const c=prep(cn,s.compounds[cn],P,s.wearQuantum);const stint=Math.floor(P.th/c.rate);
+    useNames(s).forEach(cn=>{const c=prep(cn,s.compounds[cn],P,s.wearQuantum);const stint=Math.floor(P.th/c.rate);
       ds.push({label:`${s.name}: ${cn}`,data:xs.map(n=>+(lapTime(c,n,0,P)-r0).toFixed(3)),borderColor:css("--"+(cn==="medium"?"med":cn)),backgroundColor:css("--"+(cn==="medium"?"med":cn)),
         borderDash:i===active?[]:[[7,4],[2,3],[10,3,2,3],[4,4],[1,4]][(i-(i>active?1:0))%5],borderWidth:i===active?2.5:1.3,
         pointRadius:xs.map(n=>n===stint?5:0),tension:0});
@@ -906,7 +974,7 @@ let plans=[],cur=0,plan=null,planKey="",lastP=null,lastR=null,lastTop=[],drag=-1
 const planL=(N,pits)=>[...pits,N].map((x,i,a)=>x-(i?a[i-1]:0));
 function planFrom(o){let a=0;return {seq:[...o.seq],pits:o.L.slice(0,-1).map(l=>a+=l),fuel:o.seq.map(()=>null)}}
 function normPlan(s,P){
-  const N=P.laps,names=dryNames(s),key=active+"|"+N+"|"+s.name;
+  const N=P.laps,names=useNames(s),key=active+"|"+N+"|"+s.name+"|"+P.water;
   // a new model or race length starts from that model's best plan
   if(key!==planKey){planKey=key;plans=[];cur=0}
   plan=plans[cur]||null;
@@ -916,7 +984,7 @@ function normPlan(s,P){
   plans.forEach(q=>q.seq=q.seq.map(c=>names.includes(c)?c:names[0]));
 }
 function simPlan(s,P,plan){
-  const N=P.laps,L=planL(N,plan.pits),cs={};for(const cn of dryNames(s))cs[cn]=prep(cn,s.compounds[cn],P,s.wearQuantum);
+  const N=P.laps,L=planL(N,plan.pits),cs={};for(const cn of useNames(s))cs[cn]=prep(cn,s.compounds[cn],P,s.wearQuantum);
   let t=0,lap=0,fuel=P.refuel?0:N*P.fpl,out=null;const warn=new Set(),life=[],fpts=[],loads=[];
   L.forEach((sl,si)=>{
     const c=cs[plan.seq[si]];
@@ -935,12 +1003,12 @@ function simPlan(s,P,plan){
     life.push({c:plan.seq[si],pts,si});
   });
   if(out!=null)warn.add("OUT OF FUEL LAP "+out);
-  const need=Math.min(s.mandatory||1,dryNames(s).length);if(new Set(plan.seq).size<need)warn.add(need+" COMPOUNDS");
+  const need=mandNeed(s,plan.seq);if(new Set(plan.seq.filter(c=>!WETC.includes(c))).size<need)warn.add(need+" COMPOUNDS");
   return {t,warn:[...warn],life,fpts,L,loads};
 }
 function renderPlanner(){
   const P=lastP,s=sets[active];if(!P)return;normPlan(s,P);
-  const N=P.laps,r=simPlan(s,P,plan),names=dryNames(s),ccol=c=>`var(--${c==="medium"?"med":c})`;
+  const N=P.laps,r=simPlan(s,P,plan),names=useNames(s),ccol=c=>`var(--${c==="medium"?"med":c})`;
   $("activeName4").textContent=s.name;
   $("planAdd").disabled=r.L.length>=4||N<r.L.length+1;$("planDel").disabled=r.L.length<=2;
   const best=lastR.filter(o=>o.ok).sort((x,y)=>x.t-y.t)[0],gap=best?r.t-best.t:null;
@@ -969,10 +1037,10 @@ function renderPlanner(){
 }
 // Controls drawn on the chart: compound buttons above each stint, the stop lap (with < >) on the x axis at each stop, fuel per stint under the lap numbers.
 function placePlan(r,P){
-  const ch=charts.p;if(!ch)return;const N=P.laps,names=dryNames(sets[active]);
+  const ch=charts.p;if(!ch)return;const N=P.laps,names=useNames(sets[active]);
   const off=ch.canvas.getBoundingClientRect().left-$("pWrap").getBoundingClientRect().left,X=v=>off+ch.scales.x.getPixelForValue(v);
   const st=[0,...plan.pits,N],span=i=>`left:${X(st[i]).toFixed(1)}px;width:${(X(st[i+1])-X(st[i])).toFixed(1)}px`;
-  $("pTop").innerHTML=r.L.map((sl,i)=>{const w=X(st[i+1])-X(st[i]),few=w<104;
+  $("pTop").innerHTML=r.L.map((sl,i)=>{const w=X(st[i+1])-X(st[i]),few=w<names.length*35;
     return `<div class="pseg" style="${span(i)}">${(few?[plan.seq[i]]:names).map(cn=>`<button data-pc="${cn}" data-i="${i}" ${few?'data-cyc="1"':""} class="${plan.seq[i]===cn?"on":""} ${cn}" title="${few?"Click to change compound":cap(cn)}" aria-label="${cap(cn)}">${CODE[cn]}</button>`).join("")}</div>`}).join("");
   const axisY=ch.canvas.getBoundingClientRect().top+ch.scales.x.top+6-$("pBot").getBoundingClientRect().top; // lap-number row, in pBot coordinates
   $("pBot").style.height=P.refuel?"30px":"8px";
@@ -999,7 +1067,7 @@ $("planTabs").addEventListener("click",e=>{const b=e.target.closest("button,.pta
   else cur=+b.dataset.pk;
   renderPlanner()});
 $("pWrap").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;const N=lastP.laps,d=+b.dataset.d;
-  if(b.dataset.cyc){const ns=dryNames(sets[active]),i=+b.dataset.i;plan.seq[i]=ns[(ns.indexOf(plan.seq[i])+1)%ns.length]}
+  if(b.dataset.cyc){const ns=useNames(sets[active]),i=+b.dataset.i;plan.seq[i]=ns[(ns.indexOf(plan.seq[i])+1)%ns.length]}
   else if(b.dataset.pc){plan.seq[+b.dataset.i]=b.dataset.pc}
   else if(b.dataset.pit!=null){const i=+b.dataset.pit;plan.pits[i]=clamp(plan.pits[i]+d,(plan.pits[i-1]??0)+1,(plan.pits[i+1]??N)-1)}
   else if(b.dataset.fu!=null){const i=+b.dataset.fu,L=planL(N,plan.pits);const cur=plan.fuel[i]??L[i]*lastP.fpl;plan.fuel[i]=Math.max(0,Math.round(cur+d))}
@@ -1030,6 +1098,27 @@ document.addEventListener("change",e=>{const t=e.target;if(t.type!=="number"||t.
   else t.dataset.last=t.value},true);
 document.querySelectorAll("input:not([data-c]):not([type=file])").forEach(el=>el.addEventListener("input",update));
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>{Object.values(charts).forEach(c=>c.destroy());charts={};update()});
+// Clicking the TP Stint Lab name or logo restarts the app (reloads the page); loaded files or changed settings ask first.
+let appDirty=false;
+const markDirty=()=>{appDirty=true};
+["input","change","drop"].forEach(ev=>document.addEventListener(ev,e=>{if(!e.target.closest?.("#tpConfirmDialog"))markDirty()},true));
+document.addEventListener("click",e=>{if(e.target.closest("button")&&!e.target.closest("#brandHome,#tpConfirmDialog"))markDirty()},true);
+function askRestart(){
+  const dlg=$("tpConfirmDialog");
+  if(!dlg?.showModal)return Promise.resolve(confirm("Restart the app?\n\nLoaded files and changed settings will be lost."));
+  return new Promise(res=>{
+    const done=v=>{dlg.close();["tpConfirmOk","tpConfirmCancel","tpConfirmClose"].forEach(id=>$(id).onclick=null);res(v)};
+    $("tpConfirmOk").onclick=()=>done(true);$("tpConfirmCancel").onclick=()=>done(false);$("tpConfirmClose").onclick=()=>done(false);
+    dlg.oncancel=e=>{e.preventDefault();done(false)};
+    dlg.showModal();$("tpConfirmCancel").focus();
+  });
+}
+async function restartApp(){
+  if(appDirty&&!(await askRestart()))return;
+  appDirty=false;location.reload();
+}
+$("brandHome").addEventListener("click",restartApp);
+$("brandHome").addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();restartApp()}});
 defaults();fmtDec();renderSets();renderTable();update();
 </script>
 
