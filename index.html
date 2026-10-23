@@ -5457,6 +5457,7 @@ input.cbar-val:focus{outline:none;border-color:var(--accent)}
 .sch-sum{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 10px;font-size:13px;color:var(--muted)}.sch-sum strong{font-size:16px;color:#fff}
 .sch-weeks{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px}
 .sch-weeks .sch-name{font-size:12px}
+.fin-pos{color:#46d37a}.fin-neg{color:#ff6b6b}.fin-tipc{cursor:default}.fin-tipc:hover{background:rgba(255,255,255,.05)}.fin-tip-sub{margin-top:6px}.fin-tip-n{font-size:11px;color:var(--muted);margin-top:4px;max-width:260px}
 .sch-wk{background:var(--panel);border:1px solid var(--border);border-radius:5px;padding:7px 9px 9px;min-height:96px;display:flex;flex-direction:column;gap:3px}
 .sch-top{display:flex;align-items:center;gap:6px;min-height:22px}
 .sch-n{white-space:nowrap;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
@@ -5530,12 +5531,31 @@ input.cbar-val:focus{outline:none;border-color:var(--accent)}
 .reg-add-dialog .grid-edit-actions{display:flex!important;justify-content:flex-end;gap:8px;margin-top:6px}.reg-add-dialog .grid-edit-actions button{width:auto!important;min-width:120px;margin:0!important}
 .reg-add-after{display:flex;gap:4px}.reg-add-after.wrap{flex-wrap:wrap}
 .reg-null{display:inline-flex;gap:8px;align-items:center}
-.reg-places{display:flex;flex-wrap:wrap;gap:6px 5px;align-items:flex-start}
-.reg-pl{display:flex;flex-direction:column;align-items:center;gap:2px}.reg-pl>span{font-size:10px;font-weight:900;color:#6f7c89}
-.reg-pl-b{display:flex;gap:2px}.reg-pl .grid-edit-input{width:42px;padding:5px 2px}
-.reg-pl-s{display:flex;flex-direction:column;gap:2px}.reg-pl-s .grid-step-btn{width:18px;height:17px;min-width:0;padding:0;font-size:12px;line-height:1}
-.reg-pl-act{display:flex;flex-direction:column;gap:4px;margin-left:6px;align-self:center}.reg-pl-act .grid-step-btn{width:auto;padding:3px 9px;font-size:11px;height:auto}
+/* places laid out like a starting grid: four columns, left to right, every other place set lower */
+.reg-add-dialog.reg-add-wide{width:min(780px,calc(100vw - 32px));max-width:780px}
+.reg-places{display:block;text-align:left}
+.reg-places>.reg-gcol{display:inline-flex;flex-direction:column;gap:10px;vertical-align:top}
+.reg-gcol+.reg-gcol{margin-left:44px;padding-top:26px}
+.reg-pl{display:flex;flex-direction:row;align-items:center;gap:4px;border-left:3px solid #c9d1d9;border-right:3px solid #c9d1d9;border-top:3px solid #c9d1d9;border-bottom:0;border-radius:3px 3px 0 0;padding:4px 5px 4px 6px;width:max-content}
+.reg-pl>span:first-child{font-size:11px;font-weight:900;color:#fff;background:#252b31;min-width:20px;text-align:center;padding:3px 0;border-radius:2px}
+.reg-pl .grid-edit-input{width:34px!important;padding:2px!important;font-size:12px;height:24px!important;min-height:0!important}
+.reg-pl-s{display:flex;flex-direction:column;gap:2px}
+.reg-pl-s .grid-step-btn{width:16px!important;height:12px!important;min-height:0!important;min-width:0!important;padding:0!important;font-size:7px;line-height:1}
+.reg-lines{display:grid;grid-auto-flow:row;gap:6px 10px}.reg-ln{display:flex;align-items:center;gap:5px}.reg-ln>span:first-child{font-size:10px;font-weight:900;color:#8f9aa6;min-width:14px;text-align:right}.reg-ln .grid-edit-input{width:40px!important;padding:2px 3px!important;height:24px!important;min-height:0!important;font-size:12px}.reg-ln-s{display:flex;gap:3px}.reg-ln-s .grid-step-btn{width:18px!important;height:22px!important;min-height:0!important;min-width:0!important;padding:0!important}
+.reg-add-dialog.reg-add-split{width:min(640px,calc(100vw - 32px));max-width:640px}
+.reg-split{display:grid;grid-template-columns:max-content 1fr;gap:0 22px;align-items:start}
+.reg-split .reg-sl th{display:block;padding-bottom:6px}.reg-split .reg-sl td{display:block}
+.reg-split .reg-sr th{display:block;padding:8px 0 2px}.reg-split .reg-sr td{display:block;padding:0}
+.reg-split .reg-sr tr:first-child th{padding-top:0}.reg-split .reg-sr td,.reg-split .reg-sr .grid-step{text-align:left;justify-content:flex-start}
+.reg-split .reg-add-err,.reg-split .grid-edit-actions{grid-column:1/-1}
+.reg-pl-act{display:flex;flex-direction:row;gap:6px;margin:10px 0 0}.reg-pl-act .grid-step-btn{width:auto;padding:3px 9px;font-size:11px;height:auto}
 .reg-note{font-size:12px;color:var(--muted);margin:4px 0 8px}
+.reg-gov{margin-bottom:10px}.reg-gov-r{display:flex;flex-wrap:wrap;gap:10px 40px;align-items:flex-start}.reg-gov-v{display:flex;align-items:center;gap:14px;margin-top:4px}
+.reg-gov-v .grid-step{display:inline-flex;align-items:center;gap:6px}.reg-gov-n{width:56px!important;text-align:center;cursor:default}.reg-gov-t{font-size:15px;font-weight:700}.reg-gov-s{margin-top:0}.reg-gov-s .reg-o{margin-top:4px;display:inline-block}
+.reg-hist{margin-top:18px;border:1px solid var(--border);border-radius:4px;background:var(--panel3);padding:0 11px 8px}
+.reg-hist-h{display:flex;align-items:center;gap:8px;width:100%;background:none;border:0;color:#fff;font-size:12px;font-weight:950;letter-spacing:.07em;text-transform:uppercase;padding:11px 0;cursor:pointer;text-align:left}
+.reg-hist-n{font-weight:800;color:#8f9aa6;letter-spacing:.04em}
+.reg-hist .reg-h:first-of-type{margin-top:4px}
 .reg-h{font-size:12px;font-weight:950;letter-spacing:.07em;text-transform:uppercase;color:#aab5c0;margin:16px 0 8px;border-bottom:1px solid var(--border);padding-bottom:5px}
 .reg-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;align-items:start}
 .reg-rule{border:1px solid var(--border);border-radius:4px;background:var(--panel3);padding:9px 11px;min-width:0}
@@ -5547,7 +5567,8 @@ input.cbar-val:focus{outline:none;border-color:var(--accent)}
 .reg-seg{display:flex;flex-wrap:wrap;gap:4px}
 .reg-o{border:1px solid #3a434d;border-radius:3px;background:#090c10;color:#aab5c0;padding:5px 9px;font-size:11px;font-weight:800;cursor:pointer}
 .reg-o.static{cursor:default}.reg-btn:disabled{opacity:.45;cursor:default}
-.reg-o.on{background:#17643e;border-color:#2f8b5d;color:#fff}.reg-o.on.up{background:#8a4b10;border-color:#d68a2c}.reg-o.keep.on{background:#252b31;border-color:#48515a}
+.reg-o.on{background:#17643e;border-color:#2f8b5d;color:#fff}.reg-o.on.scr{background:#8a1c22;border-color:#d63a41;color:#fff}
+.reg-o.on.up{background:#8a4b10;border-color:#d68a2c}.reg-o.keep.on{background:#252b31;border-color:#48515a}
 .reg-prop{font-size:14px;font-weight:900;color:#fff;margin:4px 0}.reg-arrow{color:#f0a24a;margin:0 4px}
 .reg-why{font-size:11px;color:var(--muted);margin-bottom:6px}.reg-ev{color:#8f97a1}
 .reg-votes{display:flex;flex-wrap:wrap;gap:4px}
@@ -5736,9 +5757,9 @@ a.tool-card.green:hover,a.tool-card.green:focus-visible{box-shadow:inset 3px 0 0
         <span><span class="tool-title">TP Stint Lab</span><span class="tool-sub">Race strategy simulator: load tyremodel.json and a track file, compare 1, 2 and 3 stop plans with the best stint split, and edit and download the tyre model.</span></span>
         <span class="tool-go">Open →</span>
       </a>
-      <a class="tool-card blue" href="https://brunocp88.github.io/TP-SaveViewer/finance-lab.html">
+      <a class="tool-card blue" href="https://brunocp88.github.io/TP-SaveViewer/mod-workshop.html">
         <span class="tool-icon"><svg style="min-width:0;width:24px;height:24px;display:block" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="6" cy="6.2" rx="3.8" ry="1.3"/><path d="M2.2 6.2v7c0 .7 1.5 1.3 3.3 1.3M2.2 9.4c0 .7 1.5 1.3 3.3 1.3"/><ellipse cx="18" cy="4.6" rx="3.8" ry="1.3"/><path d="M21.8 4.6v7c0 .7-1.5 1.3-3.3 1.3M21.8 7.8c0 .7-1.5 1.3-3.3 1.3"/><ellipse cx="12" cy="10" rx="4.8" ry="1.7"/><path d="M7.2 10v9c0 .9 2.1 1.7 4.8 1.7s4.8-.8 4.8-1.7v-9M7.2 13c0 .9 2.1 1.7 4.8 1.7s4.8-.8 4.8-1.7M7.2 16c0 .9 2.1 1.7 4.8 1.7s4.8-.8 4.8-1.7"/></svg></span>
-        <span><span class="tool-title">TP Finance Lab</span><span class="tool-sub">Rebalance every money value in a data pack: load constants.py and the JSON files, scale each finance category with sliders, download the edited files.</span></span>
+        <span><span class="tool-title">TP Mod Workshop</span><span class="tool-sub">Mod a Team Principal data pack: finances, racecraft, schedules, teams, drivers, regulations, events and junior series, then download the edited files.</span></span>
         <span class="tool-go">Open →</span>
       </a>
     </div>
@@ -12918,7 +12939,7 @@ function openDriverEditor(name){
   const traitsAll=edSaveTraits();
   const origTraits=Array.isArray(d.traits)?d.traits.slice():[];
   let traits=origTraits.slice();
-  const shown={age:Math.round(n(d.age)),pay:Math.round(n(d.pay_driver_amount_m)),injury:Math.max(0,Math.round(n(d.injury_weeks))),talent:Math.round(n(d.talent))};
+  const shown={age:Math.round(n(d.age)),pay:Math.round(n(d.pay_driver_amount_m)*100)/100,injury:Math.max(0,Math.round(n(d.injury_weeks))),talent:Math.round(n(d.talent))};
   for(const [k] of ED_DRIVER_STATS)shown[k]=Math.round(n(d[k]));
   const team=SaveAccess.driverStatus(d)?.currentTeam;
   openFormEditor({
@@ -12930,7 +12951,7 @@ function openDriverEditor(name){
       const left=`<div class="ed-col">
         ${edField('Age',edStepper('age',shown.age,{min:1,max:99,label:'Age'}))}
         ${edField('Nationality',edNationalitySelect('nationality',d.nationality))}
-        ${edField('Pay driver ($m)',edStepper('pay',shown.pay,{min:0,max:999,label:'Pay driver'}))}
+        ${edField('Pay driver ($m)',edStepper('pay',shown.pay,{min:0,max:999,step:0.05,dp:2,label:'Pay driver'}))}
         ${edField('Injury weeks',edStepper('injury',shown.injury,{min:0,max:99,label:'Injury weeks'}))}
         ${edField('Retiring?',edYesNo('retiring',retState.retiring,retState.retired))}
         ${edField('Retired?',edYesNo('retired',retState.retired,false))}
@@ -13009,7 +13030,7 @@ function openCreateDriver(){
           ${edField('Name','<input type="text" data-ed-name maxlength="60" autocomplete="off" placeholder="First and last name">')}
           ${edField('Age',edStepper('age',shown.age,{min:1,max:99,label:'Age'}))}
           ${edField('Nationality',edNationalitySelect('nationality',nats[0]))}
-          ${edField('Pay driver ($m)',edStepper('pay',shown.pay,{min:0,max:999,label:'Pay driver'}))}
+          ${edField('Pay driver ($m)',edStepper('pay',shown.pay,{min:0,max:999,step:0.05,dp:2,label:'Pay driver'}))}
         </div><div class="ed-col ed-col-right">${edDriverStatsHtml(shown)}<div class="ed-sum" data-ed-summary data-ed-id="${esc(nextId)}"></div></div></div>`;
       const bottom=`<div class="ed-bottom">
           ${edField('Traits (up to 2)',`${edChips('traits',traitsAll,traits,{max:2,main:true})}<div class="ed-hint">The first pick is the main trait (gold ring). With two picked, the rest are greyed out.</div>`)}
@@ -16476,7 +16497,9 @@ function renderJuniorContractDetail(){
     </div>
     ${f1?.team?`<div class="junior-conflict-note">Note: also holds an F1 seat (${esc(teamLabel(f1.team))}). The game allows both.</div>`:''}
     ${other?`<div class="junior-conflict-note">Other junior seat: ${esc(other.series)} · ${esc(other.team)}.</div>`:''}
+    <button type="button" class="contract-save-btn contract-edit-driver-btn" data-edit-junior-driver>Edit driver</button>
     ${assignment?'<button type="button" class="contract-cancel-future-btn" data-release-junior>Release junior seat</button>':''}`;
+  juniorContractDetail.querySelector('[data-edit-junior-driver]')?.addEventListener('click',()=>openDriverEditor(driver.name));
   const release=juniorContractDetail.querySelector('[data-release-junior]');
   if(release)release.addEventListener('click',()=>releaseJuniorDriver(driver.name));
 }
@@ -19893,7 +19916,7 @@ window.addEventListener('beforeunload',e=>{
 });
 
 /* ===== Finances tab ===== */
-const FIN_G=[['Aero development',['Aerodynamic Development'],'#3987e5'],['Chassis development',['Chassis Development'],'#d95926'],['Parts',['Car Construction'],'#2cc4d9'],['Engine supply',['Engine Supply','Engine Supplier Support'],'#c98500'],['Parts supply',['Parts Supply'],'#e6e04a'],['Tyre supply',['Tyre Supply'],'#6fd0a0'],['Race weekends',['Race Costs'],'#d55181'],['Testing',['Car Testing'],'#b5895a'],['Salaries',['Driver Salaries','Staff Salaries','Academy Signing'],'#2f9a2f'],['Upkeep',['Facility Maintenance'],'#9085e9'],['HQ upgrades',['HQ Construction'],'#c57bd0'],['Other',[,'Technology Research','Shareholder Div. Expense','Loan Payments'],'#8e98a8']];
+const FIN_G=[['Aero development',['Aerodynamic Development'],'#3987e5'],['Chassis development',['Chassis Development'],'#d95926'],['Parts',['Car Construction'],'#2cc4d9'],['Engines built',['Engine Building'],'#b7f05a'],['Engine supply',['Engine Supply','Engine Supplier Support'],'#c98500'],['Parts supply',['Parts Supply'],'#e6e04a'],['Tyre supply',['Tyre Supply'],'#6fd0a0'],['Race weekends',['Race Costs'],'#d55181'],['Testing',['Car Testing'],'#b5895a'],['Salaries',['Driver Salaries','Staff Salaries','Academy Signing'],'#2f9a2f'],['Upkeep',['Facility Maintenance'],'#9085e9'],['HQ upgrades',['HQ Construction'],'#c57bd0'],['Other',[,'Technology Research','Shareholder Div. Expense','Loan Payments'],'#8e98a8']];
 const FIN_DEV=[['Aero development','Aerodynamic Development','#3987e5'],['Chassis development','Chassis Development','#d95926'],['Technology research','Technology Research','#8e98a8']];
 let finCum=false,finCmp='Overall',finSort={col:'total',dir:-1};const finHidden=new Set();
 const finTeam=$('finTeam');
@@ -19923,7 +19946,14 @@ function finSplitIncome(w,t){
   }
   return {...w,income_items:out};
 }
-function finWeeks(name){const t=state?.raw?.teams?.[name];const h=Array.isArray(t?.finance_history)?t.finance_history:[];const sn=finSel();return h.filter(x=>+x.season===sn).sort((a,b)=>a.week-b.week).map(w=>finSplitIncome(w,t))}
+// The save books a team's own (works) engine units inside Car Construction. Engines built this season are counted from engine_parts; the same number of largest Car Construction weeks are shown as Engines built.
+function finEngineCount(name,sn){const t=state?.raw?.teams?.[name];return Object.values(t?.engine_parts?.items||{}).filter(x=>x&&x.supplier===name&&Number(x.season_built)===sn).length}
+function finEngineSplit(name,ws,sn){
+  const n=finEngineCount(name,sn);if(!n)return ws;
+  const top=ws.map((w,i)=>[+w.expense_items?.['Car Construction']||0,i]).filter(x=>x[0]>0).sort((a,b)=>b[0]-a[0]).slice(0,n).map(x=>x[1]);
+  return ws.map((w,i)=>top.includes(i)?{...w,expense_items:{...w.expense_items,'Car Construction':0,'Engine Building':+w.expense_items['Car Construction']}}:w);
+}
+function finWeeks(name){const t=state?.raw?.teams?.[name];const h=Array.isArray(t?.finance_history)?t.finance_history:[];const sn=finSel();return finEngineSplit(name,h.filter(x=>+x.season===sn).sort((a,b)=>a.week-b.week).map(w=>finSplitIncome(w,t)),sn)}
 function finEl(t,a,p){const e=document.createElementNS('http://www.w3.org/2000/svg',t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
 function finNice(m){if(!(m>0))return 1;const p=10**Math.floor(Math.log10(m)),n=m/p;return(n<=1?1:n<=2?2:n<=2.5?2.5:n<=5?5:10)*p}
 function finFrame(host,W,H,lo0,hi0,weeks){host.innerHTML='';const P={l:42,r:12,t:8,b:22},n=weeks.length;const s=finEl('svg',{viewBox:`0 0 ${W} ${H}`,class:'fin-svg'},host);
@@ -20116,24 +20146,46 @@ function renderFinancialsAll(body){
   $('finMeta').textContent=`${seasonLabel(finSel())} · ${names.length} teams · cumulative through the season · $M`;
   const ser=n=>{const W=finWeeks(n);if(finCmp==='Bank balance')return W.map(w=>+w.balance_m);if(finCmp==='Income')return finCumul(W.map(w=>+w.income_m));if(finCmp==='Overall')return finCumul(W.map(w=>+w.expense_m));const g=FIN_G.findIndex(x=>x[0]===finCmp);return finCumul(W.map(w=>finGS(w,g)))};
   const S={};names.forEach(n=>S[n]=ser(n));const wk=finWeeks(names[0]).map(w=>w.week),all=Object.values(S).flat();
-  body.innerHTML=`<div class="fin-cmp-controls" id="finCmpRow">${FIN_CMP.map(c=>`<button class="perf-mode-btn tp-control-btn tp-control-action ${c===finCmp?'active':''}" type="button" data-cmp="${esc(c)}">${esc(c)}</button>`).join('')}</div>
-  <div class="fin-grid"><div class="fin-box wide"><div class="fin-box-title">${finCmp==='Bank balance'?'Bank balance':finCmp==='Income'?'Income to date':(finCmp==='Overall'?'All spending':finCmp)+' to date'}</div><div class="fin-box-meta">One line per team in its colours. Hover a week to rank every team.</div><div class="fin-legend" id="finCmpLg"></div><div id="finCmp"></div></div>
-  <div class="fin-box wide"><div class="fin-box-title">YTD by type</div><div class="fin-box-meta">Spending per team and type, and total income, so far this season. Click a column header to sort; click again to reverse.</div><div class="table-scroll"><table class="parts fin-table" id="finCmpTable"></table></div></div></div>`;
+  body.innerHTML=`<div class="fin-grid"><div class="fin-box wide"><div class="fin-box-title">YTD by type</div><div class="fin-box-meta">Spending per team and type, and total income, so far this season. Click a column header to sort; click again to reverse.</div><div class="table-scroll"><table class="parts fin-table" id="finCmpTable"></table></div></div><div class="fin-cmp-controls" id="finCmpRow">${FIN_CMP.map(c=>`<button class="perf-mode-btn tp-control-btn tp-control-action ${c===finCmp?'active':''}" type="button" data-cmp="${esc(c)}">${esc(c)}</button>`).join('')}</div><div class="fin-box wide"><div class="fin-box-title">${finCmp==='Bank balance'?'Bank balance':finCmp==='Income'?'Income to date':(finCmp==='Overall'?'All spending':finCmp)+' to date'}</div><div class="fin-box-meta">One line per team in its colours. Hover a week to rank every team.</div><div class="fin-legend" id="finCmpLg"></div><div id="finCmp"></div></div></div>`;
   body.querySelectorAll('[data-cmp]').forEach(b=>b.onclick=()=>{finCmp=b.dataset.cmp;renderFinancials()});
   const DASH=finDashes(names);
   $('finCmpLg').innerHTML=names.map(n=>`<span>${DASH[n]?`<svg viewBox="0 0 18 8" style="width:18px!important;height:8px!important;min-width:0!important;max-width:18px!important;display:inline-block;vertical-align:middle;margin-right:4px"><line x1="0" y1="4" x2="18" y2="4" stroke="${finCol(n)}" stroke-width="2" stroke-dasharray="${DASH[n]}"/></svg>`:`<i style="background:${finCol(n)}"></i>`}${esc(teamLabel(n))} ${finM(S[n][S[n].length-1])}</span>`).join('');
   const fr=finFrame($('finCmp'),1200,320,Math.min(0,...all),Math.max(...all)*1.05,wk);names.forEach(n=>finLine(fr,S[n],finCol(n),2,.9,DASH[n]));const c=finCursor(fr);
   finHover(fr,(e,i)=>{finMove(c,fr,i);const r=names.map(n=>[n,S[n][i]]).sort((a,b)=>b[1]-a[1]);finShow(e,`<div class="fin-tip-t">Week ${wk[i]} · ${finCmp==='Bank balance'?'balance':'to date'}</div><table>${r.map(([n,v],j)=>`<tr><td>${j+1}. ${finSw(finCol(n))}${esc(teamLabel(n))}</td><td>${finF(v)}</td></tr>`).join('')}</table>`)});
-  const rows=names.map(n=>{const W=finWeeks(n);const g=FIN_G.map((_,gi)=>W.reduce((a,w)=>a+finGS(w,gi),0));return[n,g,g.reduce((a,b)=>a+b,0),(finSel()===Number(state.raw.season_no)&&Number.isFinite(+state.teams[n]?.balance_m)?+state.teams[n].balance_m:+W[W.length-1].balance_m),W.reduce((a,w)=>a+(+w.income_m||finSumObj(w.income_items)),0)]});
+  const rows=names.map(n=>{const W=finWeeks(n);const g=FIN_G.map((_,gi)=>W.reduce((a,w)=>a+finGS(w,gi),0));return[n,g,g.reduce((a,b)=>a+b,0),(finSel()===Number(state.raw.season_no)&&Number.isFinite(+state.teams[n]?.balance_m)?+state.teams[n].balance_m:+W[W.length-1].balance_m),W.reduce((a,w)=>a+(+w.income_m||finSumObj(w.income_items)),0)]}).map(r=>[...r,r[4]-r[2]]);
   const noRace=!names.some(n=>finWeeks(n).some(w=>w.expense_items&&'Race Costs' in w.expense_items));
   const drawTable=()=>{
-    const k=finSort.col,val=r=>k==='team'?teamLabel(r[0]):k==='total'?r[2]:k==='bal'?r[3]:k==='inc'?r[4]:r[1][+k];
+    const k=finSort.col,val=r=>k==='team'?teamLabel(r[0]):k==='total'?r[2]:k==='bal'?r[3]:k==='inc'?r[4]:k==='net'?r[5]:r[1][+k];
     const sorted=rows.slice().sort((x,y)=>{const a=val(x),b=val(y);return(typeof a==='string'?a.localeCompare(b):a-b)*finSort.dir});
     const th=(key,inner,cls='num')=>`<th class="${cls} sortable${finSort.col===key?' active-sort':''}" data-fin-sort="${key}">${inner}${finSort.col===key?`<span class="sort-arrow">${finSort.dir<0?'▼':'▲'}</span>`:''}</th>`;
-    $('finCmpTable').innerHTML=`<thead><tr>${th('team','Team','')}${FIN_G.map((g,i)=>th(String(i),finSw(g[2])+({'Aero development':'Aero dev','Chassis development':'Chassis dev'}[g[0]]||g[0]))).join('')}${th('total','Total')}${th('inc','Income')}${th('bal','Balance'+(finSel()===Number(state.raw.season_no)?' <button type="button" class="supplier-edit-btn fin-bal-edit" data-fin-bal-edit>Edit</button>':''))}</tr></thead><tbody>${sorted.map(([n,g,tt,b,inc])=>`<tr><td><span class="swatch swatch-color swatch-gap swatch-raised" style="--swatch-color:${teamColor(state.teams[n]||{})}"></span><strong>${esc(teamLabel(n))}</strong></td>${g.map((v,gi)=>`<td class="num">${FIN_G[gi][0]==='Race weekends'&&noRace?'–':finF(v)}</td>`).join('')}<td class="num"><strong>${finF(tt)}</strong></td><td class="num">${finF(inc)}</td><td class="num">${finF(b)}</td></tr>`).join('')}</tbody>`;
+    $('finCmpTable').innerHTML=`<thead><tr>${th('team','Team','')}${FIN_G.map((g,i)=>th(String(i),finSw(g[2])+({'Aero development':'Aero dev','Chassis development':'Chassis dev'}[g[0]]||g[0]))).join('')}${th('total','Total')}${th('inc','Income')}${th('net','Net')}${th('bal','Balance'+(finSel()===Number(state.raw.season_no)?' <button type="button" class="supplier-edit-btn fin-bal-edit" data-fin-bal-edit>Edit</button>':''))}</tr></thead><tbody>${sorted.map(([n,g,tt,b,inc,net])=>`<tr><td><span class="swatch swatch-color swatch-gap swatch-raised" style="--swatch-color:${teamColor(state.teams[n]||{})}"></span><strong>${esc(teamLabel(n))}</strong></td>${g.map((v,gi)=>`<td class="num fin-tipc" data-fin-tip="${esc(n)}|${gi}">${FIN_G[gi][0]==='Race weekends'&&noRace?'–':finF(v)}</td>`).join('')}<td class="num fin-tipc" data-fin-tip="${esc(n)}|total"><strong>${finF(tt)}</strong></td><td class="num fin-tipc" data-fin-tip="${esc(n)}|inc">${finF(inc)}</td><td class="num fin-tipc ${net<-0.004?'fin-neg':net>0.004?'fin-pos':''}" data-fin-tip="${esc(n)}|net"><strong>${net>0.004?'+':''}${finF(net)}</strong></td><td class="num fin-tipc" data-fin-tip="${esc(n)}|bal">${finF(b)}</td></tr>`).join('')}</tbody>`;
     $('finCmpTable').querySelector('[data-fin-bal-edit]')?.addEventListener('click',e=>{e.stopPropagation();openFinBalanceEditor(names)});
     $('finCmpTable').querySelectorAll('[data-fin-sort]').forEach(h=>h.onclick=()=>{const c=h.dataset.finSort;finSort=finSort.col===c?{col:c,dir:-finSort.dir}:{col:c,dir:c==='team'?1:-1};drawTable()});
   };
+  // Hover a value to see what it is made of.
+  const finTipHtml=(n,col)=>{
+    const W=finWeeks(n),tn=esc(teamLabel(n)),tbl=a=>`<table>${a.map(([k,v])=>`<tr><td>${esc(k)}</td><td>${finF(v)}</td></tr>`).join('')}</table>`;
+    const nz=a=>a.filter(x=>Math.abs(x[1])>=0.005);
+    if(col==='total')return `<div class="fin-tip-t">${tn} · all spending</div>${tbl(nz(FIN_G.map((g,gi)=>[g[0],W.reduce((a,w)=>a+finGS(w,gi),0)])).sort((x,y)=>y[1]-x[1]))}`;
+    if(col==='inc'){const m={};for(const w of W){const o=w.income_items||{};for(const k in o){const l=FIN_INC_LABEL[k]||k;m[l]=(m[l]||0)+(+o[k]||0);}}return `<div class="fin-tip-t">${tn} · income so far</div>${tbl(nz(Object.entries(m)).sort((x,y)=>y[1]-x[1]))}`;}
+    if(col==='net'){const inc=W.reduce((a,w)=>a+(+w.income_m||finSumObj(w.income_items)),0),exp=W.reduce((a,w)=>a+(+w.expense_m||0),0);return `<div class="fin-tip-t">${tn} · net so far</div>${tbl([['Income',inc],['Spending',-exp],['Net',inc-exp]])}`;}
+    if(col==='bal'){const inc=W.reduce((a,w)=>a+(+w.income_m||finSumObj(w.income_items)),0),exp=W.reduce((a,w)=>a+(+w.expense_m||0),0),start=(+W[0].balance_m)-(+W[0].net_m||0);return `<div class="fin-tip-t">${tn} · balance</div>${tbl([['Season start',start],['Income',inc],['Spending',-exp]])}`;}
+    const gi=+col,g=FIN_G[gi],m={};
+    for(const w of W)for(const k of finItemsOf(g,w.expense_items)){if(k==null)continue;const v=+w.expense_items?.[k]||0;if(v)m[k]=(m[k]||0)+v;}
+    const paid=W.filter(w=>finGS(w,gi)>0.0004),total=paid.reduce((a,w)=>a+finGS(w,gi),0);
+    if(g[0]==='Race weekends'&&noRace)return `<div class="fin-tip-t">${tn} · ${esc(g[0])}</div><div class="fin-tip-n">Not recorded in this save.</div>`;
+    let h=`<div class="fin-tip-t">${tn} · ${esc(g[0])}</div>`;
+    if(!paid.length)return h+`<div class="fin-tip-n">Nothing spent so far this season.</div>`;
+    h+=tbl(Object.entries(m).sort((x,y)=>y[1]-x[1]));
+    if(g[0]==='Engines built')h+=`<div class="fin-tip-n">${finEngineCount(n,finSel())} engine${finEngineCount(n,finSel())===1?'':'s'} built by the team's own factory this season. The save books these inside Parts; they are shown here so Parts compares like with like.</div>`;
+    if(gi<=1)h+=`<div class="fin-tip-t fin-tip-sub">By week</div>${tbl(paid.slice(0,26).map(w=>['Week '+w.week,finGS(w,gi)]))}${paid.length>26?`<div class="fin-tip-n">and ${paid.length-26} more weeks</div>`:''}`;
+    else h+=`<div class="fin-tip-n">${paid.length} week${paid.length===1?'':'s'} with payments, week ${paid[0].week} to ${paid[paid.length-1].week}</div>`;
+    if(gi===1)h+=`<div class="fin-tip-n">One saved item: the save does not say whether a payment is for this season's package or next year's chassis.</div>`;
+    return h;
+  };
+  const ftb=$('finCmpTable');
+  ftb.onmousemove=e=>{const td=e.target.closest('[data-fin-tip]');if(!td){finHide();return;}const k=td.dataset.finTip.lastIndexOf('|');finShow(e,finTipHtml(td.dataset.finTip.slice(0,k),td.dataset.finTip.slice(k+1)));};
+  ftb.onmouseleave=finHide;
   drawTable();
 }
 setupSelectors=(o=>function(){o.apply(this,arguments);if(!finTeam)return;finTeam.innerHTML='';const a=document.createElement('option');a.value='__all__';a.textContent='All teams';finTeam.appendChild(a);for(const x of state.series){const op=document.createElement('option');op.value=x.name;op.textContent=teamSaveName(x.name,state.teams?.[x.name]);finTeam.appendChild(op)}syncSelectorRail('finTeam','finTeamRail','team')})(setupSelectors);
@@ -20145,11 +20197,12 @@ $('finModeRow')?.querySelectorAll('[data-fin-mode]').forEach(b=>b.addEventListen
 
 /* ===== Regulations tab ===== */
 const REG_GROUPS=[['Entries',['formula_team_entry_cap','formula_team_entry_requirement']],
- ['Car and technical',['technical_regulation_era','car_profile','chassis_minimum_weight','handling_complexity_era','reliability_profile','tyre_profile','driver_aid_restrictions','drs_policy','ers_policy']],
+ ['Car and technical',['car_profile','chassis_minimum_weight','handling_complexity_era','reliability_profile','tyre_profile','driver_aid_restrictions','drs_policy','ers_policy']],
  ['Race and sporting',['points_system','pole_point','fastest_lap_point','qualifying_format','safety_car_policy','weekend_tyre_allocation','formula_refueling','formula_fuel_tank','formula_compound_usage']],
  ['Money, testing, calendar',['prize_money_distribution','private_testing_limits','seasonal_component_allocation_rule','calendar']]];
 function regMark(n){const id=selectorTeamIdentity(n);return `<span class="selector-team-mark fin-team-mark" style="${id?`--identity-primary:${id.primary};--identity-secondary:${id.secondary}`:''}"></span>`}
 function regTeamFor(g,cid){const m=g?.team_ids||{};for(const t in m)if(m[t]===cid)return t;return null}
+let regHistOpen=false;
 function renderRegulations(){
   const host=$('regBody');if(!state||!host)return;
   const raw=state.raw,g=raw.formula_regulation_governance;
@@ -20181,22 +20234,31 @@ function renderRegulations(){
   const pend=Array.isArray(raw.pending_reg_changes)?raw.pending_reg_changes:[];
   const engRolled=week>=41;
   const engNow=(pend.find(x=>/^engine_(minor|major|drastic)$/.test(x))||'engine_stable').slice(7);
-  const engRow=`<h3 class="reg-h">Engine rules</h3><div class="reg-grid"><div class="reg-rule"><div class="reg-rh"><b>Engine regulation</b>${engNow!=='stable'?`<span class="reg-appr">${esc(engNow[0].toUpperCase()+engNow.slice(1))} change next season</span>`:''}</div><div class="reg-rl">Next season</div><div class="reg-seg">${['stable','minor','major','drastic'].map(k=>chip(k[0].toUpperCase()+k.slice(1),(k===engNow?'on'+(k==='stable'?' keep':' up'):'')+(engRolled?'':' dis'),engRolled?`data-reg-eng="${k}"`:'',k==='stable'?'No engine rule change':'Engine rule change that resets power units')).join('')}</div><div class="reg-why">${engRolled?'The game rolled this at week 41; the chances are set in Edits and events.':'Editable once the game has rolled it at week 41; the chances are set in Edits and events.'}</div></div></div>`;
-  // latest ballot
-  let ballot='';
-  if(reviews.length){
-    const rv=reviews.slice().sort((a,b)=>(b.season-a.season)||(b.week-a.week))[0];
-    ballot=`<h3 class="reg-h">Latest ballot · season ${rv.season}, week ${rv.week}, takes effect season ${rv.effective_season}</h3><div class="reg-grid">${(rv.proposals||[]).map(p=>{
+  const engBox=`<div class="reg-rule"><div class="reg-rh"><b>Engine regulation</b>${engNow!=='stable'?`<span class="reg-appr">${esc(engNow[0].toUpperCase()+engNow.slice(1))} change next season</span>`:''}</div><div class="reg-rl">Next season</div><div class="reg-seg">${['stable','minor','major','drastic'].map(k=>chip(k[0].toUpperCase()+k.slice(1),(k===engNow?'on'+(k==='stable'?' keep':' up'):'')+(engRolled?'':' dis'),engRolled?`data-reg-eng="${k}"`:'',k==='stable'?'No engine rule change':'Engine rule change that resets power units')).join('')}</div><div class="reg-why">${engRolled?'The game rolled this at week 41; the chances are set in Edits and events.':'Editable once the game has rolled it at week 41; the chances are set in Edits and events.'}</div></div>`;
+  const engRow=`<h3 class="reg-h">Technical and engine rules</h3><div class="reg-grid">${engBox}${ruleBox('technical_regulation_era')}</div>`;
+  // ballots: this season's on top, earlier ones in a folded history at the bottom
+  const ballotGrid=rv=>`<div class="reg-grid">${(rv.proposals||[]).map(p=>{
       const votes=Object.entries(p.votes||{}).map(([cid,v])=>{const t=regTeamFor(g,cid);return {t,v}}).filter(x=>x.t).sort((a,b)=>teamLabel(a.t).localeCompare(teamLabel(b.t)));
       const ev=p.evidence&&typeof p.evidence==='object'?Object.entries(p.evidence).map(([k,x])=>`${k.replace(/_/g,' ')} ${x}`).join(' · '):'';
       return `<div class="reg-rule"><div class="reg-rh"><b>${esc(p.label||p.category_key)}</b><span class="reg-res ${p.result==='approved'?'ok':''}">${p.result==='approved'?'Approved':'Kept'} · ${p.yes_count}–${p.no_count}${p.abstain_count?` · ${p.abstain_count} abstain`:''}</span></div>
       <div class="reg-prop">${esc(p.current_name||optName(p.category_key,p.current_key))} <span class="reg-arrow">→</span> ${esc(p.proposed_name||optName(p.category_key,p.proposed_key))}</div>
       <div class="reg-why">${esc(p.reason||'')}${ev?` <span class="reg-ev">${esc(ev)}</span>`:''}</div>
       <div class="reg-votes">${votes.map(({t,v})=>`<span class="reg-vote ${v.choice==='proposed'?'yes':'no'}" title="${esc(v.reason||'')}">${regMark(t)}${esc(teamLabel(t))}<b>${v.choice==='proposed'?'For':'Against'}</b></span>`).join('')}</div></div>`}).join('')}</div>`;
-  }
-  host.innerHTML=`<div class="reg-top">${kp.map(([a,b])=>`<div class="reg-kpi"><div class="k">${a}</div><div class="v">${b}</div></div>`).join('')}<div class="reg-spacer"></div><div class="reg-mode"><div class="k">How rules change</div><div class="reg-seg"><span class="reg-o ${pol.mode==='scripted'?'':'on'}" data-reg-mode="voting">Voting</span><span class="reg-o ${pol.mode==='scripted'?'on':''}" data-reg-mode="scripted">Scripted</span></div></div></div><div class="reg-acts"><button class="reg-btn go" type="button" data-reg-act="apply" ${nUp?'':'disabled'}>Apply upcoming now</button><button class="reg-btn" type="button" data-reg-act="clear" ${nUp?'':'disabled'}>Clear upcoming</button></div>
+  const byNewest=reviews.slice().sort((a,b)=>(b.season-a.season)||(b.week-a.week));
+  const curRv=byNewest.find(r=>r.season===season),pastRv=byNewest.filter(r=>r!==curRv);
+  const ballot=curRv
+    ?`<h3 class="reg-h">Season ${season} ballot and votes · week ${curRv.week}, takes effect season ${curRv.effective_season}</h3>${ballotGrid(curRv)}`
+    :`<h3 class="reg-h">Season ${season} ballot and votes</h3><div class="reg-note">${pol.mode==='scripted'?'Voting is off: rules change by script (How rules change is set to Scripted).':Number.isFinite(+vt.review_week)?`No ballot yet this season. The review is at week ${vt.review_week}.`:'No ballot yet this season.'}</div>`;
+  const history=pastRv.length?`<div class="reg-hist"><button type="button" class="reg-hist-h" data-reg-hist aria-expanded="${regHistOpen}"><span class="sch-caret">${regHistOpen?'▾':'▸'}</span> Ballot history <span class="reg-hist-n">${pastRv.length} past ballot${pastRv.length===1?'':'s'}</span></button>${regHistOpen?pastRv.map(rv=>`<h3 class="reg-h">Season ${rv.season} ballot, week ${rv.week}, took effect season ${rv.effective_season}</h3>${ballotGrid(rv)}`).join(''):''}</div>`:'';
+  // Government reset: top-level next_reg_reset (season of the next periodic chassis reset); the game checks it on the advance from week 1.
+  const grV=Number(raw.next_reg_reset),grOn=Number.isFinite(grV)&&Number.isFinite(Number(season));
+  const grMin=week===1?season+1:season+2,grIn=grOn?grV-season:0;
+  const grYear=grOn&&Number.isFinite(Number(seasonYear(grV)))?` (${seasonYear(grV)})`:'';
+  const grAnn=raw.government_reset_state?.announced_for_season===season+1;
+  const govBox=grOn?`<h3 class="reg-h">Government reset</h3><div class="reg-rule reg-gov"><div class="reg-gov-r"><div class="reg-gov-l"><div class="reg-rl">Next government reset</div><div class="reg-gov-v"><span class="grid-step"><button type="button" class="grid-step-btn grid-step-minus" data-reg-gr="-1" ${grV<=grMin?'disabled':''} aria-label="Earlier by one season">−</button><input class="grid-edit-input reg-gov-n" value="${grV}" readonly aria-label="Next government reset season"><button type="button" class="grid-step-btn grid-step-plus" data-reg-gr="1" aria-label="Later by one season">+</button></span><span class="reg-gov-t">Season ${grV}${esc(grYear)} · ${grIn<=0?'this season':grIn===1?'next season':`in ${grIn} seasons`}</span></div></div><div class="reg-gov-s"><div class="reg-rl">Status</div><span class="reg-o ${grAnn?'on':''}">${grAnn?"Announced: active for next season's car":'Not announced'}</span></div></div><div class="reg-note">${week===1?'It can be set to next season now, at week 1.':'From week 2 the earliest is the season after next.'} The reset pulls next season's chassis potential toward 50 (25% kept), doubles the weight of staff, wind tunnel, the random roll and correlation, and resets parts suppliers' pace and reliability at rollover.</div></div>`:'';
+  host.innerHTML=`${govBox}<div class="reg-top">${kp.map(([a,b])=>`<div class="reg-kpi"><div class="k">${a}</div><div class="v">${b}</div></div>`).join('')}<div class="reg-spacer"></div><div class="reg-mode"><div class="k">How rules change</div><div class="reg-seg"><span class="reg-o ${pol.mode==='scripted'?'':'on'}" data-reg-mode="voting">Voting</span><span class="reg-o ${pol.mode==='scripted'?'on scr':''}" data-reg-mode="scripted">Scripted</span></div></div></div><div class="reg-acts"><button class="reg-btn go" type="button" data-reg-act="apply" ${nUp?'':'disabled'}>Apply upcoming now</button><button class="reg-btn" type="button" data-reg-act="clear" ${nUp?'':'disabled'}>Clear upcoming</button></div>
   ${before?`<div class="reg-note">The review is at week ${vt.review_week}. Rules set for next season before then add extra proposals; set them after the review.</div>`:''}
-  ${engRow}${ballot}${groups}`;
+  ${engRow}${ballot}${groups}${history}`;
 }
 renderHeadquarters=(o=>function(){const r=o.apply(this,arguments);try{renderRegulations()}catch(e){console.error(e)}try{renderSchedule()}catch(e){console.error(e)}return r})(renderHeadquarters);
 
@@ -20351,26 +20413,28 @@ function regAddOption(r){
     if(mainK!=null){const m=String(tpl.key).match(/^(.*?)([0-9.]+)(.*)$/);if(m&&+m[2]===+tpl[mainK])return m[1]+val[mainK]+m[3];}
     return String(name).toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'')||(hasId?'option_'+nid:'option');
   };
-  const dlg=document.createElement('dialog');dlg.className='tp-dialog reg-add-dialog';
+  const dlg=document.createElement('dialog');dlg.className='tp-dialog reg-add-dialog'+(fields.some(k=>kind(k)==='nums')?' reg-add-wide':'')+(fields.some(k=>kind(k)==='nums'&&k!=='payouts')?' reg-add-split':'');
   const stepper=(k,x,attr,stp,disabled)=>`<span class="grid-step"><button type="button" class="grid-step-btn grid-step-minus" ${attr}="${k}|-1|${stp}" ${disabled?'disabled':''}>−</button><input class="grid-edit-input" data-f-num="${k}" value="${disabled?'':x}" ${disabled?'disabled':''}><button type="button" class="grid-step-btn grid-step-plus" ${attr}="${k}|1|${stp}" ${disabled?'disabled':''}>+</button></span>`;
   const html=()=>{
-    const rowsH=fields.map(k=>{
+    const gridRow=k=>{const L=esc(labelOf(k));return `<tr><th>${L}</th><td><div class="reg-places">${[0,1].map(c=>`<div class="reg-gcol">${val[k].map((x,i)=>i%2!==c?'':`<div class="reg-pl"><span>${i+1}</span><input class="grid-edit-input" data-f-pl="${k}|${i}" value="${x}"><span class="reg-pl-s"><button type="button" class="grid-step-btn grid-step-plus" data-f-pls="${k}|${i}|1" aria-label="Place ${i+1} up">▲</button><button type="button" class="grid-step-btn grid-step-minus" data-f-pls="${k}|${i}|-1" aria-label="Place ${i+1} down">▼</button></span></div>`).join('')}</div>`).join('')}<div class="reg-pl-act"><button type="button" class="grid-step-btn grid-step-plus" data-f-pladd="${k}" title="Add a place">+ place</button><button type="button" class="grid-step-btn grid-step-minus" data-f-pldel="${k}" ${val[k].length<2?'disabled':''} title="Remove the last place">− place</button></div></div></td></tr>`;};
+    const splitK=fields.find(k=>kind(k)==='nums'&&k!=='payouts');
+    const rowsH=fields.filter(k=>k!==splitK).map(k=>{
       const kd=kind(k),L=esc(labelOf(k));
       if(kd==='bool')return `<tr><th>${L}</th><td><span class="reg-add-after">${[[true,'Yes'],[false,'No']].map(([b,t])=>`<span class="reg-o ${val[k]===b?'on':''}" data-f-bool="${k}|${b}">${t}</span>`).join('')}</span></td></tr>`;
       if(kd==='str')return `<tr><th>${L}</th><td><input class="grid-edit-input wide" data-f-str="${k}" value="${esc(val[k])}"></td></tr>`;
-      if(kd==='tags')return `<tr><th>${L}</th><td><span class="reg-add-after wrap">${vocab(k).map(t=>`<span class="reg-o ${(val[k]||[]).includes(t)?'on':''}" data-f-tag="${k}|${esc(t)}">${esc(String(t).replace(/_/g,' '))}</span>`).join('')}</span></td></tr>`;
-      if(kd==='nums')return `<tr><th>${L}</th><td><div class="reg-places">${val[k].map((x,i)=>`<div class="reg-pl"><span>${i+1}</span><div class="reg-pl-b"><input class="grid-edit-input" data-f-pl="${k}|${i}" value="${x}"><span class="reg-pl-s"><button type="button" class="grid-step-btn grid-step-plus" data-f-pls="${k}|${i}|1">+</button><button type="button" class="grid-step-btn grid-step-minus" data-f-pls="${k}|${i}|-1">−</button></span></div></div>`).join('')}<div class="reg-pl-act"><button type="button" class="grid-step-btn grid-step-plus" data-f-pladd="${k}" title="Add a place">+ place</button><button type="button" class="grid-step-btn grid-step-minus" data-f-pldel="${k}" ${val[k].length<2?'disabled':''} title="Remove the last place">− place</button></div></div></td></tr>`;
+      if(kd==='tags')return `<tr><th>${L}</th><td><span class="reg-add-after wrap">${vocab(k).map(t=>`<span class="reg-o ${(val[k]||[]).includes(t)?'on scr':''}" data-f-tag="${k}|${esc(t)}">${esc(String(t).replace(/_/g,' '))}</span>`).join('')}</span></td></tr>`;
+      if(kd==='nums'&&k==='payouts')return `<tr><th>${L}</th><td><div class="reg-lines-w"><div class="reg-lines" style="grid-template-columns:repeat(${Math.ceil(val[k].length/3)},max-content)">${val[k].map((x,i)=>`<div class="reg-ln"><span>${i+1}</span><input class="grid-edit-input" data-f-pl="${k}|${i}" value="${x}"><span class="reg-ln-s"><button type="button" class="grid-step-btn grid-step-minus" data-f-pls="${k}|${i}|-1" aria-label="Place ${i+1} down">−</button><button type="button" class="grid-step-btn grid-step-plus" data-f-pls="${k}|${i}|1" aria-label="Place ${i+1} up">+</button></span></div>`).join('')}</div><div class="reg-pl-act"><button type="button" class="grid-step-btn grid-step-plus" data-f-pladd="${k}" title="Add a place">+ place</button><button type="button" class="grid-step-btn grid-step-minus" data-f-pldel="${k}" ${val[k].length<2?'disabled':''} title="Remove the last place">− place</button></div></div></td></tr>`;
       if(kd==='nullnum')return `<tr><th>${L}</th><td><span class="reg-null">${stepper(k,val[k],'data-f-step',stepOf(k),val[k]===null)}<span class="reg-o ${val[k]===null?'on':''}" data-f-null="${k}">None</span></span></td></tr>`;
       return `<tr><th>${L}</th><td>${stepper(k,oneDec(k),'data-f-step',stepOf(k),false)}</td></tr>`;
     }).join('');
     return `<div class="tp-dialog-head"><div class="project-edit-identity"><div class="project-edit-eyebrow">Regulations</div><button type="button" class="tp-dialog-close" aria-label="Close">×</button><div class="project-edit-title">Add option</div><div class="project-edit-sub">${esc(d.label||r)} · new choice saved in this save${hasId?` (id ${nid})`:''}</div></div></div>
-    <div class="grid-edit-form"><table class="grid-edit-table"><tbody>
+    <div class="grid-edit-form${splitK?' reg-split':''}">${splitK?`<div class="reg-sl"><table class="grid-edit-table"><tbody>${gridRow(splitK)}</tbody></table></div>`:''}<div class="reg-sr"><table class="grid-edit-table"><tbody>
     <tr><th>Name</th><td><input class="grid-edit-input wide" data-f-name value="${esc(name)}" placeholder="Name of the new option"></td></tr>
     ${rowsH}
     <tr><th>Summary</th><td><input class="grid-edit-input wide" data-f-sum value="${esc(summary)}"></td></tr>
     ${'description' in tpl?`<tr><th>Description</th><td><input class="grid-edit-input wide" data-f-desc value="${esc(desc)}"></td></tr>`:''}
     <tr><th>Key</th><td><input class="grid-edit-input wide" data-f-key value="${esc(keyOf())}"></td></tr>
-    </tbody></table><div class="reg-add-err" data-f-err></div>
+    </tbody></table></div><div class="reg-add-err" data-f-err></div>
     <div class="cbar-actions grid-edit-actions"><span></span><button type="button" class="project-edit-undo" data-f-cancel>Cancel</button><button type="button" class="project-edit-apply" data-f-ok>Add option</button></div></div>`;
   };
   const paint=()=>{const a=document.activeElement;const sel=a&&a.matches&&a.matches('input')?a.outerHTML.match(/data-f-[a-z]+(="[^"]*")?/)?.[0]:null;dlg.innerHTML=html();wire();
@@ -20411,6 +20475,7 @@ function regAddOption(r){
   dlg.addEventListener('close',()=>dlg.remove(),{once:true});dlg.showModal();
 }
 $('regBody')?.addEventListener('click',e=>{
+  if(e.target.closest('[data-reg-hist]')){regHistOpen=!regHistOpen;renderRegulations();return;}
   const ad=e.target.closest('[data-reg-add]');
   if(ad){regAddOption(ad.dataset.regAdd);return;}
   const sv=e.target.closest('[data-reg-sev]');
@@ -20418,6 +20483,13 @@ $('regBody')?.addEventListener('click',e=>{
     const [r,key]=sv.dataset.regSev.split('|'),rec=state.raw.regulations?.[r],d=state.raw.formula_regulation_governance?.definition_snapshot?.[r];
     if(!rec?.upcoming||!d||rec.upcoming_severity===key)return;
     regEdit(`Regulations: ${d.label||r} severity for next season set to ${d.severities?.[key]?.name||key}`,raw=>{raw.regulations[r].upcoming_severity=key;});
+    return;
+  }
+  const gr=e.target.closest('[data-reg-gr]');
+  if(gr&&state?.raw&&Number.isFinite(Number(state.raw.next_reg_reset))){
+    const wk=(Number(state.raw.week_index)||0)+1,se=state.raw.season_no,mn=wk===1?se+1:se+2,nv=Math.max(mn,Number(state.raw.next_reg_reset)+Number(gr.dataset.regGr));
+    if(nv===Number(state.raw.next_reg_reset))return;
+    regEdit(`Regulations: next government reset set to season ${nv}${Number.isFinite(Number(seasonYear(nv)))?` (${seasonYear(nv)})`:''}`,raw=>{raw.next_reg_reset=nv;});
     return;
   }
   const eg=e.target.closest('[data-reg-eng]');

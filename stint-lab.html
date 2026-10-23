@@ -288,7 +288,7 @@ a.tool-card.blue:hover,a.tool-card.blue:focus-visible{box-shadow:inset 3px 0 0 #
   <header class="hero">
     <div>
       <h1>Simulate · Compare · Decide</h1>
-      <p class="sub">Race strategy simulator for Team Principal tyre models. Upload tyremodel.json files and a track file, edit any value, and compare 1, 2 and 3 stop strategies, single compound or mixed, with the best stint split for each, accounting for fuel weight, refuelling and pit losses.</p>
+      <p class="sub">Race strategy simulator for Team Principal tyre models. Upload tyremodel.json files and a track file, edit any value, and compare no-stop, 1, 2 and 3 stop strategies, single compound or mixed, with the best stint split for each, accounting for fuel weight, refuelling and pit losses.</p>
     </div>
     <div class="hero-badge">Local processing <span>· your files stay in this browser</span></div>
   </header>
@@ -382,13 +382,13 @@ a.tool-card.blue:hover,a.tool-card.blue:focus-visible{box-shadow:inset 3px 0 0 #
       </div>
       <div class="panel">
         <h2>Tyre loss over one stint</h2>
-        <p class="note">Time lost to wear only, against each model's new hard tyre, on an empty car. Lines are coloured by compound. Dots mark where the AI pits. With Compare models on, solid lines are the selected model and other loaded models are dashed.</p>
+        <p class="note">Time lost to wear only, against each model's hardest new tyre (lowest lat_grip_base), on an empty car. Lines are coloured by compound. Dots mark where the AI pits. With Compare models on, solid lines are the selected model and other loaded models are dashed.</p>
         <div class="chart"><canvas id="cTyre"></canvas></div>
       </div>
       <div class="panel">
         <div class="phead"><h2><span id="raceTitle">Race time</span> through the race: <span id="activeName3"></span></h2>
           <div class="viewsw" id="raceView"><button type="button" data-v="cum" class="on">Race time</button><button type="button" data-v="lap">Lap times</button></div></div>
-        <p class="note" id="noteLap" hidden>The fastest legal 1, 2 and 3 stop plans. Fuel burn makes every stint faster; wear makes it slower.</p>
+        <p class="note" id="noteLap" hidden>The fastest legal plan for each number of stops. Fuel burn makes every stint faster; wear makes it slower.</p>
         <p class="note" id="noteCum">The same plans as a running race time, against an even pace that would finish with the fastest plan's total. Pit stops show as steps up; the end of each line is its gap at the flag.</p>
         <div class="chart" id="boxLap" hidden><canvas id="cRace"></canvas></div>
         <div class="chart" id="boxCum"><canvas id="cCum"></canvas></div>
@@ -446,17 +446,52 @@ const BUILTIN=[
 ];
 // Vanilla wetness_states: [name, min_mm, max_mm, lat_mult, long_mult, wear_mult]
 const VAN_WS={soft:[["dry",0.0,0.3,1.0,1.0,1.0],["moist",0.3,0.8,0.96,0.95,1.04],["damp",0.8,1.5,0.88,0.84,1.06],["wet",1.5,3.0,0.72,0.68,1.08],["very_wet",3.0,5.0,0.56,0.52,1.12]],medium:[["dry",0.0,0.3,1.0,1.0,1.0],["moist",0.3,0.8,0.97,0.96,1.03],["damp",0.8,1.5,0.9,0.87,1.04],["wet",1.5,3.0,0.76,0.72,1.06],["very_wet",3.0,5.0,0.62,0.58,1.09]],hard:[["dry",0.0,0.3,1.0,1.0,1.0],["moist",0.3,0.8,0.98,0.97,1.02],["damp",0.8,1.5,0.92,0.89,1.03],["wet",1.5,3.0,0.8,0.76,1.05],["very_wet",3.0,5.0,0.66,0.62,1.07]],intermediate:[["dry",0.0,0.25,0.9,0.88,1.16],["moist",0.25,0.8,0.96,0.95,1.08],["crossover",0.8,1.8,1.03,1.02,1.0],["wet",1.8,3.2,1.0,0.99,0.98],["very_wet",3.2,5.0,0.9,0.88,1.04]],wet:[["dry",0.0,0.25,0.75,0.72,1.24],["moist",0.25,0.8,0.84,0.82,1.14],["damp",0.8,2.0,0.95,0.94,1.04],["wet",2.0,4.0,1.04,1.03,0.98],["very_wet",4.0,5.0,1.08,1.06,0.96]]};
+for(const c of Object.keys(BUILTIN[0].compounds))BUILTIN[0].compounds[c].cat=c==="intermediate"?"inter":c==="wet"?"wet":"dry";
 for(const [c,a] of Object.entries(VAN_WS))BUILTIN[0].compounds[c].ws=a.map(([name,min_mm,max_mm,lat_mult,long_mult,wear_mult])=>({name,min_mm,max_mm,lat_mult,long_mult,wear_mult}));
 // Generic 5 km layout used until a track file is loaded.
 const AVG_MS=[["straight",12,300],["low",3,100],["straight",10,260],["med",4,160],["straight",8,250],["high",5,220],["straight",10,280],["low",3,90],["straight",9,240],["med",5,170],["high",6,230],["straight",12,300],["low",3,110],["med",4,150],["straight",6,230]].map(([type,length_pct,target_speed_kmh])=>({type,length_pct,target_speed_kmh}));
 const AVG={name:"No track file loaded: using a generic 5 km layout",laps:60,len:5,twm:1,tfc:1,pit:20,ms:AVG_MS};
 let topAll=false,sets=BUILTIN.map(s=>({...structuredClone(s),builtin:true})),active=0,trackLabel=AVG.name;
-const ORDER=["soft","medium","hard","intermediate","wet"],WETC=["intermediate","wet"];
-const dryNames=s=>ORDER.filter(c=>s.compounds[c]&&!WETC.includes(c));
-const allNames=s=>ORDER.filter(c=>s.compounds[c]);
+// Compounds are read from the file as they are, any name and any number, in file order.
+// category "inter"/"intermediate" or "wet" (or a compound named intermediate/wet without a category) is a wet-weather tyre; every other category is dry.
+const catOf=(name,c)=>{const k=String(c?.category??"").toLowerCase();return k==="inter"||k==="intermediate"||(!k&&name==="intermediate")?"inter":k==="wet"||(!k&&name==="wet")?"wet":"dry"};
+const isWet=(s,c)=>(s.compounds[c]?.cat??"dry")!=="dry";
+const dryNames=s=>Object.keys(s.compounds).filter(c=>!isWet(s,c));
+const wetNames=s=>Object.keys(s.compounds).filter(c=>isWet(s,c));
+const allNames=s=>[...dryNames(s),...wetNames(s)];
+// Colours and stint codes, per tyre model. Known names keep theirs (soft red, medium yellow, hard white, intermediate green, wet blue).
+// Option, prime and dry take red, yellow and white when free. Other dry compounds take whichever of red, yellow and white is free, softest (highest base grip) to red, hardest to white; other colours only when those three are taken.
+// Other rain tyres take the intermediate or wet colour. Codes: the usual letter, otherwise the initial (two letters if the initial is taken).
+const KNOWN_COL={soft:"#ef3b33",medium:"#e6b84d",hard:"#d7dbe0",intermediate:"#43b02a",wet:"#2f7fd6"};
+const KNOWN_CODE={soft:"S",medium:"M",hard:"H",intermediate:"I",wet:"W"};
+const PREF_COL={option:"#ef3b33",prime:"#e6b84d",dry:"#d7dbe0"};
+const DRY3=["#ef3b33","#e6b84d","#d7dbe0"],PALETTE=["#2fc6c6","#9b6bff","#ff8fc8","#7fd36b","#c9a27a","#5aa0ff","#e05fa0","#b8e04a"];
+function assignComp(s){
+  const colors={},codes={},used=new Set();
+  for(const c of Object.keys(s.compounds))if(KNOWN_COL[c]){colors[c]=KNOWN_COL[c];codes[c]=KNOWN_CODE[c]}
+  Object.values(colors).forEach(x=>used.add(x));
+  // preferred colours when not taken: option red, prime yellow, dry white
+  for(const [c,x] of Object.entries(PREF_COL))if(s.compounds[c]&&!isWet(s,c)&&!colors[c]&&!used.has(x)){colors[c]=x;used.add(x)}
+  const dry=[...dryNames(s)].sort((a,b)=>(s.compounds[b].lat_grip_base??1)-(s.compounds[a].lat_grip_base??1)),n=dry.length;
+  dry.forEach((c,i)=>{if(colors[c])return;
+    const want=n===1?2:Math.round(i*2/(n-1)),free=DRY3.map((x,k)=>[x,k]).filter(([x])=>!used.has(x)).sort((a,b)=>Math.abs(a[1]-want)-Math.abs(b[1]-want));
+    colors[c]=free.length?free[0][0]:PALETTE.find(x=>!used.has(x))||PALETTE[0];used.add(colors[c])});
+  for(const c of wetNames(s))if(!colors[c])colors[c]=KNOWN_COL[s.compounds[c].cat==="wet"?"wet":"intermediate"];
+  const taken=new Set(Object.values(codes));
+  for(const c of Object.keys(s.compounds)){if(codes[c])continue;
+    const a=c.replace(/[^a-z0-9]/gi,""),opts=s.compounds[c].cat!=="dry"&&!taken.has(KNOWN_CODE[s.compounds[c].cat==="wet"?"wet":"intermediate"])?[KNOWN_CODE[s.compounds[c].cat==="wet"?"wet":"intermediate"]]:[];
+    codes[c]=[...opts,a.slice(0,1).toUpperCase(),a.slice(0,1).toUpperCase()+a.slice(1,2).toLowerCase(),a.slice(0,3)].find(x=>x&&!taken.has(x))??c;taken.add(codes[c])}
+  s.colors=colors;s.codes=codes;
+}
+const mapOf=(s,k)=>{if(!s.colors)assignComp(s);return s[k]};
+const col=(c,s=sets[active])=>mapOf(s,"colors")[c]??sets.map(x=>mapOf(x,"colors")[c]).find(Boolean)??PALETTE[0];
+const code=(c,s=sets[active])=>mapOf(s,"codes")[c]??sets.map(x=>mapOf(x,"codes")[c]).find(Boolean)??c;
+const ink=c=>{const h=col(c),n=parseInt(h.slice(1),16),l=(0.299*(n>>16)+0.587*(n>>8&255)+0.114*(n&255));return l>150?"#14171b":"#fff"};
+// softest = highest lateral base grip, hardest = lowest (dry compounds)
+const byGrip=s=>[...dryNames(s)].sort((a,b)=>(s.compounds[b].lat_grip_base??1)-(s.compounds[a].lat_grip_base??1));
 // Compounds raced: dry ones always, intermediate and wet only when the track has water.
 let WATER=0;
-const useNames=s=>ORDER.filter(c=>s.compounds[c]&&(!WETC.includes(c)||WATER>0));
+const useNames=s=>WATER>0?allNames(s):dryNames(s);
 // The compound's wetness state for this much water (first state whose range holds it; past the last range, the last state).
 const NOSTATE={name:"none",lat_mult:1,long_mult:1,wear_mult:1};
 function wetState(c,mm){const a=c.ws;if(!a||!a.length)return NOSTATE;
@@ -497,9 +532,10 @@ async function addTyreFiles(files){
     try{
       const j=JSON.parse(await readText(f));
       const cs=j.compounds||j;const out={};
-      for(const c of ORDER){if(!cs[c])continue;out[c]=Object.fromEntries(FIELDS.map(k=>[k,cs[c][k]??GAME_DEFAULTS[k]??null]));
-        if(Array.isArray(cs[c].wetness_states))out[c].ws=cs[c].wetness_states.map(w=>({...w}))}
-      if(!dryNames({compounds:out}).length)throw new Error("no soft, medium or hard compound found");
+      for(const [c,v] of Object.entries(cs)){if(!v||typeof v!=="object"||Array.isArray(v)||!("lat_grip_base" in v||"wear_rate_base" in v))continue;
+        out[c]=Object.fromEntries(FIELDS.map(k=>[k,v[k]??GAME_DEFAULTS[k]??null]));out[c].cat=catOf(c,v);
+        if(Array.isArray(v.wetness_states))out[c].ws=v.wetness_states.map(w=>({...w}))}
+      if(!dryNames({compounds:out}).length)throw new Error("no dry compound found");
       sets.push({name:f.name.replace(/\.json$/i,""),mandatory:j.mandatory_compound_count??1,wearQuantum:j.wear_quantum??null,defaultCompound:j.default_compound??null,startProb:{...(j.start_probabilities||{})},compounds:out,raw:j});added++;
       if(sets.length>SET_COLORS.length)sets.shift();
     }catch(e){errs.push(f.name+": "+e.message)}
@@ -564,7 +600,7 @@ $("sets").addEventListener("click",e=>{
 });
 const CLIFF=["wear_cliff_onset_pct","wear_cliff_mult_lat","wear_cliff_mult_long"];
 // The Dry/Wet switch picks the compounds shown in the editor; the Tyre cliff switch acts on those.
-const viewNames=s=>tyreView==="wet"&&WETC.some(c=>s.compounds[c])?WETC.filter(c=>s.compounds[c]):dryNames(s);
+const viewNames=s=>tyreView==="wet"&&wetNames(s).length?wetNames(s):dryNames(s);
 const hasCliff=s=>viewNames(s).some(c=>s.compounds[c].wear_cliff_onset_pct!=null);
 // Cliff values kept aside when a cliff is removed, so it comes back as it was; vanilla values if there is nothing to restore.
 const stashCliff=(s,c)=>{const o=s.compounds[c];if(o.wear_cliff_onset_pct!=null||o.wear_cliff_mult_lat!=null){(s.cliffStash=s.cliffStash||{})[c]=CLIFF.map(f=>o[f])}};
@@ -572,8 +608,8 @@ const restoreCliff=(s,c,onset)=>{const o=s.compounds[c],st=s.cliffStash?.[c]||DE
   o.wear_cliff_onset_pct=onset??st[0];if(o.wear_cliff_mult_lat==null)o.wear_cliff_mult_lat=st[1];if(o.wear_cliff_mult_long==null)o.wear_cliff_mult_long=st[2]};
 const clearCliff=(s,c)=>{stashCliff(s,c);for(const f of CLIFF)s.compounds[c][f]=null};
 function renderTable(){
-  const s=sets[active],cs=dryNames(s),wc=WETC.filter(c=>s.compounds[c]),all=allNames(s),mm=WATER,cols=Math.max(cs.length,wc.length);
-  const head=list=>list.map(c=>`<th><span class="dot" style="background:var(--${c==="medium"?"med":c})"></span>${c==="intermediate"?"Inter":cap(c)}</th>`).join("")+"<th></th>".repeat(cols-list.length);
+  const s=sets[active],cs=dryNames(s),wc=wetNames(s),all=allNames(s),mm=WATER,cols=Math.max(3,cs.length,wc.length);
+  const head=list=>list.map(c=>`<th><span class="dot" style="background:${col(c)}"></span>${short(c)}</th>`).join("")+"<th></th>".repeat(cols-list.length);
   const cell=(c,f,i)=>`<td><input type="number" step="${STEPS[i]}" min="0" ${f==="wear_cliff_onset_pct"?'max="100"':""} data-c="${c}" data-f="${f}" value="${s.compounds[c][f]??""}" ${OPTIONAL.has(f)&&!hasCliff(s)?"disabled":""} placeholder="none" aria-label="${c} ${f}"></td>`;
   const rows=(list,cliffRow)=>FIELDS.map((f,i)=>(cliffRow&&f==="wear_cliff_onset_pct"?`<tr><td colspan="${cols+1}"><label class="chk"><input type="checkbox" id="cliffOn" ${hasCliff(s)?"checked":""}><span class="ck"></span><span>Tyre cliff</span></label></td></tr>`:"")+`<tr><td>${f}</td>`+list.map(c=>cell(c,f,i)).join("")+"<td></td>".repeat(cols-list.length)+"</tr>").join("");
   // Dry/Wet switch: the dry compounds, or intermediate and wet with the wetness table
@@ -582,9 +618,12 @@ function renderTable(){
   $("cmpTable").innerHTML=`<colgroup><col class="k">${"<col>".repeat(cols)}</colgroup><thead><tr><th></th>${head(wet?wc:cs)}</tr></thead><tbody>`+rows(wet?wc:cs,true)+"</tbody>";
   // wetness_states: the state each compound is in at the race's track water, editable
   $("wetHead").textContent=`Wetness at ${mm.toFixed(1)} mm track water`;
-  $("wetTable").innerHTML=`<colgroup><col class="k">${"<col>".repeat(all.length)}</colgroup><thead><tr><th></th>${all.map(c=>`<th><span class="dot" style="background:var(--${c==="medium"?"med":c})"></span>${{intermediate:"Inter",medium:"Med"}[c]??cap(c)}</th>`).join("")}</tr></thead><tbody><tr><td>state</td>`+all.map(c=>`<td class="wst">${wetState(s.compounds[c],mm).name.replace("_"," ")}</td>`).join("")+"</tr>"+
-    WFIELDS.map(f=>`<tr><td>${f}</td>`+all.map(c=>{const w=wetState(s.compounds[c],mm);return `<td><input type="number" step="0.01" min="0" data-wc="${c}" data-w="${f}" value="${w===NOSTATE?"":w[f]}" ${w===NOSTATE?"disabled":""} aria-label="${c} ${f}"></td>`}).join("")+"</tr>").join("")+"</tbody>";
+  $("wetTable").classList.toggle("five",all.length>3);const wpad="<td></td>".repeat(Math.max(0,3-all.length));
+  $("wetTable").innerHTML=`<colgroup><col class="k">${"<col>".repeat(Math.max(3,all.length))}</colgroup><thead><tr><th></th>${all.map(c=>`<th><span class="dot" style="background:${col(c)}"></span>${short(c,all.length>3?5:9)}</th>`).join("")}${wpad}</tr></thead><tbody><tr><td>state</td>`+all.map(c=>`<td class="wst">${wetState(s.compounds[c],mm).name.replace("_"," ")}</td>`).join("")+wpad+"</tr>"+
+    WFIELDS.map(f=>`<tr><td>${f}</td>`+all.map(c=>{const w=wetState(s.compounds[c],mm);return `<td><input type="number" step="0.01" min="0" data-wc="${c}" data-w="${f}" value="${w===NOSTATE?"":w[f]}" ${w===NOSTATE?"disabled":""} aria-label="${c} ${f}"></td>`}).join("")+wpad+"</tr>").join("")+"</tbody>";
 }
+// Column labels: names are cut to fit narrow columns (full name in the tooltip).
+const short=(c,max)=>{const n={intermediate:"Inter"}[c]??(max<6&&c==="medium"?"Med":cap(c));return `<span title="${cap(c)}">${n.length>max?n.slice(0,max-1)+"…":n}</span>`};
 const WFIELDS=["lat_mult","long_mult","wear_mult"];
 let tyreView="dry";
 $("tyreView").addEventListener("click",e=>{const b=e.target.closest("button");if(!b||b.disabled)return;tyreView=b.dataset.tv;renderTable()});
@@ -626,12 +665,12 @@ $("cmpTable").addEventListener("change",e=>{
 function renderRace(){
   const s=sets[active],cs=dryNames(s);
   // Same columns as the compound table above, so each value sits under its compound.
-  $("raceCols").innerHTML=`<col class="k">${cs.map(()=>"<col>").join("")}`;
-  $("defComp").innerHTML="<td>default_compound</td>"+cs.map(c=>`<td><button type="button" data-dc="${c}" class="${s.defaultCompound===c?"on":""}"><span class="dot" style="background:var(--${c==="medium"?"med":c})"></span>${cap(c)}</button></td>`).join("");
-  $("startProb").innerHTML="<td>start_probabilities</td>"+cs.map(c=>`<td><input type="number" min="0" max="1" step="0.05" data-sp="${c}" value="${(s.startProb?.[c]??0).toFixed(2)}" data-last="${(s.startProb?.[c]??0).toFixed(2)}" aria-label="${c} start probability"></td>`).join("");
+  const rpad="<td></td>".repeat(Math.max(0,3-cs.length));$("raceCols").innerHTML=`<col class="k">${"<col>".repeat(Math.max(3,cs.length))}`;
+  $("defComp").innerHTML="<td>default_compound</td>"+cs.map(c=>`<td><button type="button" data-dc="${c}" class="${s.defaultCompound===c?"on":""}"><span class="dot" style="background:${col(c)}"></span>${short(c,7)}</button></td>`).join("")+rpad;
+  $("startProb").innerHTML="<td>start_probabilities</td>"+cs.map(c=>`<td><input type="number" min="0" max="1" step="0.05" data-sp="${c}" value="${(s.startProb?.[c]??0).toFixed(2)}" data-last="${(s.startProb?.[c]??0).toFixed(2)}" aria-label="${c} start probability"></td>`).join("")+rpad;
   spTotal();
 }
-function spTotal(){const sp=sets[active].startProb||{},dry=dryNames(sets[active]).reduce((a,c)=>a+(+sp[c]||0),0),other=WETC.reduce((a,c)=>a+(+sp[c]||0),0);
+function spTotal(){const sp=sets[active].startProb||{},dry=dryNames(sets[active]).reduce((a,c)=>a+(+sp[c]||0),0),other=Object.keys(sp).filter(c=>!dryNames(sets[active]).includes(c)).reduce((a,c)=>a+(+sp[c]||0),0);
   const t=dry+other;$("spTotal").innerHTML=`Dry ${dry.toFixed(2)} + intermediate and wet ${other.toFixed(2)} = <b style="color:${Math.abs(t-1)<0.005?"var(--good)":"var(--bad)"}">${t.toFixed(2)}</b>`}
 $("defComp").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;sets[active].defaultCompound=b.dataset.dc;renderRace()});
 $("startProb").addEventListener("input",e=>{const t=e.target;if(!t.dataset.sp)return;const v=+t.value;
@@ -666,7 +705,7 @@ function exportModel(s){
   if(s.startProb&&Object.keys(s.startProb).length){j.start_probabilities=j.start_probabilities||{};
     for(const c of allNames(s))if(s.startProb[c]!=null)j.start_probabilities[c]=s.startProb[c];
     if(!s.raw)for(const k of ["intermediate","wet"])if(s.startProb[k]!=null)j.start_probabilities[k]=s.startProb[k]}
-  for(const c of allNames(s)){const o=cs[c]=cs[c]||{category:c==="intermediate"?"inter":c==="wet"?"wet":"dry"};
+  for(const c of allNames(s)){const o=cs[c]=cs[c]||{category:s.compounds[c].cat||"dry"};
     for(const f of FIELDS){const v=s.compounds[c][f];if(v==null)delete o[f];else o[f]=v}
     if(s.compounds[c].ws)o.wetness_states=structuredClone(s.compounds[c].ws)}
   return j;
@@ -812,8 +851,7 @@ function gameLapTimeFuel(lenKm,lat,lng,carKg,engKg,fuelKg){
   const at=k=>row[k]??(row[k]=gameLapTime(lenKm,lat,lng,carKg,engKg,k*10));
   return w<1e-9?at(i):at(i)*(1-w)+at(i+1)*w;
 }
-const CODE={soft:"S",medium:"M",hard:"H",intermediate:"I",wet:"W"};
-const seqName=seq=>seq.map(c=>CODE[c]).join("-");
+const seqName=seq=>seq.map(c=>code(c)).join("-");
 const equalSplit=(laps,K)=>Array.from({length:K},(_,i)=>Math.floor(laps/K)+(i<laps%K?1:0));
 // Time a race for a compound sequence and stint lengths L. cs maps compound name to prep() output.
 function evalSplit(cs,seq,L,P){
@@ -842,19 +880,19 @@ function stintCosts(c,P){
   for(let d=0;d<N;d++){const f0=total-d*P.fpl;let s=0;for(let len=1;len<=Math.min(maxLen,N-d);len++){const i=len-1;s+=lapTime(c,i,f0-i*P.fpl-P.fpl/2,P);tab[d*W+len]=s}}
   return {run:(d,len)=>tab[d*W+len],stop:()=>P.pit};
 }
-// Every compound sequence for 1-3 stops. Optimal mode finds the fastest legal stint split by dynamic programming over laps completed.
+// Every compound sequence for 0-3 stops (no-stop only when one set of tyres and the fuel last the race). Optimal mode finds the fastest legal stint split by dynamic programming over laps completed.
 // Mandatory compounds count dry compounds only, and a race that uses an intermediate or wet tyre is exempt (assumed, as in F1).
-const mandNeed=(s,seq)=>seq.some(c=>WETC.includes(c))?0:Math.min(s.mandatory||1,dryNames(s).length);
+const mandNeed=(s,seq)=>seq.some(c=>isWet(s,c))?0:Math.min(s.mandatory||1,dryNames(s).length);
 function runSet(s,P){
   const N=P.laps,names=useNames(s),cs={},costs={},out=[];
   for(const cn of names){cs[cn]=prep(cn,s.compounds[cn],P,s.wearQuantum);if(P.optimal)costs[cn]=stintCosts(cs[cn],P)}
   const finish=(seq,L)=>{
     const r=evalSplit(cs,seq,L,P),distinct=new Set(seq).size,need=mandNeed(s,seq);
-    if(new Set(seq.filter(c=>!WETC.includes(c))).size<need){r.ok=false;r.why.push(`needs ${need} compounds`)}
+    if(new Set(seq.filter(c=>!isWet(s,c))).size<need){r.ok=false;r.why.push(`needs ${need} compounds`)}
     return {seq,N:seq.length-1,name:seqName(seq),mixed:distinct>1,...r};
   };
   if(!P.optimal){
-    const rec=(seq)=>{if(seq.length>=2)out.push(finish(seq,equalSplit(N,seq.length)));if(seq.length<4)for(const cn of names)rec([...seq,cn])};
+    const rec=(seq)=>{if(seq.length>=2)out.push(finish(seq,equalSplit(N,seq.length)));else if(seq.length===1){const r=finish(seq,[N]);if(r.ok)out.push(r)}if(seq.length<4)for(const cn of names)rec([...seq,cn])};
     rec([]);
   }else{
     const start=new Float64Array(N+1).fill(Infinity);start[0]=0;
@@ -867,6 +905,7 @@ function runSet(s,P){
           for(let len=1;d+len<=N;len++){const c=cost.run(d,len);if(c===Infinity)break;
             const v=b+c+(k?cost.stop(len):0);if(v<dp[d+len]){dp[d+len]=v;prev[d+len]=d}}}
         const nn={seq:[...node.seq,cn],dp,prev,parent:node};next.push(nn);
+        if(k===0&&dp[N]<Infinity){const r=finish(nn.seq,[N]);if(r.ok)out.push(r)}
         if(k>=1){
           let L;
           if(dp[N]<Infinity){L=[];let d=N;for(let n=nn;n.parent;n=n.parent){const p=n.prev[d];L.unshift(d-p);d=p}}
@@ -912,19 +951,19 @@ function draw(key,el,type,data,o){if(charts[key]){charts[key].data=data;charts[k
 const fmt=x=>(x>=0?"+":"")+x.toFixed(1);
 function update(){
   const P=S();
-  {const ns=dryNames(sets[active]),q=sets[active].wearQuantum,lt=cn=>lapTime(prep(cn,sets[active].compounds[cn],P,q),0,0,P);
+  {const ns=byGrip(sets[active]),q=sets[active].wearQuantum,lt=cn=>lapTime(prep(cn,sets[active].compounds[cn],P,q),0,0,P);
    $("gripGap").value=ns.length>1?(lt(ns[ns.length-1])-lt(ns[0])).toFixed(2):"";
    $("gripGap").previousElementSibling.textContent=ns.length>1?`${cap(ns[0])} vs ${ns[ns.length-1]}, new tyres, empty car (s)`:"Softest vs hardest compound (s)"}
   {const s=sets[active],pc=x=>"x"+x.toFixed(2);
-   $("waterOut").innerHTML=allNames(s).map(cn=>{const w=wetState(s.compounds[cn],P.water);return `<span class="dot" style="background:var(--${cn==="medium"?"med":cn})"></span>${cap(cn)}: ${w.name.replace("_"," ")}, grip ${pc(w.lat_mult)} / ${pc(w.long_mult)}, wear ${pc(w.wear_mult)}`}).join("<br>")+
+   $("waterOut").innerHTML=allNames(s).map(cn=>{const w=wetState(s.compounds[cn],P.water);return `<span class="dot" style="background:${col(cn)}"></span>${cap(cn)}: ${w.name.replace("_"," ")}, grip ${pc(w.lat_mult)} / ${pc(w.long_mult)}, wear ${pc(w.wear_mult)}`}).join("<br>")+
      (P.water>0?"":"<br>Intermediate and wet tyres join the strategies when the track has water.")}
   const results=sets.map(s=>runSet(s,P));
-  const ccol=c=>`var(--${c==="medium"?"med":c})`;
+  const ccol=c=>`${col(c)}`;
   const TAG=w=>w==="wear"?"WEAR":w==="tank"?"TANK":w==="empty stint"?"EMPTY":w.replace(/needs (\d) compounds/,"$1 COMPOUNDS");
   const bestOf=(r,N)=>{const c=r.filter(o=>o.N===N);return c.filter(o=>o.ok).sort((a,b)=>a.t-b.t)[0]||c.sort((a,b)=>a.t-b.t)[0]};
   const V=shown(),vs=V.map(i=>sets[i]);
   // top strategies for active
-  const R=results[active],bad=css("--bad"),RK=ranked(R),ALL=RK.slice(0,12),TOP=topAll?ALL:(()=>{const t=[1,2,3].map(n=>RK.find(o=>o.N===n&&o.ok)).filter(Boolean);for(const o of RK){if(t.length>=5)break;if(!t.includes(o))t.push(o)}return t.sort((a,b)=>(b.ok-a.ok)||(a.t-b.t))})();
+  const R=results[active],bad=css("--bad"),RK=ranked(R),ALL=RK.slice(0,12),TOP=topAll?ALL:(()=>{const t=[0,1,2,3].map(n=>RK.find(o=>o.N===n&&o.ok)).filter(Boolean);for(const o of RK){if(t.length>=5)break;if(!t.includes(o))t.push(o)}return t.sort((a,b)=>(b.ok-a.ok)||(a.t-b.t))})();
   $("aiStint").innerHTML="<b>Longest stint before AI pits</b>"+useNames(sets[active]).map(cn=>`<span><span class="dot" style="background:${ccol(cn)}"></span>${cap(cn)} ${Math.floor(P.th/prep(cn,sets[active].compounds[cn],P).rate)} laps</span>`).join("");
   $("topAll").textContent=topAll?"Show best per stop count":"Show all 12";
   $("topLead").textContent=topAll?"The 12 fastest plans.":"The fastest legal plan for each number of stops, filled up to 5 with the next fastest plans, numbered by rank among all plans.";
@@ -933,7 +972,7 @@ function update(){
   const N=P.laps,pct=x=>(100*x/N).toFixed(3)+"%",step=N>40?10:5;
   $("stintChart").innerHTML=TOP.map((o,ri)=>{
     let at=0;const segs=o.seq.map((c,i)=>{const l=o.L[i],x0=at;at+=l;
-      return `<div class="st-seg ${c}" style="left:calc(${pct(x0)} + ${i?1:0}px);width:calc(${pct(l)} - ${i?2:0}px)" title="${cap(c)}: ${l} laps (laps ${x0+1}-${at})">${l}</div>`+(i<o.seq.length-1?`<span class="st-pit" style="left:${pct(at)}">${at}</span>`:"")}).join("");
+      return `<div class="st-seg" style="background:${col(c)};color:${ink(c)};left:calc(${pct(x0)} + ${i?1:0}px);width:calc(${pct(l)} - ${i?2:0}px)" title="${cap(c)}: ${l} laps (laps ${x0+1}-${at})">${l}</div>`+(i<o.seq.length-1?`<span class="st-pit" style="left:${pct(at)}">${at}</span>`:"")}).join("");
     const top=o.ok&&Math.abs(o.gap)<1e-6;
     return `<div class="st-row pick ${o.ok?"":"illegal"}" data-k="${ri}" title="${o.ok?"Click to load into the Strategy planner":"Breaks "+o.why.join(", ")+". Click to load into the Strategy planner"}"><span class="st-rank">${RK.indexOf(o)+1}</span><span class="st-name">${o.name}</span><div class="st-track">${segs}</div><span class="st-gap ${top?"best":""}">${top?raceTime(o.t):fmt(o.gap)+" s"}</span></div>`}).join("")+
     `<div class="st-axis"><span></span><span></span><div class="ticks">${Array.from({length:Math.floor(N/step)+1},(_,k)=>`<span style="left:${pct(k*step)}">${k*step}</span>`).join("")}</div><span></span><div class="lbl">Lap</div></div>`+
@@ -942,29 +981,29 @@ function update(){
   const maxL=Math.min(80,Math.max(...vs.flatMap(s=>useNames(s).map(cn=>Math.floor(P.th/prep(cn,s.compounds[cn],P).rate))))+5);
   const xs=[...Array(maxL+1).keys()];const ds=[];
   V.forEach(i=>{const s=sets[i];
-    const href=s.compounds.hard?prep("hard",s.compounds.hard,P,s.wearQuantum):prep(dryNames(s)[0],s.compounds[dryNames(s)[0]],P,s.wearQuantum);
+    const hn=byGrip(s).at(-1),href=prep(hn,s.compounds[hn],P,s.wearQuantum);
     const r0=lapTime(href,0,0,P);
     useNames(s).forEach(cn=>{const c=prep(cn,s.compounds[cn],P,s.wearQuantum);const stint=Math.floor(P.th/c.rate);
-      ds.push({label:`${s.name}: ${cn}`,data:xs.map(n=>+(lapTime(c,n,0,P)-r0).toFixed(3)),borderColor:css("--"+(cn==="medium"?"med":cn)),backgroundColor:css("--"+(cn==="medium"?"med":cn)),
+      ds.push({label:`${s.name}: ${cn}`,data:xs.map(n=>+(lapTime(c,n,0,P)-r0).toFixed(3)),borderColor:col(cn,s),backgroundColor:col(cn,s),
         borderDash:i===active?[]:[[7,4],[2,3],[10,3,2,3],[4,4],[1,4]][(i-(i>active?1:0))%5],borderWidth:i===active?2.5:1.3,
         pointRadius:xs.map(n=>n===stint?5:0),tension:0});
     });
   });
-  const o2=opts("laps on the tyre","seconds slower than new hard");
+  const o2=opts("laps on the tyre","seconds slower than the hardest new tyre");
   o2.plugins.legend.labels={...o2.plugins.legend.labels,color:"#c7cbd1",usePointStyle:true,pointStyle:"line",pointStyleWidth:34,padding:14,
     generateLabels:ch=>ch.data.datasets.map((d,i)=>({text:d.label,strokeStyle:d.borderColor,fillStyle:d.borderColor,lineWidth:2.5,lineDash:d.borderDash,pointStyle:"line",fontColor:"#c7cbd1",hidden:!ch.isDatasetVisible(i),datasetIndex:i}))};
   draw("t","cTyre","line",{labels:xs,datasets:ds},o2);
   // race trace for active: fastest legal plan per stop count
-  const STOPCOL=["#2f6fd6","#d97a00","#9a4fd0"];
-  const best=[1,2,3].map(N=>R.filter(o=>o.N===N&&o.ok).sort((a,b)=>a.t-b.t)[0]).filter(Boolean);
+  const STOPCOL=["#0e8f91","#2f6fd6","#d97a00","#9a4fd0"],stopLbl=n=>n?n+"-stop":"No-stop";
+  const best=[0,1,2,3].map(N=>R.filter(o=>o.N===N&&o.ok).sort((a,b)=>a.t-b.t)[0]).filter(Boolean);
   const o3=opts("lap","lap time (s)");o3.elements={point:{radius:0}};
-  draw("r","cRace","line",{labels:[...Array(P.laps).keys()].map(i=>i+1),datasets:best.map(o=>({label:`${o.N}-stop ${o.name} (${o.L.join("/")})`,data:o.laps,
-    borderColor:STOPCOL[o.N-1],backgroundColor:STOPCOL[o.N-1],borderWidth:2,tension:0}))},o3);
+  draw("r","cRace","line",{labels:[...Array(P.laps).keys()].map(i=>i+1),datasets:best.map(o=>({label:`${stopLbl(o.N)} ${o.name} (${o.L.join("/")})`,data:o.laps,
+    borderColor:STOPCOL[o.N],backgroundColor:STOPCOL[o.N],borderWidth:2,tension:0}))},o3);
   // race time: running total against an even pace that finishes with the fastest plan's total
   if(best.length){const pace=Math.min(...best.map(o=>o.t))/P.laps,o4=opts("lap","seconds vs even pace (+ = behind)");o4.elements={point:{radius:0}};
     o4.plugins.tooltip.callbacks={label:x=>`${x.dataset.label}: ${raceTime(best[x.datasetIndex].cum[x.dataIndex])} (${x.parsed.y>=0?"+":""}${x.parsed.y.toFixed(1)} s)`};
-    draw("c","cCum","line",{labels:[...Array(P.laps).keys()].map(i=>i+1),datasets:best.map(o=>({label:`${o.N}-stop ${o.name} (${raceTime(o.t)})`,data:o.cum.map((v,i)=>+(v-pace*(i+1)).toFixed(2)),
-      borderColor:STOPCOL[o.N-1],backgroundColor:STOPCOL[o.N-1],borderWidth:2,tension:0,stepped:false}))},o4)}
+    draw("c","cCum","line",{labels:[...Array(P.laps).keys()].map(i=>i+1),datasets:best.map(o=>({label:`${stopLbl(o.N)} ${o.name} (${raceTime(o.t)})`,data:o.cum.map((v,i)=>+(v-pace*(i+1)).toFixed(2)),
+      borderColor:STOPCOL[o.N],backgroundColor:STOPCOL[o.N],borderWidth:2,tension:0,stepped:false}))},o4)}
   lastP=P;lastR=R;lastTop=TOP;renderPlanner();
 }
 
@@ -1003,21 +1042,21 @@ function simPlan(s,P,plan){
     life.push({c:plan.seq[si],pts,si});
   });
   if(out!=null)warn.add("OUT OF FUEL LAP "+out);
-  const need=mandNeed(s,plan.seq);if(new Set(plan.seq.filter(c=>!WETC.includes(c))).size<need)warn.add(need+" COMPOUNDS");
+  const need=mandNeed(s,plan.seq);if(new Set(plan.seq.filter(c=>!isWet(s,c))).size<need)warn.add(need+" COMPOUNDS");
   return {t,warn:[...warn],life,fpts,L,loads};
 }
 function renderPlanner(){
   const P=lastP,s=sets[active];if(!P)return;normPlan(s,P);
-  const N=P.laps,r=simPlan(s,P,plan),names=useNames(s),ccol=c=>`var(--${c==="medium"?"med":c})`;
+  const N=P.laps,r=simPlan(s,P,plan),names=useNames(s),ccol=c=>`${col(c)}`;
   $("activeName4").textContent=s.name;
-  $("planAdd").disabled=r.L.length>=4||N<r.L.length+1;$("planDel").disabled=r.L.length<=2;
+  $("planAdd").disabled=r.L.length>=4||N<r.L.length+1;$("planDel").disabled=r.L.length<=1;
   const best=lastR.filter(o=>o.ok).sort((x,y)=>x.t-y.t)[0],gap=best?r.t-best.t:null;
   // every plan: race time, gap to the model's best plan, warnings; the selected plan is the one being edited and drawn
   const all=plans.map(q=>q===plan?r:simPlan(s,P,q)),fastest=Math.min(...all.map(x=>x.t));
   $("planTabs").innerHTML=plans.map((q,k)=>`<div class="ptab ${k===cur?"on":""}" data-pk="${k}" role="button" tabindex="0"><span class="pl">Plan ${"ABC"[k]}${plans.length>1?`<button class="prm" data-rm="${k}" title="Remove plan ${"ABC"[k]}" aria-label="Remove plan ${"ABC"[k]}">&times;</button>`:""}</span><span class="ps">${seqName(q.seq)} ${all[k].L.join("/")}</span><span class="pt">${raceTime(all[k].t)}</span><span class="pg">${plans.length>1?(Math.abs(all[k].t-fastest)<0.05?"fastest plan":fmt(all[k].t-fastest)+" s"):""}</span><span class="pw">${all[k].warn.map(w=>`<span class="tag">${w}</span>`).join("")}</span></div>`).join("")+
     [0,1,2].slice(plans.length).map(k=>k===plans.length?`<button class="ptab add" id="planNew">+ Add plan ${"ABC"[k]}</button>`:`<div class="ptab empty"></div>`).join("");
   $("planRes").innerHTML=`<span class="rt">Plan ${"ABC"[cur]}: ${raceTime(r.t)}</span>`+(best?`<span>${Math.abs(gap)<0.05?"matches the best plan":fmt(gap)+" s to the best plan"} (${best.name} ${best.L.join("/")})</span>`:"")+r.warn.map(w=>`<span class="tag">${w}</span>`).join("");
-  const ds=r.life.map(st=>{const col=css("--"+(st.c==="medium"?"med":st.c));return {label:`Stint ${st.si+1}: ${cap(st.c)}`,data:st.pts,yAxisID:"y",borderColor:col,backgroundColor:col+"2e",fill:"origin",borderWidth:2,pointRadius:0,tension:0,
+  const ds=r.life.map(st=>{const cl=col(st.c);return {label:`Stint ${st.si+1}: ${cap(st.c)}`,data:st.pts,yAxisID:"y",borderColor:cl,backgroundColor:cl+"2e",fill:"origin",borderWidth:2,pointRadius:0,tension:0,
     segment:{borderDash:g=>g.p1.raw.w>P.th+1e-9?[5,4]:undefined}}});
   ds.push({label:"Fuel (kg)",data:r.fpts,yAxisID:"y2",borderColor:css("--bad"),backgroundColor:css("--bad"),borderWidth:1.6,pointRadius:0,tension:0,fill:false});
   const o=opts("lap","tyre life left (%)");o.parsing=false;
@@ -1041,7 +1080,7 @@ function placePlan(r,P){
   const off=ch.canvas.getBoundingClientRect().left-$("pWrap").getBoundingClientRect().left,X=v=>off+ch.scales.x.getPixelForValue(v);
   const st=[0,...plan.pits,N],span=i=>`left:${X(st[i]).toFixed(1)}px;width:${(X(st[i+1])-X(st[i])).toFixed(1)}px`;
   $("pTop").innerHTML=r.L.map((sl,i)=>{const w=X(st[i+1])-X(st[i]),few=w<names.length*35;
-    return `<div class="pseg" style="${span(i)}">${(few?[plan.seq[i]]:names).map(cn=>`<button data-pc="${cn}" data-i="${i}" ${few?'data-cyc="1"':""} class="${plan.seq[i]===cn?"on":""} ${cn}" title="${few?"Click to change compound":cap(cn)}" aria-label="${cap(cn)}">${CODE[cn]}</button>`).join("")}</div>`}).join("");
+    return `<div class="pseg" style="${span(i)}">${(few?[plan.seq[i]]:names).map(cn=>`<button data-pc="${cn}" data-i="${i}" ${few?'data-cyc="1"':""} class="${plan.seq[i]===cn?"on":""}" ${plan.seq[i]===cn?`style="background:${col(cn)};color:${ink(cn)}"`:""} title="${few?"Click to change compound":cap(cn)}" aria-label="${cap(cn)}">${code(cn)}</button>`).join("")}</div>`}).join("");
   const axisY=ch.canvas.getBoundingClientRect().top+ch.scales.x.top+6-$("pBot").getBoundingClientRect().top; // lap-number row, in pBot coordinates
   $("pBot").style.height=P.refuel?"30px":"8px";
   $("pBot").innerHTML=plan.pits.map((p,i)=>`<span class="pstop" style="left:${X(p).toFixed(1)}px;top:${axisY.toFixed(0)}px"><button data-pit="${i}" data-d="-1" aria-label="Stop earlier">&lsaquo;</button><b>${p}</b><button data-pit="${i}" data-d="1" aria-label="Stop later">&rsaquo;</button></span>`).join("")+
@@ -1075,7 +1114,7 @@ $("pWrap").addEventListener("click",e=>{const b=e.target.closest("button");if(!b
   renderPlanner()});
 $("planAdd").addEventListener("click",()=>{const N=lastP.laps,L=planL(N,plan.pits),k=L.indexOf(Math.max(...L));if(L[k]<2)return;
   const start=k?plan.pits[k-1]:0;plan.pits.splice(k,0,start+Math.floor(L[k]/2));plan.seq.splice(k+1,0,plan.seq[k]);plan.fuel.splice(k,1,null,null);renderPlanner()});
-$("planDel").addEventListener("click",()=>{if(plan.seq.length<=2)return;plan.pits.pop();plan.seq.pop();plan.fuel.pop();plan.fuel[plan.fuel.length-1]=null;renderPlanner()});
+$("planDel").addEventListener("click",()=>{if(plan.seq.length<=1)return;plan.pits.pop();plan.seq.pop();plan.fuel.pop();plan.fuel[plan.fuel.length-1]=null;renderPlanner()});
 $("stintChart").addEventListener("click",e=>{const row=e.target.closest(".st-row");if(!row||row.dataset.k==null)return;plan=plans[cur]=planFrom(lastTop[+row.dataset.k]);renderPlanner();
   $("planPanel").scrollIntoView({behavior:"smooth",block:"nearest"})});
 
