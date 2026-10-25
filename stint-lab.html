@@ -95,6 +95,7 @@ button.primary:hover{background:var(--accent2)}
 label.chk[hidden]{display:none}
 .drop{border:1.5px dashed #3a3f47;border-radius:5px;padding:14px 12px;text-align:center;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);cursor:pointer;background:var(--panel3)}
 .drop:hover{border-color:#626975;color:#c7cbd1}
+#constRow[hidden]{display:none}
 .drop.need{border-color:var(--accent);color:#fff;background:#0b170f}
 .trackline.none{color:var(--mid)}
 .drop.over{border-color:var(--accent);color:#fff;background:#0b170f}
@@ -349,6 +350,11 @@ a.tool-card.blue:hover,a.tool-card.blue:focus-visible{box-shadow:inset 3px 0 0 #
         <div class="sect">Derived from the track file and game code</div>
         <label class="f"><span>Lap time, 50-rated car at 800 kg, grip 1.00 (s)</span><input type="number" data-dec="2" id="base" step="0.01" readonly tabindex="-1" class="ro"></label>
         <label class="f"><span>Soft vs hard, new tyres, empty car (s)</span><input type="number" data-dec="2" id="gripGap" step="0.01" readonly tabindex="-1" class="ro"></label>
+        <label class="f"><span>New vs worn hard, empty car (s)</span><input type="number" data-dec="2" id="wearGap" step="0.01" readonly tabindex="-1" class="ro"></label>
+        <label class="f"><span>Tyre loss per lap, empty car (s/lap)</span><span></span></label>
+        <div class="note" id="lossOut"></div>
+        <label class="f"><span>1-stop stint fuel vs empty, new tyre (s)</span><input type="number" data-dec="2" id="fuelGap" step="0.01" readonly tabindex="-1" class="ro"></label>
+        <div class="note" id="fuelGapOut"></div>
         <button id="avgTrack">Remove all tracks</button>
       </details>
 
@@ -358,9 +364,13 @@ a.tool-card.blue:hover,a.tool-card.blue:focus-visible{box-shadow:inset 3px 0 0 #
         <label class="f"><span>Engine (kg)</span><input type="number" id="engine" step="5"></label>
         <label class="f"><span>Tank size (kg)</span><input type="number" id="tank" step="10"></label>
         <div class="note" id="massOut"></div>
+        <div class="drop" id="dropConst" tabindex="0" role="button">Drop constants.py here, or click to choose</div>
+        <input type="file" id="fileConst" accept=".py,text/x-python,text/plain" hidden>
+        <div class="toast" id="constMsg"></div>
         <label class="f"><span>FUEL_PER_LAP_CONSTANT</span><input type="number" id="fpc" step="5"></label>
         <label class="f"><span>FUEL_REFERENCE_EFFICIENCY</span><input type="number" id="fre" step="5" min="1"></label>
         <div class="note" id="fplOut"></div>
+        <div class="btnrow" id="constRow" hidden><button id="dlConst">Download constants.py</button></div>
         <label class="chk"><input type="checkbox" id="refuel"><span class="ck"></span><span>Refuelling allowed</span></label>
         <label class="f"><span>Refuel time per 10 kg (s), game value</span><input type="number" data-dec="1" id="ref" step="0.1" readonly tabindex="-1" class="ro"></label>
         <label class="f"><span>Chief mechanic pit-stop skill (1-20)</span><input type="number" id="mech" step="1" min="1" max="20"></label>
@@ -722,6 +732,29 @@ $("dlJson").addEventListener("click",()=>{
   const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type:"application/json"}));a.download="tyremodel.json";
   document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000);done();
 });
+// constants.py: FUEL_PER_LAP_CONSTANT and FUEL_REFERENCE_EFFICIENCY are read into the fuel boxes; the download is the
+// uploaded file with only those two numbers replaced, every other line as it was.
+const CONST_KEYS={FUEL_PER_LAP_CONSTANT:"fpc",FUEL_REFERENCE_EFFICIENCY:"fre"};
+const constRe=k=>new RegExp(`^(${k}\\s*=\\s*)(-?[0-9]*\\.?[0-9]+(?:[eE][-+]?[0-9]+)?)`,"m");
+let constText=null,constName="constants.py";
+async function addConstFile(files){
+  const f=files[0];if(!f)return;const txt=await readText(f),found=[];
+  for(const [k,id] of Object.entries(CONST_KEYS)){const m=txt.match(constRe(k));if(m){$(id).value=+m[2];$(id).dataset.last=$(id).value;found.push(`${k} ${+m[2]}`)}}
+  if(!found.length){msg($("constMsg"),f.name+": no FUEL_PER_LAP_CONSTANT or FUEL_REFERENCE_EFFICIENCY found.",true);return}
+  constText=txt;constName=f.name;$("constRow").hidden=false;
+  msg($("constMsg"),`Loaded ${f.name}: ${found.join(", ")}.`);update();
+}
+function exportConst(){let t=constText;for(const [k,id] of Object.entries(CONST_KEYS)){const v=+$(id).value;if(isFinite(v))t=t.replace(constRe(k),(_,a)=>a+(Number.isInteger(v)?v.toFixed(1):String(v)))}return t}
+function saveText(name,txt,el,done,type){
+  if(window.claude?.use){
+    if(!dlCap){msg(el,"Download is not available in this view.");return}
+    dlCap.save({filename:name,data:txt}).then(done,e=>{if(e?.code!=="declined")msg(el,"Download failed: "+(e?.message||e?.code||"unknown error"))});
+    return;
+  }
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type}));a.download=name;
+  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000);done();
+}
+$("dlConst").addEventListener("click",()=>saveText(constName,exportConst(),$("constMsg"),()=>msg($("constMsg"),"Downloaded. Only FUEL_PER_LAP_CONSTANT and FUEL_REFERENCE_EFFICIENCY changed; every other line is as uploaded."),"text/x-python"));
 let dlCap=null;if(window.claude?.use)window.claude.use("downloads").then(d=>{dlCap=d}).catch(()=>{});
 
 /* ---------- physics ---------- */
@@ -937,6 +970,7 @@ function opts(xt,yt){
   const ink=css("--muted"),line=css("--grid"),f={family:"Inter",size:11};
   const ttl=t=>({display:!!t,text:t,color:css("--label"),font:{family:"Inter",size:10,weight:"800"}});
   return {responsive:true,maintainAspectRatio:false,animation:false,
+    interaction:{mode:"index",axis:"x",intersect:false},
     plugins:{legend:{labels:{color:ink,font:f,boxWidth:14}},
       tooltip:{backgroundColor:"#050607",borderColor:"#3a3f47",borderWidth:1,titleColor:"#fff",bodyColor:"#c7cbd1",titleFont:{family:"Inter",size:11,weight:"800"},bodyFont:f,padding:9,cornerRadius:4}},
     scales:{x:{title:ttl(xt?xt.toUpperCase():""),ticks:{color:ink,font:f},grid:{color:line},border:{color:"#555b64"}},
@@ -953,7 +987,18 @@ function update(){
   const P=S();
   {const ns=byGrip(sets[active]),q=sets[active].wearQuantum,lt=cn=>lapTime(prep(cn,sets[active].compounds[cn],P,q),0,0,P);
    $("gripGap").value=ns.length>1?(lt(ns[ns.length-1])-lt(ns[0])).toFixed(2):"";
-   $("gripGap").previousElementSibling.textContent=ns.length>1?`${cap(ns[0])} vs ${ns[ns.length-1]}, new tyres, empty car (s)`:"Softest vs hardest compound (s)"}
+   $("gripGap").previousElementSibling.textContent=ns.length>1?`${cap(ns[0])} vs ${ns[ns.length-1]}, new tyres, empty car (s)`:"Softest vs hardest compound (s)";
+   // fuel for one stint of a 1-stop race (the longer half), on the hardest new tyre
+   const hn=ns[ns.length-1],c=prep(hn,sets[active].compounds[hn],P,q),sl=Math.ceil(P.laps/2),kg=sl*P.fpl;
+   const fg=lapTime(c,0,kg,P)-lapTime(c,0,0,P);$("fuelGap").value=fg.toFixed(2);
+   $("fuelGap").previousElementSibling.textContent=`Fuelled vs empty car, both on new ${hn} (s)`;
+   $("fuelGapOut").textContent=`= with ${kg.toFixed(0)} kg on board (fuel for a ${sl}-lap 1-stop stint) the car is ${fg.toFixed(2)} s per lap slower than empty; ${kg>0?(fg/kg*10).toFixed(2):"0.00"} s per 10 kg`;
+   // the last lap before the AI pits (wear just under "AI pits at wear"), same tyre, empty car
+   const nl=c.rate>0?Math.max(0,Math.ceil(P.th/c.rate-1e-9)-1):0,wg=lapTime(c,nl,0,P)-lapTime(c,0,0,P);
+   $("wearGap").value=wg.toFixed(2);$("wearGap").previousElementSibling.textContent=`Worn vs new ${hn}, both empty (s)`;
+   // average loss per lap over a stint run to the AI pit threshold, each dry compound, empty car
+   $("lossOut").innerHTML=ns.map(cn=>{const k=prep(cn,sets[active].compounds[cn],P,q),n=k.rate>0?Math.max(0,Math.ceil(P.th/k.rate-1e-9)-1):0,d=lapTime(k,n,0,P)-lapTime(k,0,0,P);
+     return `<span class="dot" style="background:${col(cn)}"></span>${cap(cn)}: ${n>0?(d/n).toFixed(3):"0.000"} s per lap, ${d.toFixed(2)} s lost over ${n+1} laps`}).join("<br>")+`<br>Average over a stint run until the AI pits at ${(P.th*100).toFixed(0)}% wear, on this track's wear`}
   {const s=sets[active],pc=x=>"x"+x.toFixed(2);
    $("waterOut").innerHTML=allNames(s).map(cn=>{const w=wetState(s.compounds[cn],P.water);return `<span class="dot" style="background:${col(cn)}"></span>${cap(cn)}: ${w.name.replace("_"," ")}, grip ${pc(w.lat_mult)} / ${pc(w.long_mult)}, wear ${pc(w.wear_mult)}`}).join("<br>")+
      (P.water>0?"":"<br>Intermediate and wet tyres join the strategies when the track has water.")}
@@ -1120,6 +1165,7 @@ $("stintChart").addEventListener("click",e=>{const row=e.target.closest(".st-row
 
 wireDrop($("dropTyre"),$("fileTyre"),addTyreFiles);
 wireDrop($("dropTrack"),$("fileTrack"),addTrackFile);
+wireDrop($("dropConst"),$("fileConst"),addConstFile);
 $("avgTrack").addEventListener("click",()=>{tracks=[];applyTracks();msg($("trackMsg"),"");update()});
 $("trackList").addEventListener("click",e=>{const b=e.target.closest("[data-tr]");if(!b)return;tracks.splice(+b.dataset.tr,1);applyTracks();msg($("trackMsg"),tracks.length>1?`Averaging ${tracks.length} tracks.`:"");update()});
 document.querySelectorAll("input[type=number]:not([data-c])").forEach(el=>{el.min=el.min||"0";el.dataset.last=el.value});

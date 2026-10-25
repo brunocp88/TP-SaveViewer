@@ -533,6 +533,18 @@ textarea.edit{display:block;width:100%;max-width:100%;resize:none;field-sizing:c
 .edit-list{display:block;padding:4px 12px;border-color:#1d3a6e;background:#0a1222;margin-top:-4px}
 .ed-tab{width:100%;border-collapse:collapse;font-size:13px}.ed-tab th{text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:#777e88;padding:6px 8px}
 .ed-tab td{padding:5px 8px;border-top:1px solid var(--border)}.ed-tab .btn{padding:4px 10px}
+.trk-tab{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+.trk-tab th{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:800;text-align:center;padding:7px 8px;background:#0b0e12;border:1px solid var(--border);position:sticky;top:0;z-index:1}
+.trk-tab th:first-child{text-align:left}
+.trk-tab td{vertical-align:middle;padding:3px 8px;border:1px solid var(--border);text-align:center;white-space:nowrap;height:34px}
+.trk-tab tbody tr:nth-child(even) td{background:#0e1116}
+.trk-tab tbody tr:hover td{background:#141a22}
+.trk-tab .stepper{gap:3px}.trk-tab .stepper button{width:22px;height:22px;font-size:13px}.trk-tab .stepper .fnum{width:50px;padding:2px}
+.trk-name{text-align:left!important;cursor:pointer;min-width:120px}.trk-name b{font-weight:700}.trk-name small{color:var(--muted);font-size:11px;margin-left:8px}
+.trk-name:hover b{color:#6fa0ff}.trk-name .trk-edt{color:#f0b429}
+.trk-rocell{color:#aeb4bd}
+.trk-hi .fnum,.trk-hi input{color:#ff6b6b}.trk-lo .fnum,.trk-lo input{color:#3ddc84}
+.trk-ro{color:#d9dcdf}
 
 </style>
 </head>
@@ -1008,7 +1020,7 @@ const CURVE_HINT = {
   prize: "0 keeps the file's shape. Positive flattens it (100 pays every place the same), negative makes it steeper (more money to the top places). The pot stays the same.",
   falloff: "0 keeps the file's shape. Positive makes the effect last further back (longer), negative makes it fade quickly behind the car (sharper). The effect right behind the car is set by Strength only.",
 };
-const WORKSHOPS = [['finance', 'Finance'], ['dirty', 'Race and racecraft'], ['dev', 'Development'], ['schedule', 'Schedule creator'], ['teams', 'Teams and suppliers'], ['people', 'Drivers and staff'], ['sponsors', 'Sponsors'], ['regs', 'Regulations'], ['events', 'Events'], ['junior', 'Junior series'], ['general', 'General']];
+const WORKSHOPS = [['finance', 'Finance'], ['dirty', 'Race and racecraft'], ['dev', 'Development'], ['schedule', 'Schedule creator'], ['tracks', 'Tracks'], ['teams', 'Teams and suppliers'], ['people', 'Drivers and staff'], ['sponsors', 'Sponsors'], ['regs', 'Regulations'], ['events', 'Events'], ['junior', 'Junior series'], ['general', 'General']];
 const settingCat = c => rows.filter(r => r.cat === c).every(r => r.kind === 'setting');
 const FILE_ORDER = ['constants.py', ...new Set(RULES.map(r => r.file).filter(f => f !== 'constants.py'))];
 
@@ -1292,20 +1304,22 @@ function update() {
   const tsN = [...files.values()].filter(f => f.tsEdited).length;
   const bad = rows.filter(r => edits[r.key] != null && parseEdit(r, edits[r.key]).err).length;
   const edF = editedFiles(per);
-  $('editSummary').innerHTML = (edF.length ? `<b>${edF.length} file${edF.length > 1 ? 's' : ''} edited</b> <span class="ed-names">${edF.map(x => esc(x.f.name)).join(', ')}</span>` : 'No changes yet.') + esc( (bad ? ` ${bad} typed value${bad > 1 ? 's have' : ' has'} a problem and ${bad > 1 ? 'are' : 'is'} left as the slider sets ${bad > 1 ? 'them' : 'it'}.` : ''));
+  $('editSummary').innerHTML = (edF.length ? `<b>${edF.length} file${edF.length > 1 ? 's' : ''} edited</b> <span class="ed-names">${edF.map(x => esc(x.name)).join(', ')}</span>` : 'No changes yet.') + esc( (bad ? ` ${bad} typed value${bad > 1 ? 's have' : ' has'} a problem and ${bad > 1 ? 'are' : 'is'} left as the slider sets ${bad > 1 ? 'them' : 'it'}.` : ''));
   $('editBar').classList.toggle('idle', !nVals);
   $('dlAll').disabled = $('viewEdits').disabled = !edF.length;
   if (!edF.length) editListOpen = false;
   $('viewEdits').textContent = editListOpen ? 'Hide edited files' : 'View edited files'; $('viewEdits').setAttribute('aria-expanded', editListOpen);
   $('editList').hidden = !editListOpen;
-  $('editList').innerHTML = edF.length ? `<table class="ed-tab"><thead><tr><th>File</th><th>Changes</th><th></th></tr></thead><tbody>${edF.map(x => `<tr><td class="key">${esc(x.f.path)}</td><td>${[x.n ? `${x.n} slider value${x.n > 1 ? 's' : ''}` : '', x.f.tsEdited ? 'edited in an editing workshop' : ''].filter(Boolean).join(' · ')}</td><td style="text-align:right"><button class="btn" type="button" data-edf="${esc(x.f.name)}">Download</button></td></tr>`).join('')}</tbody></table>` : '';
-  $('editList').querySelectorAll('button[data-edf]').forEach(b => b.addEventListener('click', () => { const f = files.get(b.dataset.edf); download(f.name, editedText(f, per.get(f.name)), f.py ? 'text/x-python' : 'application/json'); }));
+  $('editList').innerHTML = edF.length ? `<table class="ed-tab"><thead><tr><th>File</th><th>Changes</th><th></th></tr></thead><tbody>${edF.map((x, i) => `<tr><td class="key">${esc(x.path)}</td><td>${[x.n ? `${x.n} slider value${x.n > 1 ? 's' : ''}` : '', x.what].filter(Boolean).join(' · ')}</td><td style="text-align:right"><button class="btn" type="button" data-edf="${i}">Download</button></td></tr>`).join('')}</tbody></table>` : '';
+  $('editList').querySelectorAll('button[data-edf]').forEach(b => b.addEventListener('click', () => { const x = edF[+b.dataset.edf]; download(x.name, x.text(), x.py ? 'text/x-python' : 'application/json'); }));
   $('editBar').classList.toggle('idle', !nVals && !tsN);
   $('tFiles').textContent = nFiles || ''; $('tChanges').textContent = chg.length || '';
   const names = [...files.keys()].sort((a, b) => (FILE_ORDER.indexOf(a) + 1 || 99) - (FILE_ORDER.indexOf(b) + 1 || 99) || a.localeCompare(b));
   const found = new Map(); rows.forEach(r => found.set(r.fileName, (found.get(r.fileName) || 0) + r.leaves.length));
   $('loadedFiles').innerHTML = names.map(n => { const f = files.get(n); return `<span class="fchip ${f.error ? 'bad' : per.has(n) || f.tsEdited ? 'chg' : found.get(n) ? 'ok' : 'miss'}" title="${esc(f.path)}">${esc(n)}</span>`; }).join('');
-  $('nLoaded').textContent = files.size;
+  const sf = schedFiles().filter(x => !x.created);
+  $('loadedFiles').innerHTML += sf.map(x => `<span class="fchip ${x.edited ? 'chg' : 'ok'}" title="${esc(x.path)}">${esc(x.name)}</span>`).join('') + (tracks.size ? `<span class="fchip ok" title="Track files for the Schedule creator">${[...tracks.values()].filter(t => !t.fromSave).length} track files</span>` : '');
+  $('nLoaded').textContent = files.size + sf.length + [...tracks.values()].filter(t => !t.fromSave).length;
   $('filesBody').innerHTML = names.map(n => {
     const f = files.get(n), k = per.get(n)?.length || 0, any = k || f.tsEdited;
     const st = f.error ? `<span class="status-bad">Could not read</span><span class="sub-hint">${esc(f.error)}</span>` : found.get(n) ? '<span class="status-ok">Loaded</span>' : '<span class="status-miss">No finance values</span>';
@@ -1361,15 +1375,30 @@ function makeZip(entries) {
 }
 // Every edited file (slider values and/or editing workshops), in the loaded-files order.
 var editListOpen = false;
+// Pack schedule and saves loaded in the Schedule creator: they live outside files, so they are listed here.
+function schedFiles() {
+  const out = [], p = scheds.find(x => x.pack);
+  if (p) { const text = writeJson(p.w.slice(), p.pack.style); out.push({ name: p.pack.name, path: p.pack.path || p.pack.name, text, what: 'schedule edited in the Schedule creator', edited: text !== p.pack.orig }); }
+  for (const sv of saves.values()) { const text = saveText(sv.name); out.push({ name: sv.name, path: sv.name, text, what: 'save schedule edited in the Schedule creator', edited: text !== sv.text }); }
+  for (const t of trkList()) if (t.edited) out.push({ name: t.id + '.json', path: t.path || t.id + '.json', text: t.text, what: 'track edited in the Tracks workshop', edited: true, created: true });
+  // Schedules made in the Schedule creator are new files, written in the pack schedule's layout.
+  const used = new Set(out.map(x => x.name));
+  for (const x of scheds) if (!x.pack && !x.save && x.junior == null && x.w.some(Boolean)) {
+    let n = (x.n.replace(/\.json$/i, '').replace(/[^\w.-]+/g, '_').replace(/^_+|_+$/g, '') || 'schedule') + '.json'; for (let k = 2; used.has(n); k++) n = n.replace(/(_\d+)?\.json$/, `_${k}.json`); used.add(n);
+    out.push({ name: n, path: n, text: writeJson(x.w.slice(), p?.pack.style || { nl: '\n', indent: '  ', ascii: true, endNl: '\n', floats: new Set() }), what: 'new schedule made in the Schedule creator', edited: true, created: true });
+  }
+  return out;
+}
 function editedFiles(per = fileChanges()) {
-  return [...files.values()].filter(f => !f.error && (per.has(f.name) || f.tsEdited)).map(f => ({ f, n: per.get(f.name)?.length || 0 }))
-    .sort((a, b) => (FILE_ORDER.indexOf(a.f.name) + 1 || 99) - (FILE_ORDER.indexOf(b.f.name) + 1 || 99) || a.f.name.localeCompare(b.f.name));
+  return [...files.values()].filter(f => !f.error && (per.has(f.name) || f.tsEdited)).map(f => ({ name: f.name, path: f.path, n: per.get(f.name)?.length || 0, what: f.tsEdited ? 'edited in an editing workshop' : '', text: () => editedText(f, per.get(f.name)), py: f.py }))
+    .sort((a, b) => (FILE_ORDER.indexOf(a.name) + 1 || 99) - (FILE_ORDER.indexOf(b.name) + 1 || 99) || a.name.localeCompare(b.name))
+    .concat(schedFiles().filter(x => x.edited).map(x => ({ name: x.name, path: x.path, n: 0, what: x.what, text: () => x.text })));
 }
 $('viewEdits').addEventListener('click', () => { editListOpen = !editListOpen; update(); });
 $('dlAll').addEventListener('click', () => {
   const per = fileChanges(), ed = editedFiles(per);
   if (!ed.length) return;
-  const entries = ed.map(({ f }) => ({ name: f.path, text: editedText(f, per.get(f.name)) }));
+  const entries = ed.map(x => ({ name: x.path, text: x.text() }));
   const root = (entries[0].name.includes('/') ? entries[0].name.split('/')[0] : 'data_pack');
   download(`${root}_edited.zip`, makeZip(entries));
 });
@@ -1384,7 +1413,7 @@ try { const s = JSON.parse(localStorage.getItem(LS + '-schedule') || 'null'); co
 let sched = scheds[cur].w;
 const openSched = i => { cur = i; sched = scheds[i].w; };
 // Schedules read from a save stay in this page only (the save itself is not stored).
-const persistSched = () => { if (scheds[cur]?.junior != null && TS) tsCommit([JF]); try { const l = scheds.filter(x => !x.save && !x.pack && x.junior == null); localStorage.setItem(LS + '-schedule', JSON.stringify({ l: l.length ? l : [{ n: 'Schedule 1', w: Array(WEEKS).fill(null) }], i: Math.max(0, l.indexOf(scheds[cur])) })); } catch (e) {} };
+const persistSched = () => { if (scheds[cur]?.junior != null && TS) tsCommit([JF]); try { update(); } catch (e) {} try { const l = scheds.filter(x => !x.save && !x.pack && x.junior == null); localStorage.setItem(LS + '-schedule', JSON.stringify({ l: l.length ? l : [{ n: 'Schedule 1', w: Array(WEEKS).fill(null) }], i: Math.max(0, l.indexOf(scheds[cur])) })); } catch (e) {} };
 const saves = new Map();   // file name -> {name, text}
 // Value range [start, end) of a key of the top-level object, found without parsing the whole save again.
 function topRange(text, key) {
@@ -1436,7 +1465,7 @@ function loadSave(name, text) {
 function loadPackSchedule(name, path, text) {
   let doc; try { doc = readJson(text); } catch (e) { return false; }
   if (!Array.isArray(doc.data) || doc.data.length !== WEEKS) return false;
-  const ns = { n: 'Pack schedule', w: doc.data.map(v => typeof v === 'string' && v ? v : null), pack: { name, path, style: doc.style } };
+  const ns = { n: 'Pack schedule', w: doc.data.map(v => typeof v === 'string' && v ? v : null), pack: { name, path, style: doc.style, orig: text } };
   scheds = scheds.filter(x => !x.pack && (x.save || x.w.some(Boolean)));
   scheds.unshift(ns); openSched(0);
   return true;
@@ -1455,7 +1484,7 @@ function trackOf(name, path, text) {
   let o; try { o = JSON.parse(text); } catch (e) { return null; }
   if (!o || typeof o !== 'object' || Array.isArray(o) || !('length_km' in o || 'micro_sectors' in o || 'lap_modifier' in o || 'points' in o || /(^|\/)tracks\//i.test(path))) return null;
   const id = name.replace(/\.json$/i, '');
-  return { id, name: typeof o.name === 'string' && o.name ? o.name : id, nat: typeof o.nationality === 'string' ? o.nationality : '', km: typeof o.length_km === 'number' ? o.length_km : null, path };
+  return { id, name: typeof o.name === 'string' && o.name ? o.name : id, nat: typeof o.nationality === 'string' ? o.nationality : '', km: typeof o.length_km === 'number' ? o.length_km : null, path, text, orig: text };
 }
 const trackSort = (a, b) => a.name.localeCompare(b.name) || a.id.localeCompare(b.id);
 const capital = s => s ? s[0].toUpperCase() + s.slice(1).replace(/_/g, ' ') : '';
@@ -1493,7 +1522,7 @@ function renderSchedule() {
   const missing = [...new Set(races.filter(v => !tracks.has(v)))], lockN = scheds[cur].lock || 0;
   host.innerHTML = `<div class="sched-tabs">${scheds.map((x, i) => `<button class="stab${i === cur ? ' on' : ''}" type="button" data-s="${i}">${esc(x.n)}<small>${x.w.filter(v => v && !SPECIAL[v]).length} races</small></button>`).join('')}</div>
     <div class="bar sched-bar"><span class="bar-label">Schedule</span><strong>${races.length} race${races.length === 1 ? '' : 's'}</strong><span class="sched-sub">${tests ? `${tests} test week${tests === 1 ? '' : 's'} · ` : ''}${WEEKS - races.length - tests} empty week${WEEKS - races.length - tests === 1 ? '' : 's'}${lockN ? ` · weeks 1-${lockN} played` : ''}</span><span class="grow"></span>
-      <button class="btn" id="schLoad" type="button">Load schedule or save</button><button class="btn" id="schDup" type="button">Duplicate schedule</button>${scheds.length > 1 && scheds[cur].junior == null ? '<button class="btn" id="schDel" type="button">Delete schedule</button>' : ''}<button class="btn" id="schClear" type="button" ${sched.some(Boolean) ? '' : 'disabled'}>Clear schedule</button>${scheds[cur].junior != null ? '<button class="btn primary" id="schDl" type="button">Download junior_series.json</button>' : scheds[cur].save ? '<button class="btn primary" id="schDl" type="button">Download save</button>' : `<button class="btn primary" id="schDl" type="button" ${sched.some(Boolean) ? '' : 'disabled'}>Download schedule</button>`}</div>
+      <button class="btn" id="schLoad" type="button">Load schedule or save</button><button class="btn" id="schDup" type="button">Duplicate schedule</button>${scheds.length > 1 && scheds[cur].junior == null ? '<button class="btn" id="schDel" type="button">Delete schedule</button>' : ''}<button class="btn" id="schClear" type="button" ${sched.some(Boolean) ? '' : 'disabled'}>Clear schedule</button></div>
     <input type="file" id="schInput" accept=".json,application/json" hidden>
     ${missing.length ? `<div class="bar sched-warn">${missing.length} track${missing.length === 1 ? ' is' : 's are'} in the schedule but not loaded: ${missing.map(esc).join(', ')}</div>` : ''}
     <div class="weeks" id="weeks">${sched.map((v, i) => weekHtml(i)).join('')}</div>
@@ -1529,7 +1558,6 @@ function renderSchedule() {
   $('schDup').addEventListener('click', () => { const src = scheds[cur]; scheds.splice(cur + 1, 0, { n: src.n.replace(/ \(copy( \d+)?\)$/, '') + ' (copy)', w: src.w.slice() }); openSched(cur + 1); redraw(); });
   if ($('schDel')) $('schDel').addEventListener('click', () => { scheds.splice(cur, 1); openSched(Math.max(0, cur - 1)); redraw(); });
   $('schClear').addEventListener('click', () => { for (let i = scheds[cur].lock || 0; i < WEEKS; i++) sched[i] = null; redraw(); });
-  $('schDl').addEventListener('click', () => scheds[cur].junior != null ? download(JF, files.get(JF).text, 'application/json') : scheds[cur].pack ? download(scheds[cur].pack.name, writeJson(sched.slice(), scheds[cur].pack.style), 'application/json') : scheds[cur].save ? download(scheds[cur].save.replace(/\.json$/i, '') + '_schedule.json', saveText(scheds[cur].save), 'application/json') : download(scheds[cur].n.replace(/\.json$/i, '').replace(/[^\w.-]+/g, '_').replace(/^_+|_+$/g, '') + '.json', writeJson(sched.slice(), scheds.find(x => x.pack)?.pack.style || { nl: '\n', indent: '  ', ascii: true, endNl: '\n', floats: new Set() }), 'application/json'));
   $('schLoad').addEventListener('click', () => $('schInput').click());
   $('schInput').addEventListener('change', async e => {
     const f = e.target.files[0]; e.target.value = ''; if (!f) return;
@@ -1617,7 +1645,7 @@ function writeJson(data, style) {
 // Names that tie the files together are renamed everywhere at once: team names (drivers, staff, parts contracts,
 // starting technologies, ERS levels, works engine supplier), engine supplier and engine names, parts supplier names.
 const TS_FILES = ['teams.json', 'engines.json', 'parts.json', 'startingtechnologies.json', 'ers_development.json', 'drivers.json', 'staff.json', 'regulations.json', 'events.json', 'tyre_suppliers.json', 'team_buyouts.json', 'junior_series.json', 'config.json', 'team_ownership.json', 'team_histories.json', 'relationships.json', 'sponsors.json', 'starting_sponsors.json'];
-let TS = null, tsView = 'teams', tsSel = { teams: 0, engines: null, parts: null, drivers: 0, staff: 0, junior: 0, tyres: null, hist: null, sponsors: 0 }, tsCat = null, tsConfirm = null;
+let TS = null, tsView = 'teams', tsSel = { teams: 0, engines: null, parts: null, drivers: 0, staff: 0, junior: 0, tyres: null, hist: null, sponsors: 0, trk: 0 }, tsCat = null, tsConfirm = null;
 const TAGS = [['world_beater', 'World beater'], ['title_contender', 'Title contender'], ['front_runner', 'Front runner'], ['upper_midfield', 'Upper midfield'], ['midfield', 'Midfield'], ['lower_midfield', 'Lower midfield'], ['backmarker', 'Backmarker'], ['hopeless', 'Hopeless']];
 const HQ_NAMES = { factory: 'Factory', wind_tunnel: 'Wind tunnel', cfd_center: 'CFD centre', engine_plant: 'Engine plant', test_track: 'Test track', driver_centre: 'Driver centre', recon_centre: 'Recon centre', hospitality_pr_center: 'Hospitality and PR' };
 const CTYPES = [['works', 'Works'], ['partner', 'Partner'], ['customer', 'Customer']];
@@ -1635,6 +1663,7 @@ const tsTech = () => Array.isArray(tsD('startingtechnologies.json')?.teams) ? ts
 const tsErs = () => tsD('ers_development.json')?.starting_levels || null;
 const tsPeople = n => Array.isArray(tsD(n)) ? tsD(n) : [];
 function tsCommit(names) {
+  for (const n of names) if (n.startsWith('track:')) trkCommit(n.slice(6));
   for (const n of names) {
     const f = files.get(n); if (!f || !TS[n]) continue;
     f.text = writeJson(TS[n].data, TS[n].style);
@@ -1817,13 +1846,13 @@ function renderTS() {
   vanMap();
   B = []; CH = []; LT = [];
   const evc = (ok, n) => ok ? String(n) : 0;
-  const views = mod === 'junior' ? [['junior', 'Junior series', (jrList() || []).length || (jrList() ? '0' : 0)]] : mod === 'events' ? [['evteams', 'Team joins and leaves', evc(evList() || tsTeams().length, (evList() || []).filter(e => e.type === 'team_join' || e.type === 'team_leave').length)], ['evengines', 'Engine suppliers', evc(tsEng(), Object.values(tsEng() || {}).filter(s => !s.factory).length)], ['evtyres', 'Tyre suppliers', evc(tyreSups(), Object.keys(tyreSups() || {}).length)], ['evbuy', 'Rebrands and takeovers', evc(buyList(), (buyList() || []).filter(e => e.team).length)], ['evother', 'Other events', evc(evList(), (evList() || []).filter(e => !['team_join', 'team_leave', 'engine_supplier_join', 'sponsor_industry_cycle'].includes(e.type)).length)]] : mod === 'regs' ? [['regs', 'Regulations', regCats().length]] : mod === 'sponsors' ? [['sponsors', 'Sponsors', (spList() || []).length], ['ssdeals', 'Starting deals', spStart() ? spStart().length || '0' : 0], ['sptiers', 'Tiers and player rules', spBrackets() || rows.some(r => r.view === 'sptiers') ? 'tiers' : 0]] : mod === 'people' ? [['drivers', 'Drivers', tsDrivers().length], ['staff', 'Staff', tsStaff().length], ['pdev', 'Development', ddev() || rows.some(r => r.view === 'pdev') ? 'ages' : 0], ['market', 'Contract market', pneg() ? 'rules' : 0], ['rel', 'Relationships', relD() ? Object.values(relD()).reduce((a, m) => a + Object.values(m || {}).reduce((b, x) => b + Object.keys(x || {}).length, 0), 0) || '0' : 0]] : [['teams', 'Teams', tsTeams().length], ['engines', 'Engine suppliers', Object.keys(tsEng() || {}).length], ['parts', 'Parts suppliers', Object.values(tsParts() || {}).reduce((a, c) => a + Object.keys(c.suppliers || {}).length, 0)], ['tyres', 'Tyre suppliers', Object.keys(tyreSups() || {}).length], ['owners', 'Ownership', Object.keys(ownD() || {}).length || (ownD() ? '0' : 0)], ['hist', 'Histories', Object.keys(histD() || {}).length || (histD() ? '0' : 0)]];
+  const views = mod === 'junior' ? [['junior', 'Junior series', (jrList() || []).length || (jrList() ? '0' : 0)]] : mod === 'events' ? [['evteams', 'Team joins and leaves', evc(evList() || tsTeams().length, (evList() || []).filter(e => e.type === 'team_join' || e.type === 'team_leave').length)], ['evengines', 'Engine suppliers', evc(tsEng(), Object.values(tsEng() || {}).filter(s => !s.factory).length)], ['evtyres', 'Tyre suppliers', evc(tyreSups(), Object.keys(tyreSups() || {}).length)], ['evbuy', 'Rebrands and takeovers', evc(buyList(), (buyList() || []).filter(e => e.team).length)], ['evother', 'Other events', evc(evList(), (evList() || []).filter(e => !['team_join', 'team_leave', 'engine_supplier_join', 'sponsor_industry_cycle'].includes(e.type)).length)]] : mod === 'regs' ? [['regs', 'Regulations', regCats().length]] : mod === 'tracks' ? [['trkall', 'All tracks', trkList().length], ['trk', 'Track', trkList().length]] : mod === 'sponsors' ? [['sponsors', 'Sponsors', (spList() || []).length], ['ssdeals', 'Starting deals', spStart() ? spStart().length || '0' : 0], ['sptiers', 'Tiers and player rules', spBrackets() || rows.some(r => r.view === 'sptiers') ? 'tiers' : 0]] : mod === 'people' ? [['drivers', 'Drivers', tsDrivers().length], ['staff', 'Staff', tsStaff().length], ['pdev', 'Development', ddev() || rows.some(r => r.view === 'pdev') ? 'ages' : 0], ['market', 'Contract market', pneg() ? 'rules' : 0], ['rel', 'Relationships', relD() ? Object.values(relD()).reduce((a, m) => a + Object.values(m || {}).reduce((b, x) => b + Object.keys(x || {}).length, 0), 0) || '0' : 0]] : [['teams', 'Teams', tsTeams().length], ['engines', 'Engine suppliers', Object.keys(tsEng() || {}).length], ['parts', 'Parts suppliers', Object.values(tsParts() || {}).reduce((a, c) => a + Object.keys(c.suppliers || {}).length, 0)], ['tyres', 'Tyre suppliers', Object.keys(tyreSups() || {}).length], ['owners', 'Ownership', Object.keys(ownD() || {}).length || (ownD() ? '0' : 0)], ['hist', 'Histories', Object.keys(histD() || {}).length || (histD() ? '0' : 0)]];
   if (!views.some(v => v[0] === tsView && v[2])) tsView = (views.find(v => v[2]) || views[0])[0];
-  const edited = TS_FILES.filter(n => files.get(n)?.tsEdited);
+  const edited = [...TS_FILES.filter(n => files.get(n)?.tsEdited), ...trkList().filter(t => t.edited).map(t => t.id + '.json')];
   host.innerHTML = `<div class="sched-tabs">${views.length < 2 ? '' : views.map(([k, l, n]) => `<button class="stab${k === tsView ? ' on' : ''}" type="button" data-v="${k}"${n ? '' : ' disabled'}>${l}<small>${n}</small></button>`).join('')}<span class="grow"></span>${mod === 'events' ? `<button type="button" class="btn ev-add" data-act="e:create" data-arg="${{ evteams: 'team_join', evengines: 'engine_supplier_join', evtyres: 'tyre_join', evbuy: 'identity_rebrand', evother: 'calendar_swap' }[tsView] || ''}">+ Create event</button>` : ''}<span class="sched-sub">${edited.length ? 'Edited: ' + edited.map(esc).join(', ') : 'No edits yet'}</span></div>
-    <div class="ts-grid">${tsView === 'teams' ? teamsView() : tsView === 'engines' ? enginesView() : tsView === 'drivers' ? driversView() : tsView === 'staff' ? staffView() : tsView === 'regs' ? regsView() : tsView === 'evteams' ? evTeamsView() : tsView === 'evengines' ? evEnginesView() : tsView === 'evtyres' ? evTyresView() : tsView === 'evbuy' ? evBuyView() : tsView === 'evother' ? evOtherView() : tsView === 'junior' ? juniorView() : tsView === 'tyres' ? tyresView() : tsView === 'owners' ? ownView() : tsView === 'hist' ? histView() : tsView === 'pdev' ? pdevView() : tsView === 'market' ? marketView() : tsView === 'rel' ? relView() : tsView === 'sponsors' ? sponsorsView() : tsView === 'ssdeals' ? spStartView() : tsView === 'sptiers' ? spTiersView() : partsView()}</div>`;
+    <div class="ts-grid">${tsView === 'teams' ? teamsView() : tsView === 'engines' ? enginesView() : tsView === 'drivers' ? driversView() : tsView === 'staff' ? staffView() : tsView === 'regs' ? regsView() : tsView === 'evteams' ? evTeamsView() : tsView === 'evengines' ? evEnginesView() : tsView === 'evtyres' ? evTyresView() : tsView === 'evbuy' ? evBuyView() : tsView === 'evother' ? evOtherView() : tsView === 'junior' ? juniorView() : tsView === 'tyres' ? tyresView() : tsView === 'owners' ? ownView() : tsView === 'hist' ? histView() : tsView === 'pdev' ? pdevView() : tsView === 'market' ? marketView() : tsView === 'rel' ? relView() : tsView === 'sponsors' ? sponsorsView() : tsView === 'ssdeals' ? spStartView() : tsView === 'sptiers' ? spTiersView() : tsView === 'trkall' ? trkAllView() : tsView === 'trk' ? trkView() : partsView()}</div>`;
   host.querySelectorAll('.stab[data-v]').forEach(b => b.addEventListener('click', () => { tsView = b.dataset.v; tsConfirm = null; renderTS(); }));
-  host.querySelectorAll('.tli[data-i]').forEach(el => el.addEventListener('click', () => { const k = el.dataset.i; if (tsView === 'teams' || tsView === 'drivers' || tsView === 'staff' || tsView === 'junior' || tsView === 'sponsors') tsSel[tsView] = +k; else if (tsView === 'engines') tsSel.engines = k; else if (tsView === 'tyres' || tsView === 'hist') tsSel[tsView] = k; else tsSel.parts = k; tsConfirm = null; renderTS(); }));
+  host.querySelectorAll('.tli[data-i]').forEach(el => el.addEventListener('click', () => { const k = el.dataset.i; if (tsView === 'teams' || tsView === 'drivers' || tsView === 'staff' || tsView === 'junior' || tsView === 'sponsors' || tsView === 'trk') tsSel[tsView] = +k; else if (tsView === 'engines') tsSel.engines = k; else if (tsView === 'tyres' || tsView === 'hist') tsSel[tsView] = k; else tsSel.parts = k; tsConfirm = null; renderTS(); }));
   host.querySelectorAll('[data-act]').forEach(b => b.addEventListener('click', () => b.dataset.act.startsWith('p:') ? pAct(b.dataset.act.slice(2), b.dataset.arg) : b.dataset.act.startsWith('e:') ? eAct(b.dataset.act.slice(2), b.dataset.arg) : b.dataset.act.startsWith('x:') ? xAct(b.dataset.act.slice(2), b.dataset.arg) : b.dataset.act.startsWith('j:') ? jAct(b.dataset.act.slice(2), b.dataset.arg) : tsAct(b.dataset.act, b.dataset.arg)));
   bindAll(host); bindPeople(host); bindRegs(host); bindJunior(host); bindX(host); bindXcat(host); bindSponsors(host);
   const tc = $('tsCats'); if (tc) { renderCats(tc, tsView, tc.parentNode.querySelectorAll('.xcat').length); update(); }
@@ -1968,7 +1997,7 @@ function partsView() {
     <div class="tboxes">
     ${box('Identity', textRow('Name', k, v => renamePart(tsCat, k, v), ['parts.json']) + selRow('Nationality', s.nationality, nats().map(n => [n, natLabel(n)]), v => { s.nationality = v; }, F)
       + ('preferred_engine' in s ? selRow('Preferred engine', s.preferred_engine, [[null, 'None'], ...engines.map(e => [e, e])], v => { s.preferred_engine = v; }, F) : ''))}
-    ${box('Ratings and budget', numRow('Pace', s, 'pace_rating', F) + numRow('Reliability', s, 'reliability_rating', F) + numRow('Budget (M)', s, 'budget_m', F) + numRow('Parts per season', s, 'allocation_per_season', F) + numRow('Customers (max)', s, 'max_customers', F)
+    ${box('Ratings and budget', numRow('Pace', s, 'pace_rating', F) + numRow('Reliability', s, 'reliability_rating', F) + numRow('Budget (M)', s, 'budget_m', F, { step: 0.1 }) + numRow('Parts per season', s, 'allocation_per_season', F) + numRow('Customers (max)', s, 'max_customers', F)
       + (s.dev_weights ? Object.keys(s.dev_weights).map(w => numRow('Development: ' + w, s.dev_weights, w, F, { step: 0.05, max: 1 })).join('') : '')
       + genericRows(s, new Set(['nationality', 'preferred_engine', 'pace_rating', 'reliability_rating', 'budget_m', 'allocation_per_season', 'max_customers']), F))}
     ${box('Teams and contracts', partContracts(tsCat, k, users), { wide: true })}
@@ -2944,6 +2973,7 @@ function relView() {
 // ---- actions ----
 function xAct(a, arg) {
   if (/^s[ps][A-Z]/.test(a)) return spAct(a, arg);
+  if (a === 'trkOpen') { tsSel.trk = +arg; tsView = 'trk'; return renderTS(); }
   if (a === 'ltAdd') { const x = LT[+arg]; x.arr.push(structuredClone(x.arr[x.arr.length - 1] ?? {})); return tsCommit(x.files); }
   if (a === 'ltDel') { const [i, j] = arg.split(':').map(Number), x = LT[i]; x.arr.splice(j, 1); return tsCommit(x.files); }
   if (a === 'tyAsk') { tsConfirm = 'tyre'; renderTS(); return; }
@@ -3065,24 +3095,72 @@ function bindSponsors(host) {
   host.querySelectorAll('input.sp-newind').forEach(inp => inp.addEventListener('change', () => { const v = inp.value.trim(); if (!v) return; spList()[tsSel.sponsors | 0].industry = v; tsCommit([SPF]); }));
 }
 
+// ---------- tracks workshop ----------
+// Track files (tracks/<id>.json): race values next to the drawn layout (points, micro_sectors, drs_zones), which are only read.
+// Each loaded track keeps its text; edits rewrite it with writeJson in the file's own layout and reach the edits bar like any file.
+const TRK_FIELDS = [
+  ['lap_modifier', 'Lap modifier', 0.05], ['length_km', 'Lap length (km)', 0, 'ro'], ['pit_lane_loss_s', 'Pit lane loss (s)', 0.5],
+  ['tyre_wear_mult', 'Tyre wear', 0.01], ['fuel_consumption', 'Fuel use', 0.01], ['dnf_modifier', 'DNF chance', 0.01],
+  ['wet_weather_probability_multiplier', 'Rain chance', 0.01], ['overtaking_difficulty', 'Overtaking difficulty', 0.05], ['track_time_mult', 'Lap time', 0.05]];
+const TRK_COLS = [['lap_modifier', 'Lap modifier', 0.05], ['laps', 'Laps', 0, 'ro'], ['length_km', 'Lap km', 0, 'ro'], ['tyre_wear_mult', 'Tyre wear', 0.01], ['fuel_consumption', 'Fuel use', 0.01], ['dnf_modifier', 'DNF chance', 0.01], ['wet_weather_probability_multiplier', 'Rain chance', 0.01], ['pit_lane_loss_s', 'Pit loss (s)', 0.5]];
+const trkList = () => [...tracks.values()].filter(t => t.text != null).sort((a, b) => a.id.localeCompare(b.id));
+const trkDoc = t => { if (!t.doc) try { t.doc = readJson(t.text); } catch (e) { t.doc = null; } return t.doc?.data && typeof t.doc.data === 'object' ? t.doc.data : null; };
+const trkLaps = d => typeof d.lap_modifier === 'number' ? Math.round(50 * d.lap_modifier) : null;
+// Multipliers away from 1 are coloured: more wear, fuel, DNFs or rain is red, less is green.
+const trkTone = (k, v) => typeof v !== 'number' || !['tyre_wear_mult', 'fuel_consumption', 'dnf_modifier', 'wet_weather_probability_multiplier'].includes(k) || Math.abs(v - 1) < 1e-9 ? '' : v > 1 ? ' trk-hi' : ' trk-lo';
+function trkCommit(id) {
+  const t = tracks.get(id); if (!t || !t.doc) return;
+  t.text = writeJson(t.doc.data, t.doc.style); t.edited = t.text !== t.orig;
+  const d = t.doc.data; if (typeof d.length_km === 'number') t.km = d.length_km; if (typeof d.name === 'string' && d.name) t.name = d.name; if (typeof d.nationality === 'string') t.nat = d.nationality;
+}
+function trkAllView() {
+  const L = trkList(); if (!L.length) return '<div class="panel empty">Load track files to edit them.</div>';
+  const rows = L.map((t, i) => { const d = trkDoc(t); if (!d) return `<tr><td class="flab">${esc(t.id)}</td><td colspan="${TRK_COLS.length}" class="fhint">Could not read this file.</td></tr>`;
+    const F = ['track:' + t.id];
+    return `<tr class="${t.edited ? 'trk-ed' : ''}"><td class="trk-name" data-act="x:trkOpen" data-arg="${i}" title="Open ${esc(t.id)}"><b>${esc(t.id)}</b>${d.name ? `<small>${esc(d.name)}</small>` : ''}${t.edited ? '<small class="trk-edt">edited</small>' : ''}</td>${TRK_COLS.map(([k, , st, ro]) => `<td class="${ro ? 'trk-rocell' : ''}${trkTone(k, d[k])}">${k === 'laps' ? (trkLaps(d) ?? '–') : !(k in d) ? '<span class="fhint">–</span>' : ro ? esc(fmt(d[k])) : decCell(d, k, F, { step: st, label: `${t.id} ${k}` })}</td>`).join('')}</tr>`; }).join('');
+  return `<div class="ts-ed ev-ed"><div class="tboxes">${box('All tracks', `<table class="trk-tab"><thead><tr><th>Track</th>${TRK_COLS.map(([, l]) => `<th>${l}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table>
+    <div class="fhint lt-foot">Laps are 50 × lap modifier. Lap km is read only. Multipliers above 1 (more tyre wear, fuel use, DNFs or rain) are red, below 1 green. Click a track name to see all its values.</div>`, { wide: true })}</div></div>`;
+}
+function trkView() {
+  const L = trkList(); if (!L.length) return '<div class="panel empty">Load track files to edit them.</div>';
+  const i = tsSel.trk = Math.max(0, Math.min(tsSel.trk | 0, L.length - 1)), t = L[i], d = trkDoc(t), F = ['track:' + t.id];
+  const items = L.map((x, k) => { const y = trkDoc(x); return { k: String(k), name: x.id, sub: `${y?.name || capital(x.nat || '')}${x.edited ? ' · edited' : ''}` }; });
+  if (!d) return listHtml(items, String(i), `<b>Tracks</b><span class="sched-sub">${L.length}</span>`) + `<div class="ts-ed"><div class="panel empty">${esc(t.path)} could not be read.</div></div>`;
+  const known = new Set(['points', 'micro_sectors', 'drs_zones', 'sector_splits', 'racing_surface', 'starting_grid', 'hide_polyline_visual', 'use_raw_canvas_coordinates', 'raw_canvas_size', 'name', 'nationality', ...TRK_FIELDS.map(f => f[0])]);
+  const num = ([k, l, st, ro]) => !(k in d) ? '' : ro ? frow(l, `<span class="trk-ro">${esc(fmt(d[k]))}</span>`) : frow(l, `<span class="${trkTone(k, d[k]).trim()}">${decCell(d, k, F, { step: st, label: l })}</span>${k === 'lap_modifier' ? `<span class="fhint">${trkLaps(d)} race laps</span>` : ''}`);
+  const ms = Array.isArray(d.micro_sectors) ? d.micro_sectors : [], share = ty => ms.filter(m => m.type === ty).reduce((a, m) => a + (+m.length_pct || 0), 0);
+  const layout = [['Micro sectors', ms.length], ['Straights', ms.length ? `${fmt(+share('straight').toFixed(1))}% of the lap` : '–'], ['Corners (low / medium / high)', ms.length ? ['low', 'med', 'high'].map(ty => ms.filter(m => m.type === ty).length).join(' / ') : '–'], ['DRS zones', Array.isArray(d.drs_zones) ? d.drs_zones.length : 0]]
+    .map(([l, v]) => frow(l, `<span class="trk-ro">${esc(String(v))}</span>`)).join('');
+  const other = Object.keys(d).filter(k => !known.has(k) && typeof d[k] === 'number').map(k => frow(k, decCell(d, k, F, { step: 0.05, label: k }))).join('');
+  const ed = `<div class="ts-ed"><div class="ts-ed-h"><h2>${esc(d.name || t.id)}</h2><span class="sched-sub">${esc(t.path)}${t.edited ? ' · edited' : ''}</span></div>
+    <div class="tboxes">
+    ${box('Track', ('name' in d ? textRow('Name', d.name, v => { d.name = v; return true; }, F) : '') + selRow('Nationality', d.nationality, [...new Set([...nats(), ...(d.nationality ? [d.nationality] : [])])].sort().map(n => [n, natLabel(n)]), v => { d.nationality = v; }, F)
+      + TRK_FIELDS.slice(0, 3).map(num).join('') + num(TRK_FIELDS[8]))}
+    ${box('Wear, reliability and weather', TRK_FIELDS.slice(3, 8).map(num).join('') + other + '<div class="fhint lt-foot">Multipliers: 1 is normal. Red means more than normal, green less.</div>')}
+    ${box('Layout (read only)', layout + '<div class="fhint lt-foot">The drawn layout, sectors and DRS zones are kept exactly as loaded.</div>')}
+    </div></div>`;
+  return listHtml(items, String(i), `<b>Tracks</b><span class="sched-sub">${L.length}${L.some(x => x.edited) ? ` · ${L.filter(x => x.edited).length} edited` : ''}</span>`) + ed;
+}
+
 function renderWorkshops() {
   if (!TS) tsLoad();
   const have = new Set(rows.map(r => CAT_MOD[r.cat])); have.add('schedule');
   if (['teams.json', 'engines.json', 'parts.json', 'tyre_suppliers.json', 'team_ownership.json', 'team_histories.json'].some(n => files.has(n) && !files.get(n).error)) have.add('teams');
   if (['drivers.json', 'staff.json', 'relationships.json'].some(n => files.has(n) && !files.get(n).error) || ddev() || pneg()) have.add('people');
   if (files.has('regulations.json') && !files.get('regulations.json').error) have.add('regs');
+  if (trkList().length) have.add('tracks');
   if (['sponsors.json', 'starting_sponsors.json'].some(n => files.has(n) && !files.get(n).error) || spBrackets()) have.add('sponsors');
   if (['events.json', 'tyre_suppliers.json', BUY_FILE].some(n => n && files.has(n) && !files.get(n).error)) have.add('events');
   if (files.has(JF) && !files.get(JF).error) have.add('junior');
-  if (['teams', 'people', 'sponsors', 'regs', 'events', 'junior'].some(k => have.has(k)) && !TS) tsLoad();
-  const count = k => k === 'sponsors' ? `${(spList() || []).length} sponsors` : k === 'general' ? 'career' : k === 'junior' ? `${(jrList() || []).length} series` : k === 'events' ? `${(evList() || []).length + (buyList() || []).filter(e => e.team).length} events` : k === 'regs' ? `${regCats().length} rules` : k === 'people' ? (tsDrivers().length || tsStaff().length ? `${tsDrivers().length} drivers · ${tsStaff().length} staff` : 'growth · contract market') : k === 'teams' ? `${tsTeams().length} teams · ${Object.keys(tsEng() || {}).length} engines` : k === 'schedule' ? `${sched.filter(v => v && !SPECIAL[v]).length} races · ${tracks.size} tracks` : `${rows.filter(r => CAT_MOD[r.cat] === k).reduce((a, r) => a + r.leaves.length, 0)} values`;
+  if (['tracks', 'teams', 'people', 'sponsors', 'regs', 'events', 'junior'].some(k => have.has(k)) && !TS) tsLoad();
+  const count = k => k === 'tracks' ? `${trkList().length} tracks${trkList().some(t => t.edited) ? ` · ${trkList().filter(t => t.edited).length} edited` : ''}` : k === 'sponsors' ? `${(spList() || []).length} sponsors` : k === 'general' ? 'career' : k === 'junior' ? `${(jrList() || []).length} series` : k === 'events' ? `${(evList() || []).length + (buyList() || []).filter(e => e.team).length} events` : k === 'regs' ? `${regCats().length} rules` : k === 'people' ? (tsDrivers().length || tsStaff().length ? `${tsDrivers().length} drivers · ${tsStaff().length} staff` : 'growth · contract market') : k === 'teams' ? `${tsTeams().length} teams · ${Object.keys(tsEng() || {}).length} engines` : k === 'schedule' ? `${sched.filter(v => v && !SPECIAL[v]).length} races · ${tracks.size} tracks` : `${rows.filter(r => CAT_MOD[r.cat] === k).reduce((a, r) => a + r.leaves.length, 0)} values`;
   $('workshops').innerHTML = '<span class="bar-label">Workshop</span>' + WORKSHOPS.map(([k, n]) => `<button class="ws${k === mod ? ' on' : ''}" type="button" data-w="${k}"${have.has(k) ? '' : ' disabled title="Load the file this workshop edits"'}>${n}<small>${count(k)}</small></button>`).join('');
-  $('workshops').querySelectorAll('.ws').forEach(b => b.addEventListener('click', () => { mod = b.dataset.w; persist(); renderWorkshops(); renderCats(); update(); if (mod === 'schedule') renderSchedule(); if (['teams', 'people', 'sponsors', 'regs', 'events', 'junior'].includes(mod)) renderTS(); }));
+  $('workshops').querySelectorAll('.ws').forEach(b => b.addEventListener('click', () => { mod = b.dataset.w; persist(); renderWorkshops(); renderCats(); update(); if (mod === 'schedule') renderSchedule(); if (['tracks', 'teams', 'people', 'sponsors', 'regs', 'events', 'junior'].includes(mod)) renderTS(); }));
   $('pApplied').hidden = mod !== 'finance';
   document.querySelector('.tab[data-t="afford"]').hidden = mod !== 'finance';
-  $('sliderArea').hidden = ['schedule', 'teams', 'people', 'sponsors', 'regs', 'events', 'junior'].includes(mod); $('schedArea').hidden = mod !== 'schedule'; $('tsArea').hidden = !['teams', 'people', 'sponsors', 'regs', 'events', 'junior'].includes(mod);
+  $('sliderArea').hidden = ['schedule', 'tracks', 'teams', 'people', 'sponsors', 'regs', 'events', 'junior'].includes(mod); $('schedArea').hidden = mod !== 'schedule'; $('tsArea').hidden = !['tracks', 'teams', 'people', 'sponsors', 'regs', 'events', 'junior'].includes(mod);
 }
-function showApp() { $('upload').hidden = true; $('app').hidden = false; renderWorkshops(); renderCats(); update(); if (mod === 'schedule') renderSchedule(); if (['teams', 'people', 'sponsors', 'regs', 'events', 'junior'].includes(mod)) renderTS(); }
+function showApp() { $('upload').hidden = true; $('app').hidden = false; renderWorkshops(); renderCats(); update(); if (mod === 'schedule') renderSchedule(); if (['tracks', 'teams', 'people', 'sponsors', 'regs', 'events', 'junior'].includes(mod)) renderTS(); }
 async function readEntry(entry, out) {
   if (entry.isFile) { const f = await new Promise((res, rej) => entry.file(res, rej)); f.relPath = entry.fullPath.replace(/^\//, ''); out.push(f); return; }
   if (entry.isDirectory) {
@@ -3107,7 +3185,7 @@ $('openApp').addEventListener('click', showApp);
 $('fileInput').addEventListener('change', e => { addFileList(e.target.files); e.target.value = ''; });
 $('folderInput').addEventListener('change', e => { addFileList(e.target.files); e.target.value = ''; });
 $('addFiles').addEventListener('click', () => $('fileInput').click());
-$('clearFiles').addEventListener('click', () => { TS = null; files.clear(); tracks.clear(); saves.clear(); scheds = scheds.filter(x => !x.save && x.junior == null); if (!scheds.length) scheds = [{ n: 'Schedule 1', w: Array(WEEKS).fill(null) }]; openSched(0); rows = []; $('dropFiles').innerHTML = ''; $('openApp').hidden = true; $('dropStatus').textContent = ''; $('app').hidden = true; $('upload').hidden = false; });
+$('clearFiles').addEventListener('click', () => { TS = null; files.clear(); tracks.clear(); saves.clear(); scheds = scheds.filter(x => !x.save && !x.pack && x.junior == null); if (!scheds.length) scheds = [{ n: 'Schedule 1', w: Array(WEEKS).fill(null) }]; openSched(0); rows = []; $('dropFiles').innerHTML = ''; $('openApp').hidden = true; $('dropStatus').textContent = ''; $('app').hidden = true; $('upload').hidden = false; });
 
 // ---------- affordability (from a save) ----------
 const COST_MAP = { 'Driver Salaries': 'Driver pay', 'Staff Salaries': 'Staff pay', 'Engine Supply': 'Supplier prices', 'Parts Supply': 'Supplier prices', 'Tyre Supply': 'Supplier prices', 'Race Costs': 'Race weekends, testing and juniors', 'Facility Maintenance': 'Facilities (HQ)', 'Car Construction': 'Part build costs' };
