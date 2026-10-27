@@ -149,6 +149,7 @@ table.race button{width:100%;padding:5px 4px;font-size:10px;display:flex;align-i
 .chart[hidden]{display:none}
 .edhead{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-top:8px}.edhead .sect{margin-top:0}
 #wetTable[hidden],#wetHead[hidden]{display:none}
+table.cmp td#tyreInfoCell{padding:6px 0 10px;font-family:var(--body);font-size:13px;white-space:normal;overflow:visible;color:inherit}#tyreInfoCell label.f{margin-bottom:6px}
 table.race button.on{background:#15181d;color:#fff;border-color:var(--accent);box-shadow:inset 0 -2px 0 var(--accent)}
 
 input.bad{border-color:var(--bad)!important;animation:badflash .6s}
@@ -319,8 +320,17 @@ a.tool-card.blue:hover,a.tool-card.blue:focus-visible{box-shadow:inset 3px 0 0 #
         <div class="toast" id="tyreMsg"></div>
         <div class="edhead"><div class="sect">Editing: <span id="editName"></span></div><div class="viewsw" id="tyreView"><button type="button" data-tv="dry" class="on">Dry</button><button type="button" data-tv="wet">Wet</button></div></div>
         <div class="tablewrap"><table class="cmp" id="cmpTable"></table></div>
+        <div id="tyreInfo">
+        <label class="f"><span>Soft vs hard, new tyres, empty car (s)</span><input type="number" data-dec="2" id="gripGap" step="0.01" readonly tabindex="-1" class="ro"></label>
+        <label class="f"><span>New vs worn hard, empty car (s)</span><input type="number" data-dec="2" id="wearGap" step="0.01" readonly tabindex="-1" class="ro"></label>
+        <label class="f"><span>Tyre loss per lap, empty car (s/lap)</span><span></span></label>
+        <div class="note" id="lossOut"></div>
+        </div>
+        <!-- wetness_states editor, hidden for now (Bruno 2026-10-27); still rendered and still exported with the file -->
+        <div id="wetBox" style="display:none">
         <div class="sect" id="wetHead"></div>
         <div class="tablewrap"><table class="cmp five" id="wetTable"></table></div>
+        </div>
         <div class="sect">Race settings in the file</div>
         <div class="tablewrap"><table class="cmp race" id="raceTable"><colgroup id="raceCols"></colgroup><tbody>
           <tr><td>mandatory_compound_count</td><td><input type="number" id="mand" min="1" max="3" step="1" aria-label="mandatory_compound_count"></td></tr>
@@ -345,14 +355,13 @@ a.tool-card.blue:hover,a.tool-card.blue:focus-visible{box-shadow:inset 3px 0 0 #
         <label class="f"><span>tyre_wear_mult</span><input type="number" data-dec="2" id="twm" step="0.01"></label>
         <label class="f"><span>fuel_consumption</span><input type="number" data-dec="2" id="tfc" step="0.01"></label>
         <label class="f"><span>Pit lane loss (s)</span><input type="number" data-dec="1" id="pit" step="0.1"></label>
+        <!-- track water and wet states, hidden for now (Bruno 2026-10-27); water stays 0 mm, a dry race -->
+        <div style="display:none">
         <label class="f"><span>Track water (mm), whole race</span><input type="number" data-dec="1" id="water" step="0.1" min="0" max="5"></label>
         <div class="note" id="waterOut"></div>
+        </div>
         <div class="sect">Derived from the track file and game code</div>
         <label class="f"><span>Lap time, 50-rated car at 800 kg, grip 1.00 (s)</span><input type="number" data-dec="2" id="base" step="0.01" readonly tabindex="-1" class="ro"></label>
-        <label class="f"><span>Soft vs hard, new tyres, empty car (s)</span><input type="number" data-dec="2" id="gripGap" step="0.01" readonly tabindex="-1" class="ro"></label>
-        <label class="f"><span>New vs worn hard, empty car (s)</span><input type="number" data-dec="2" id="wearGap" step="0.01" readonly tabindex="-1" class="ro"></label>
-        <label class="f"><span>Tyre loss per lap, empty car (s/lap)</span><span></span></label>
-        <div class="note" id="lossOut"></div>
         <label class="f"><span>1-stop stint fuel vs empty, new tyre (s)</span><input type="number" data-dec="2" id="fuelGap" step="0.01" readonly tabindex="-1" class="ro"></label>
         <div class="note" id="fuelGapOut"></div>
         <button id="avgTrack">Remove all tracks</button>
@@ -520,7 +529,7 @@ function fmtDec(){document.querySelectorAll("input[data-dec]").forEach(el=>{if(e
 document.addEventListener("change",e=>{const el=e.target;if(el.dataset&&el.dataset.dec&&el.value!=="")el.value=(+el.value).toFixed(+el.dataset.dec)});
 function defaults(){
   setTrack(AVG);
-  $("chassis").value=600;$("engine").value=115;$("fpc").value=100;$("fre").value=50;$("refuel").checked=true;$("ref").value=1.5;$("tank").value=120;$("th").value=0.75;$("prof").value=1.0;$("mech").value=10;$("pace").value=0;$("water").value=0;
+  $("chassis").value=600;$("engine").value=115;$("fpc").value=100;$("fre").value=50;$("refuel").checked=false;$("ref").value=1.5;$("tank").value=120;$("th").value=0.75;$("prof").value=1.0;$("mech").value=10;$("pace").value=0;$("water").value=0;
 }
 
 /* ---------- uploads ---------- */
@@ -617,15 +626,19 @@ const stashCliff=(s,c)=>{const o=s.compounds[c];if(o.wear_cliff_onset_pct!=null|
 const restoreCliff=(s,c,onset)=>{const o=s.compounds[c],st=s.cliffStash?.[c]||DEFCLIFF[c]||[65,1.6,1.6];
   o.wear_cliff_onset_pct=onset??st[0];if(o.wear_cliff_mult_lat==null)o.wear_cliff_mult_lat=st[1];if(o.wear_cliff_mult_long==null)o.wear_cliff_mult_long=st[2]};
 const clearCliff=(s,c)=>{stashCliff(s,c);for(const f of CLIFF)s.compounds[c][f]=null};
+let TYREINFO=null;
 function renderTable(){
   const s=sets[active],cs=dryNames(s),wc=wetNames(s),all=allNames(s),mm=WATER,cols=Math.max(3,cs.length,wc.length);
   const head=list=>list.map(c=>`<th><span class="dot" style="background:${col(c)}"></span>${short(c)}</th>`).join("")+"<th></th>".repeat(cols-list.length);
   const cell=(c,f,i)=>`<td><input type="number" step="${STEPS[i]}" min="0" ${f==="wear_cliff_onset_pct"?'max="100"':""} data-c="${c}" data-f="${f}" value="${s.compounds[c][f]??""}" ${OPTIONAL.has(f)&&!hasCliff(s)?"disabled":""} placeholder="none" aria-label="${c} ${f}"></td>`;
-  const rows=(list,cliffRow)=>FIELDS.map((f,i)=>(cliffRow&&f==="wear_cliff_onset_pct"?`<tr><td colspan="${cols+1}"><label class="chk"><input type="checkbox" id="cliffOn" ${hasCliff(s)?"checked":""}><span class="ck"></span><span>Tyre cliff</span></label></td></tr>`:"")+`<tr><td>${f}</td>`+list.map(c=>cell(c,f,i)).join("")+"<td></td>".repeat(cols-list.length)+"</tr>").join("");
+  const rows=(list,cliffRow)=>FIELDS.map((f,i)=>(cliffRow&&f==="wear_cliff_onset_pct"?`<tr><td colspan="${cols+1}" id="tyreInfoCell"></td></tr><tr><td colspan="${cols+1}"><label class="chk"><input type="checkbox" id="cliffOn" ${hasCliff(s)?"checked":""}><span class="ck"></span><span>Tyre cliff</span></label></td></tr>`:"")+(OPTIONAL.has(f)&&!hasCliff(s)?"":`<tr><td>${f}</td>`+list.map(c=>cell(c,f,i)).join("")+"<td></td>".repeat(cols-list.length)+"</tr>")).join(""); // cliff rows only while the cliff is on
   // Dry/Wet switch: the dry compounds, or intermediate and wet with the wetness table
   const wet=tyreView==="wet"&&wc.length;
   document.querySelectorAll("#tyreView button").forEach(b=>{b.classList.toggle("on",b.dataset.tv===(wet?"wet":"dry"));if(b.dataset.tv==="wet")b.disabled=!wc.length});
+  // the tyre gap and loss lines sit above the Tyre cliff row; the node is kept across re-renders
+  TYREINFO=TYREINFO||$("tyreInfo");TYREINFO.remove();
   $("cmpTable").innerHTML=`<colgroup><col class="k">${"<col>".repeat(cols)}</colgroup><thead><tr><th></th>${head(wet?wc:cs)}</tr></thead><tbody>`+rows(wet?wc:cs,true)+"</tbody>";
+  $("tyreInfoCell").appendChild(TYREINFO);
   // wetness_states: the state each compound is in at the race's track water, editable
   $("wetHead").textContent=`Wetness at ${mm.toFixed(1)} mm track water`;
   $("wetTable").classList.toggle("five",all.length>3);const wpad="<td></td>".repeat(Math.max(0,3-all.length));

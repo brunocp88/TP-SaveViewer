@@ -1,0 +1,35 @@
+# TP Save Lab v0.62: what was added since v0.58
+
+## Drivers
+- Contracts and Juniors: Edit driver is a small EDIT button beside the driver's name in the contract panel (also on unsigned drivers, and in Next season). 
+- Junior series editing: Edit series (name and tier) and an Edit button per team card (name, quality 1-10). The Edit series window has a dashed + Add team (name, quality; empty seats are filled from the Juniors tab; duplicates refused).
+- Driver window: a view-only Career table (Year, Series, Team, R, Pts, Pos, Ovr) beside the attributes, one row per finished season; narrower window, traits wrap under the attributes.
+
+## Staff
+- Contracts: a small EDIT button opens a staff editor laid out like Create staff (age, nationality, skill and talent steppers with full stat names, view-only Overall; name and role read-only). Changes go into the Editor's log and recalculate the skill. The editor and Create staff fit their content, and Create staff shows the roles in two columns.
+- Overall: the plain sum of the role's attributes, as in game (max 40 for Head of Dynamics and Chief Mechanic, 60 for Technical Director, 100 for Chief Designer, Head of Aero and Head of Engine), on cards, list, sorting, editor and Create staff.
+- Role filter: single-select, in contract-card order (Technical Director, Chief Designer, Head of Aero, Head of Dynamics, Chief Mechanic, Head of Engine).
+
+## Projects and Warehouse
+- Layout: Team selector on the top row and Part type on the bottom row on both tabs. Part types list the aero parts first, then Chassis and Engine; Projects ends with Next-year chassis, Warehouse with Gearbox and Brakes. Warehouse puts the Team selector above Part type.
+- Projects: a new Aero part type button (Front wing, Rear wing, Underfloor, Diffuser, Sidepods together).
+- Projects > Complete sorting: completed designs first, then ongoing designs (by estimated week), each in week order across every filtered part (aero and chassis weeks on one scale); rows with no week stay last.
+
+## Teams, Headquarters and Technology
+- Headquarters (Teams): UI improvements, removing outdated designs and information
+- Technology: the two top banners are removed; team name 14px and level text 10px bold, as on Teams.
+- Team selector buttons: all team buttons on Cars, Finances, Warehouse and Projects are the same size;
+
+## Edits
+- Car baseline: chassis-style buttons (-1.0 -0.5 [value] +0.5 +1.0); Car Mass colours inverted (lower mass is green); wider window.
+- Engines and suppliers: engine, tyre and parts supplier editors use -0.5 -0.1 [value] +0.1 +0.5;
+- Chassis and project editors: step buttons read -0.5 -0.1 / +0.1 +0.5.
+
+## Regulations
+- Edit options: every rule with numbers or lists gets an Edit options button that opens the Add option window filled with that option (key locked). On/off, allowed/banned, named-mode and hardcoded rules have none.
+- Technical Regulation Era: a single Edit settings button for the severity grid only. The announcement week is not editable in the save (the game reads it from the pack's regulations.json).
+
+## Performance, Schedule and Championship
+- Schedule: only event weeks (races and test weeks) in week order, eight cards per row, each with week number arrows and a 1-52 week picker. 
+- Standings (main and junior): Pos, Team, Driver, rounds, Pts, with Team left of Driver, Pts only in the last column, and Team and Driver names and headers centred. Export CSV follows the order. "(current)" no longer follows the latest year on the season buttons and graph legend.
+- Junior Standings: with the schedule in the save, the table lists every round of the season (played rounds filled, the rest empty) and the header reads "after N of M simulated rounds".

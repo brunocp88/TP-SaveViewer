@@ -545,6 +545,44 @@ textarea.edit{display:block;width:100%;max-width:100%;resize:none;field-sizing:c
 .trk-rocell{color:#aeb4bd}
 .trk-hi .fnum,.trk-hi input{color:#ff6b6b}.trk-lo .fnum,.trk-lo input{color:#3ddc84}
 .trk-ro{color:#d9dcdf}
+.tm-wrap{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:10px;align-items:start}
+@media (max-width:1100px){.tm-wrap{grid-template-columns:1fr}}
+.pk-panel{position:sticky;top:64px;max-height:calc(100vh - 80px);overflow:auto;padding:10px;margin:0}
+.pk-h{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}.pk-h .btn{padding:3px 9px;font-size:11px}
+.pk-row{display:grid;grid-template-columns:18px 112px 1fr 34px;align-items:center;gap:6px;width:100%;background:none;border:1px solid transparent;border-radius:3px;padding:2px 3px;margin:1px 0;cursor:pointer;color:var(--text);font:inherit;font-size:12px;text-align:left}
+.pk-row:hover{border-color:var(--border2)}.pk-row.sel{border-color:#2f6fe0;background:#0e1a30}.pk-row.ina{opacity:.45}
+.pk-n{color:var(--muted);font-size:10px;text-align:right}
+.pk-team{border-radius:3px;padding:2px 6px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
+.pk-bar{display:block;height:8px;background:#1a1f27;border-radius:4px;overflow:hidden}.pk-bar i{display:block;height:100%;background:#cfd6df;border-radius:4px}
+.pk-v{text-align:right;font-variant-numeric:tabular-nums}
+.pk-foot{margin-top:8px;line-height:1.4}
+.spr-ctl{display:flex;flex-wrap:wrap;gap:10px 24px;align-items:center;margin-bottom:10px}
+.spr-c{display:flex;align-items:center;gap:8px}.spr-c .flab{width:auto}.spr-l2{margin-left:10px}
+.spr-val{min-width:54px;text-align:center;font-variant-numeric:tabular-nums;border:1px solid var(--border2);border-radius:3px;padding:3px 6px;background:#090b0e}
+.spr-tab .spr-val{min-width:40px;padding:1px 4px}
+.spr-bars{min-width:220px}.spr-bars .pk-bar{margin:2px 0}.spr-old i{background:#4a515c!important}
+.spr-tab .trk-name .tdot{margin-right:6px}.spr-tab .trk-name small{margin-left:6px}
+.pptab .prel{display:block;margin-top:4px;height:22px;padding:0 8px;font-size:11px}
+.pctab tbody.pc+tbody.pc tr:first-child td{border-top:1px solid var(--border);padding-top:12px}
+.pctab tr.pc2 td{padding-bottom:12px}
+.pctab .pcs{display:inline-flex;align-items:center;gap:8px;margin-right:18px}
+.pctab .pcl{font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.tbox-b.cols2{column-count:2;column-gap:28px}
+.tbox-b.cols2>.frow{break-inside:avoid}
+.tbox-b.cols2>.frow:has(.btn[data-act]){column-span:all}
+@media (max-width:860px){.tbox-b.cols2{column-count:1}}
+.pctab thead th:last-child{width:100%}
+.hrow{display:flex;flex-wrap:wrap;gap:10px 28px;align-items:flex-end}
+.hrow>.frow{flex-direction:column;align-items:flex-start;gap:6px;min-height:0}
+.hrow>.frow>.flab{width:auto;font-size:13px}
+.reg-rh-r{display:flex;gap:6px;margin-left:auto}
+.reg-add.on{color:#fff;border-style:solid;border-color:var(--accent);background:var(--accent-soft)}
+.reg-o.ing{border-style:dashed}
+.reg-o.ing.on{border-style:solid}
+.ftext[readonly]{opacity:.6}
+.ftext.csvlist{flex:1;min-width:260px;max-width:640px;font-variant-numeric:tabular-nums}
+.reg-dlg-t .ftext.csvlist{width:100%}
+.reg-csv-n{font-size:11.5px;color:var(--muted);margin-top:4px}
 
 </style>
 </head>
@@ -1316,7 +1354,7 @@ function update() {
   $('tFiles').textContent = nFiles || ''; $('tChanges').textContent = chg.length || '';
   const names = [...files.keys()].sort((a, b) => (FILE_ORDER.indexOf(a) + 1 || 99) - (FILE_ORDER.indexOf(b) + 1 || 99) || a.localeCompare(b));
   const found = new Map(); rows.forEach(r => found.set(r.fileName, (found.get(r.fileName) || 0) + r.leaves.length));
-  $('loadedFiles').innerHTML = names.map(n => { const f = files.get(n); return `<span class="fchip ${f.error ? 'bad' : per.has(n) || f.tsEdited ? 'chg' : found.get(n) ? 'ok' : 'miss'}" title="${esc(f.path)}">${esc(n)}</span>`; }).join('');
+  $('loadedFiles').innerHTML = names.map(n => { const f = files.get(n); return `<span class="fchip ${f.error ? 'bad' : per.has(n) || f.tsEdited ? 'chg' : found.get(n) || TS_FILES.includes(n) ? 'ok' : 'miss'}" title="${esc(f.path)}">${esc(n)}</span>`; }).join('');
   const sf = schedFiles().filter(x => !x.created);
   $('loadedFiles').innerHTML += sf.map(x => `<span class="fchip ${x.edited ? 'chg' : 'ok'}" title="${esc(x.path)}">${esc(x.name)}</span>`).join('') + (tracks.size ? `<span class="fchip ok" title="Track files for the Schedule creator">${[...tracks.values()].filter(t => !t.fromSave).length} track files</span>` : '');
   $('nLoaded').textContent = files.size + sf.length + [...tracks.values()].filter(t => !t.fromSave).length;
@@ -1707,6 +1745,11 @@ function selRow(label, cur, opts, set, files, o = {}) {
   const has = opts.some(([v]) => v === cur);
   return `<div class="frow"><span class="flab">${esc(label)}</span><select class="fsel" data-b="${b}" aria-label="${esc(label)}">${has ? '' : `<option value="${esc(JSON.stringify(cur ?? null))}" selected>${cur == null ? 'None' : esc(String(cur)) + ' (not found)'}</option>`}${opts.map(([v, l]) => `<option value="${esc(JSON.stringify(v))}"${v === cur ? ' selected' : ''}>${esc(l)}</option>`).join('')}</select>${o.hint ? `<span class="fhint">${esc(o.hint)}</span>` : ''}</div>`;
 }
+// "25, 18, 15" → [25, 18, 15]; null when any entry is not a number of 0 or more.
+function parseCsvNums(t) {
+  const a = String(t).split(/[,;\s]+/).filter(Boolean).map(x => Number(x));
+  return a.length && a.every(x => Number.isFinite(x) && x >= 0) ? a : null;
+}
 function textRow(label, cur, set, files) {
   const b = bind(() => cur, set, files);
   return `<div class="frow"><span class="flab">${esc(label)}</span><input class="ftext" data-b="${b}" value="${esc(cur ?? '')}" spellcheck="false" aria-label="${esc(label)}"></div>`;
@@ -1716,7 +1759,7 @@ function colorRow(label, obj, key, files) {
   const a = obj[key], b = bind(() => a, v => { obj[key] = v; }, files);
   return `<div class="frow"><span class="flab">${esc(label)}</span><input type="color" class="fcol" data-b="${b}" value="${rgbHex(a)}" aria-label="${esc(label)}">${['R', 'G', 'B'].map((c, i) => `<input class="frgb" data-b="${b}" data-i="${i}" inputmode="numeric" value="${a[i]}" aria-label="${esc(label)} ${c}">`).join('')}</div>`;
 }
-const box = (title, body, o = {}) => body ? `<section class="tbox${o.wide ? ' wide' : ''}"><div class="tbox-h">${esc(title)}${o.extra || ''}</div><div class="tbox-b">${body}</div></section>` : '';
+const box = (title, body, o = {}) => body ? `<section class="tbox${o.wide ? ' wide' : ''}"><div class="tbox-h">${esc(title)}${o.extra || ''}</div><div class="tbox-b${o.cols ? ' cols2' : ''}">${body}</div></section>` : '';
 function bindAll(host) {
   const after = b => tsCommit(B[b].files);
   const clamp = (x, v) => { if (x.min != null && v < x.min) v = x.min; if (x.max != null && v > x.max) v = x.max; return +v.toFixed(4); };
@@ -1846,11 +1889,15 @@ function renderTS() {
   vanMap();
   B = []; CH = []; LT = [];
   const evc = (ok, n) => ok ? String(n) : 0;
-  const views = mod === 'junior' ? [['junior', 'Junior series', (jrList() || []).length || (jrList() ? '0' : 0)]] : mod === 'events' ? [['evteams', 'Team joins and leaves', evc(evList() || tsTeams().length, (evList() || []).filter(e => e.type === 'team_join' || e.type === 'team_leave').length)], ['evengines', 'Engine suppliers', evc(tsEng(), Object.values(tsEng() || {}).filter(s => !s.factory).length)], ['evtyres', 'Tyre suppliers', evc(tyreSups(), Object.keys(tyreSups() || {}).length)], ['evbuy', 'Rebrands and takeovers', evc(buyList(), (buyList() || []).filter(e => e.team).length)], ['evother', 'Other events', evc(evList(), (evList() || []).filter(e => !['team_join', 'team_leave', 'engine_supplier_join', 'sponsor_industry_cycle'].includes(e.type)).length)]] : mod === 'regs' ? [['regs', 'Regulations', regCats().length]] : mod === 'tracks' ? [['trkall', 'All tracks', trkList().length], ['trk', 'Track', trkList().length]] : mod === 'sponsors' ? [['sponsors', 'Sponsors', (spList() || []).length], ['ssdeals', 'Starting deals', spStart() ? spStart().length || '0' : 0], ['sptiers', 'Tiers and player rules', spBrackets() || rows.some(r => r.view === 'sptiers') ? 'tiers' : 0]] : mod === 'people' ? [['drivers', 'Drivers', tsDrivers().length], ['staff', 'Staff', tsStaff().length], ['pdev', 'Development', ddev() || rows.some(r => r.view === 'pdev') ? 'ages' : 0], ['market', 'Contract market', pneg() ? 'rules' : 0], ['rel', 'Relationships', relD() ? Object.values(relD()).reduce((a, m) => a + Object.values(m || {}).reduce((b, x) => b + Object.keys(x || {}).length, 0), 0) || '0' : 0]] : [['teams', 'Teams', tsTeams().length], ['engines', 'Engine suppliers', Object.keys(tsEng() || {}).length], ['parts', 'Parts suppliers', Object.values(tsParts() || {}).reduce((a, c) => a + Object.keys(c.suppliers || {}).length, 0)], ['tyres', 'Tyre suppliers', Object.keys(tyreSups() || {}).length], ['owners', 'Ownership', Object.keys(ownD() || {}).length || (ownD() ? '0' : 0)], ['hist', 'Histories', Object.keys(histD() || {}).length || (histD() ? '0' : 0)]];
+  const views = mod === 'junior' ? [['junior', 'Junior series', (jrList() || []).length || (jrList() ? '0' : 0)]] : mod === 'events' ? [['evteams', 'Team joins and leaves', evc(evList() || tsTeams().length, (evList() || []).filter(e => e.type === 'team_join' || e.type === 'team_leave').length)], ['evengines', 'Engine suppliers', evc(tsEng(), Object.values(tsEng() || {}).filter(s => !s.factory).length)], ['evtyres', 'Tyre suppliers', evc(tyreSups(), Object.keys(tyreSups() || {}).length)], ['evbuy', 'Rebrands and takeovers', evc(buyList(), (buyList() || []).filter(e => e.team).length)], ['evother', 'Other events', evc(evList(), (evList() || []).filter(e => !['team_join', 'team_leave', 'engine_supplier_join', 'sponsor_industry_cycle'].includes(e.type)).length)]] : mod === 'regs' ? [['regs', 'Regulations', regCats().length]] : mod === 'tracks' ? [['trkall', 'All tracks', trkList().length], ['trk', 'Track', trkList().length]] : mod === 'sponsors' ? [['sponsors', 'Sponsors', (spList() || []).length], ['ssdeals', 'Starting deals', spStart() ? spStart().length || '0' : 0], ['sptiers', 'Tiers and player rules', spBrackets() || rows.some(r => r.view === 'sptiers') ? 'tiers' : 0]] : mod === 'people' ? [['drivers', 'Drivers', tsDrivers().length], ['staff', 'Staff', tsStaff().length], ['pdev', 'Development', ddev() || rows.some(r => r.view === 'pdev') ? 'ages' : 0], ['market', 'Contract market', pneg() ? 'rules' : 0], ['rel', 'Relationships', relD() ? Object.values(relD()).reduce((a, m) => a + Object.values(m || {}).reduce((b, x) => b + Object.keys(x || {}).length, 0), 0) || '0' : 0]] : [['teams', 'Teams', tsTeams().length], ['spread', 'Field spread', tsTeams().filter(t => Number.isFinite(carOverall(t, false))).length], ['engines', 'Engine suppliers', Object.keys(tsEng() || {}).length], ['parts', 'Parts suppliers', Object.values(tsParts() || {}).reduce((a, c) => a + Object.keys(c.suppliers || {}).length, 0)], ['tyres', 'Tyre suppliers', Object.keys(tyreSups() || {}).length], ['owners', 'Ownership', Object.keys(ownD() || {}).length || (ownD() ? '0' : 0)], ['hist', 'Histories', Object.keys(histD() || {}).length || (histD() ? '0' : 0)]];
   if (!views.some(v => v[0] === tsView && v[2])) tsView = (views.find(v => v[2]) || views[0])[0];
   const edited = [...TS_FILES.filter(n => files.get(n)?.tsEdited), ...trkList().filter(t => t.edited).map(t => t.id + '.json')];
+  const keepList = host.querySelector('.ts-list')?.scrollTop || 0, keepY = window.scrollY, keepView = host.dataset.view;
   host.innerHTML = `<div class="sched-tabs">${views.length < 2 ? '' : views.map(([k, l, n]) => `<button class="stab${k === tsView ? ' on' : ''}" type="button" data-v="${k}"${n ? '' : ' disabled'}>${l}<small>${n}</small></button>`).join('')}<span class="grow"></span>${mod === 'events' ? `<button type="button" class="btn ev-add" data-act="e:create" data-arg="${{ evteams: 'team_join', evengines: 'engine_supplier_join', evtyres: 'tyre_join', evbuy: 'identity_rebrand', evother: 'calendar_swap' }[tsView] || ''}">+ Create event</button>` : ''}<span class="sched-sub">${edited.length ? 'Edited: ' + edited.map(esc).join(', ') : 'No edits yet'}</span></div>
-    <div class="ts-grid">${tsView === 'teams' ? teamsView() : tsView === 'engines' ? enginesView() : tsView === 'drivers' ? driversView() : tsView === 'staff' ? staffView() : tsView === 'regs' ? regsView() : tsView === 'evteams' ? evTeamsView() : tsView === 'evengines' ? evEnginesView() : tsView === 'evtyres' ? evTyresView() : tsView === 'evbuy' ? evBuyView() : tsView === 'evother' ? evOtherView() : tsView === 'junior' ? juniorView() : tsView === 'tyres' ? tyresView() : tsView === 'owners' ? ownView() : tsView === 'hist' ? histView() : tsView === 'pdev' ? pdevView() : tsView === 'market' ? marketView() : tsView === 'rel' ? relView() : tsView === 'sponsors' ? sponsorsView() : tsView === 'ssdeals' ? spStartView() : tsView === 'sptiers' ? spTiersView() : tsView === 'trkall' ? trkAllView() : tsView === 'trk' ? trkView() : partsView()}</div>`;
+    <div class="ts-grid">${tsView === 'teams' ? teamsView() : tsView === 'spread' ? spreadView() : tsView === 'engines' ? enginesView() : tsView === 'drivers' ? driversView() : tsView === 'staff' ? staffView() : tsView === 'regs' ? regsView() : tsView === 'evteams' ? evTeamsView() : tsView === 'evengines' ? evEnginesView() : tsView === 'evtyres' ? evTyresView() : tsView === 'evbuy' ? evBuyView() : tsView === 'evother' ? evOtherView() : tsView === 'junior' ? juniorView() : tsView === 'tyres' ? tyresView() : tsView === 'owners' ? ownView() : tsView === 'hist' ? histView() : tsView === 'pdev' ? pdevView() : tsView === 'market' ? marketView() : tsView === 'rel' ? relView() : tsView === 'sponsors' ? sponsorsView() : tsView === 'ssdeals' ? spStartView() : tsView === 'sptiers' ? spTiersView() : tsView === 'trkall' ? trkAllView() : tsView === 'trk' ? trkView() : partsView()}</div>`;
+  // Re-rendering after a pick or an edit keeps the list and page where they were (a new view starts at the top of the list).
+  if (keepView === tsView + mod) { const l = host.querySelector('.ts-list'); if (l) l.scrollTop = keepList; window.scrollTo(0, keepY); }
+  host.dataset.view = tsView + mod;
   host.querySelectorAll('.stab[data-v]').forEach(b => b.addEventListener('click', () => { tsView = b.dataset.v; tsConfirm = null; renderTS(); }));
   host.querySelectorAll('.tli[data-i]').forEach(el => el.addEventListener('click', () => { const k = el.dataset.i; if (tsView === 'teams' || tsView === 'drivers' || tsView === 'staff' || tsView === 'junior' || tsView === 'sponsors' || tsView === 'trk') tsSel[tsView] = +k; else if (tsView === 'engines') tsSel.engines = k; else if (tsView === 'tyres' || tsView === 'hist') tsSel[tsView] = k; else tsSel.parts = k; tsConfirm = null; renderTS(); }));
   host.querySelectorAll('[data-act]').forEach(b => b.addEventListener('click', () => b.dataset.act.startsWith('p:') ? pAct(b.dataset.act.slice(2), b.dataset.arg) : b.dataset.act.startsWith('e:') ? eAct(b.dataset.act.slice(2), b.dataset.arg) : b.dataset.act.startsWith('x:') ? xAct(b.dataset.act.slice(2), b.dataset.arg) : b.dataset.act.startsWith('j:') ? jAct(b.dataset.act.slice(2), b.dataset.arg) : tsAct(b.dataset.act, b.dataset.arg)));
@@ -1901,19 +1948,19 @@ function teamsView() {
       ${carRow('Reliability', t, 'chassis_reliability', cp, 'chassis_reliability')}${carRow('Dirty air sensitivity', t, 'dirty_air_sensitivity', cp, 'dirty_air_sensitivity')}
       ${carRow('Aero efficiency', t, 'aero_efficiency_rating', cp, 'aero_efficiency_rating')}${carRow('Car mass (kg)', t, 'car_mass_kg', null, null)}</tbody></table>`, { wide: true })
       : box('Entry performance', choiceRow('Tag', t, 'entry_performance_tag', TAGS, F) + `<div class="frow"><span class="flab"></span><button class="btn" type="button" data-act="addCar">Add car stats</button><span class="fhint">copies the car of the middle active team</span></div>`, { wide: true })}
-    ${t.headquarters ? box('Facilities', Object.keys(t.headquarters).map(k => numRow(HQ_NAMES[k] || k, t.headquarters, k, F, { max: Array.isArray(hq?.[k]) ? hq[k].length : 5 })).join('')) : ''}
+    ${t.headquarters ? box('Facilities', Object.keys(t.headquarters).map(k => numRow(HQ_NAMES[k] || k, t.headquarters, k, F, { max: Array.isArray(hq?.[k]) ? hq[k].length : 5 })).join(''), { wide: true, cols: true }) : ''}
     ${box('Engine', (eng ? selRow('Engine', ek, Object.entries(eng).sort((a, b) => a[1].engine.localeCompare(b[1].engine)).map(([k, s]) => [k, `${s.engine} · ${k}${s.factory ? ' (works)' : ''}`]), v => setEngine(t, v), F) : '')
       + choiceRow('Deal', t, null, CTYPES, F, { get: () => engType(t), set: v => setEngType(t, v) })
       + numRow('Seasons', t, 'engine_contract_seasons', F, { min: 1 }) + numRow('Units per season', t, 'engine_units_per_season', F, { min: 1 })
       + (t.engine_contract ? numRow('Deal starts (season)', t.engine_contract, 'start_season', F, { min: 1 }) + numRow('Deal ends (season)', t.engine_contract, 'expires_season', F, { min: 1 }) : ''))}
     ${t.tyre_contract ? box('Tyres', selRow('Supplier', t.tyre_contract.supplier, tyres.map(s => [s, s]), v => { t.tyre_contract.supplier = v; }, F) + choiceRow('Deal', t.tyre_contract, 'type', CTYPES, F) + numRow('Deal starts (season)', t.tyre_contract, 'start_season', F, { min: 1 }) + numRow('Deal ends (season)', t.tyre_contract, 'expires_season', F, { min: 1 })) : ''}
-    ${dc && cats ? box('Parts contracts', dc[t.name] ? `<table class="ctab ptab"><thead><tr><th></th><th>Supplier</th><th>Deal</th><th>Years</th><th>Parts / season</th></tr></thead><tbody>${Object.keys(cats).map(c => { const x = dc[t.name][c]; if (!x) return `<tr><td class="flab">${esc(cats[c].label || c)}</td><td colspan="4"><button class="btn" type="button" data-act="addPart" data-arg="${esc(c)}">Add</button></td></tr>`; const P = ['parts.json']; const sb = bind(() => x.supplier, v => { x.supplier = v; }, P); const tb = bind(() => x.type, v => { x.type = v; }, P); return `<tr><td class="flab">${esc(cats[c].label || c)}</td><td><select class="fsel" data-b="${sb}" aria-label="${esc(c)} supplier">${cats[c].suppliers?.[x.supplier] ? '' : `<option selected>${esc(x.supplier)} (not found)</option>`}${Object.keys(cats[c].suppliers || {}).sort().map(s => `<option value="${esc(JSON.stringify(s))}"${s === x.supplier ? ' selected' : ''}>${esc(s)}</option>`).join('')}</select></td><td><span class="fchoice">${CTYPES.map(([v, l]) => `<button class="btn${x.type === v ? ' on' : ''}" type="button" data-b="${tb}" data-v="${esc(JSON.stringify(v))}">${l}</button>`).join('')}</span></td><td>${stepOnly(x, 'years', P, 1)}</td><td>${stepOnly(x, 'parts_per_season', P, 1)}</td></tr>`; }).join('')}</tbody></table>` : `<div class="frow"><span class="sched-sub">No default parts contracts for this team.</span><button class="btn" type="button" data-act="addContracts">Add parts contracts</button></div>`, { wide: true }) : ''}
-    ${tech ? box('Starting technologies', (() => { const te = tech.find(x => x.team === t.name); return te ? Object.keys(te.technologies || {}).map(k => numRow(capital(k.replace(/_/g, ' ')).replace(/\b(abs|tpms|drs|ecu|ers)\b/gi, m => m.toUpperCase()), te.technologies, k, ['startingtechnologies.json'], { max: 5 })).join('') : `<div class="frow"><span class="sched-sub">Not listed: the game uses its built-in levels.</span><button class="btn" type="button" data-act="addTech">Add levels</button></div>`; })()) : ''}
-    ${ers ? box('ERS starting levels', ers[t.name] ? Object.keys(ers[t.name]).map(k => numRow(capital(k), ers[t.name], k, ['ers_development.json'], { max: 10 })).join('') + `<div class="frow"><span class="flab"></span><button class="btn" type="button" data-act="ersDefault">Use default levels</button></div>` : `<div class="frow"><span class="sched-sub">Uses the default levels${ers.default ? ' (' + Object.values(ers.default).join(', ') + ')' : ''}.</span><button class="btn" type="button" data-act="ersOwn">Give own levels</button></div>`) : ''}
-    ${t.driver_focus ? box('Driver focus', Object.keys(t.driver_focus).map(k => numRow(capital(k), t.driver_focus, k, F)).join('') + `<div class="frow"><span class="flab">Total</span><b>${Object.values(t.driver_focus).reduce((a, v) => a + v, 0)}</b></div>`) : ''}
-    ${t.history ? box('History', Object.keys(t.history).map(k => numRow(capital(k), t.history, k, F)).join('')) : ''}
+    ${dc && cats ? box('Parts contracts', dc[t.name] ? `<table class="ctab ptab pctab"><thead><tr><th></th><th>Supplier</th><th>Deal</th></tr></thead>${Object.keys(cats).map(c => { const x = dc[t.name][c]; if (!x) return `<tbody class="pc"><tr><td class="flab">${esc(cats[c].label || c)}</td><td colspan="2"><button class="btn" type="button" data-act="addPart" data-arg="${esc(c)}">Add</button></td></tr></tbody>`; const P = ['parts.json']; const sb = bind(() => x.supplier, v => { x.supplier = v; }, P); const tb = bind(() => x.type, v => { x.type = v; }, P); return `<tbody class="pc"><tr><td class="flab">${esc(cats[c].label || c)}</td><td><select class="fsel" data-b="${sb}" aria-label="${esc(c)} supplier">${cats[c].suppliers?.[x.supplier] ? '' : `<option selected>${esc(x.supplier)} (not found)</option>`}${Object.keys(cats[c].suppliers || {}).sort().map(s => `<option value="${esc(JSON.stringify(s))}"${s === x.supplier ? ' selected' : ''}>${esc(s)}</option>`).join('')}</select></td><td><span class="fchoice">${CTYPES.map(([v, l]) => `<button class="btn${x.type === v ? ' on' : ''}" type="button" data-b="${tb}" data-v="${esc(JSON.stringify(v))}">${l}</button>`).join('')}</span></td></tr><tr class="pc2"><td></td><td colspan="2"><span class="pcs"><span class="pcl">Years</span>${stepOnly(x, 'years', P, 1)}</span><span class="pcs"><span class="pcl">Parts / season</span>${stepOnly(x, 'parts_per_season', P, 1)}</span></td></tr></tbody>`; }).join('')}</table>` : `<div class="frow"><span class="sched-sub">No default parts contracts for this team.</span><button class="btn" type="button" data-act="addContracts">Add parts contracts</button></div>`, { wide: true }) : ''}
+    ${tech ? box('Starting technologies', (() => { const te = tech.find(x => x.team === t.name); return te ? Object.keys(te.technologies || {}).map(k => numRow(capital(k.replace(/_/g, ' ')).replace(/\b(abs|tpms|drs|ecu|ers)\b/gi, m => m.toUpperCase()), te.technologies, k, ['startingtechnologies.json'], { max: 5 })).join('') : `<div class="frow"><span class="sched-sub">Not listed: the game uses its built-in levels.</span><button class="btn" type="button" data-act="addTech">Add levels</button></div>`; })(), { wide: true, cols: true }) : ''}
+    ${ers ? box('ERS starting levels', ers[t.name] ? Object.keys(ers[t.name]).map(k => numRow(capital(k), ers[t.name], k, ['ers_development.json'], { max: 10 })).join('') + `<div class="frow"><span class="flab"></span><button class="btn" type="button" data-act="ersDefault">Use default levels</button></div>` : `<div class="frow"><span class="sched-sub">Uses the default levels${ers.default ? ' (' + Object.values(ers.default).join(', ') + ')' : ''}.</span><button class="btn" type="button" data-act="ersOwn">Give own levels</button></div>`, { wide: true, cols: true }) : ''}
+    ${t.driver_focus ? box('Driver focus', Object.keys(t.driver_focus).map(k => numRow(capital(k), t.driver_focus, k, F)).join('') + `<div class="frow"><span class="flab">Total</span><b>${Object.values(t.driver_focus).reduce((a, v) => a + v, 0)}</b></div>`, { wide: true, cols: true }) : ''}
+    ${t.history ? box('History', Object.keys(t.history).map(k => numRow(capital(k), t.history, k, F)).join(''), { wide: true, cols: true }) : ''}
     </div></div>`;
-  return listHtml(items, String(i), `<b>Teams</b><span class="sched-sub">${teams.length}</span>`) + ed;
+  return listHtml(items, String(i), `<b>Teams</b><span class="sched-sub">${teams.length}</span>`) + `<div class="tm-wrap">${ed}${pkPanel(t)}</div>`;
 }
 function stepOnly(o, k, files, step) {
   if (!(k in o)) return '';
@@ -2143,17 +2190,18 @@ function teamPeopleBox(t) {
   const nd = tsDrivers().filter(d => d.future_contract?.team === t.name), ns = tsStaff().filter(s => s.future_contract?.team === t.name);
   if (!files.has('drivers.json') && !files.has('staff.json')) return '';
   const link = (kind, list, p) => `<button class="plink" type="button" data-act="p:open" data-arg="${kind}:${list.indexOf(p)}">${esc(p.name)}</button>`;
-  const drow = d => { const c = d.contract; return `<tr><td>${link('drivers', tsDrivers(), d)}<small>${rating(d)} · ${d.age}</small></td><td>${'role' in c ? choiceCells(() => c.role, v => { c.role = v; }, DF, DROLES) : ''}</td><td>${'status' in c ? choiceCells(() => c.status, v => { c.status = v; if ('priority' in c) c.priority = v; }, DF, DSTATUS) : ''}</td><td>${stepOnly(c, 'salary_m', DF, 0.1)}</td><td>${stepOnly(c, 'length_weeks', DF, 1)}</td><td><button class="btn" type="button" data-act="p:release" data-arg="drivers:${tsDrivers().indexOf(d)}">Release</button></td></tr>`; };
-  const srow = s => { const c = s.contract; return `<tr><td>${link('staff', tsStaff(), s)}<small>${staffOv(s) ?? '–'} · ${s.age}</small></td><td colspan="2">${esc(roleName(s.role))}</td><td>${stepOnly(c, 'salary_m', SF, 0.1)}</td><td>${stepOnly(c, 'length_weeks', SF, 1)}</td><td><button class="btn" type="button" data-act="p:release" data-arg="staff:${tsStaff().indexOf(s)}">Release</button></td></tr>`; };
+  const drow = d => { const c = d.contract; return `<tr><td>${link('drivers', tsDrivers(), d)}<small>${rating(d)} · ${d.age}</small><button class="btn prel" type="button" data-act="p:release" data-arg="drivers:${tsDrivers().indexOf(d)}">Release</button></td><td>${'role' in c ? choiceCells(() => c.role, v => { c.role = v; }, DF, DROLES) : ''}</td><td>${'status' in c ? choiceCells(() => c.status, v => { c.status = v; if ('priority' in c) c.priority = v; }, DF, DSTATUS) : ''}</td><td>${stepOnly(c, 'salary_m', DF, 0.1)}</td><td>${stepOnly(c, 'length_weeks', DF, 52)}</td></tr>`; };
+  const srow = s => { const c = s.contract; return `<tr><td>${link('staff', tsStaff(), s)}<small>${staffOv(s) ?? '–'} · ${s.age}</small><button class="btn prel" type="button" data-act="p:release" data-arg="staff:${tsStaff().indexOf(s)}">Release</button></td><td colspan="2">${esc(roleName(s.role))}</td><td>${stepOnly(c, 'salary_m', SF, 0.1)}</td><td>${stepOnly(c, 'length_weeks', SF, 52)}</td></tr>`; };
   const freeD = tsDrivers().map((d, i) => [d, i]).filter(([d]) => !curTeam(d) && !d.retired).sort((a, b) => rating(b[0]) - rating(a[0]));
-  const freeS = tsStaff().map((s, i) => [s, i]).filter(([s]) => !curTeam(s)).sort((a, b) => (a[0].role || '').localeCompare(b[0].role || '') || (staffOv(b[0]) ?? 0) - (staffOv(a[0]) ?? 0));
+  const works = (t.headquarters?.engine_plant ?? 0) > 0;
+  const freeS = tsStaff().map((s, i) => [s, i]).filter(([s]) => !curTeam(s)).filter(([s]) => works || s.role !== 'head_of_engine').sort((a, b) => (a[0].role || '').localeCompare(b[0].role || '') || (staffOv(b[0]) ?? 0) - (staffOv(a[0]) ?? 0));
   const mains = ds.filter(d => d.contract?.role !== 'reserve').length;
   const sign = (kind, opts) => `<select class="fsel psign" data-sign="${kind}" aria-label="Sign"><option value="">${kind === 'drivers' ? 'Sign a driver' : 'Sign staff'}</option>${opts}</select>`;
-  const body = `<table class="ctab ptab pptab"><thead><tr><th>Driver</th><th>Role</th><th>Status</th><th>Salary (M)</th><th>Weeks</th><th></th></tr></thead><tbody>${ds.map(drow).join('') || '<tr><td colspan="6" class="sched-sub">No drivers under contract.</td></tr>'}</tbody></table>
+  const body = `<table class="ctab ptab pptab"><thead><tr><th>Driver</th><th>Role</th><th>Status</th><th>Salary (M)</th><th>Term (weeks)</th></tr></thead><tbody>${ds.map(drow).join('') || '<tr><td colspan="5" class="sched-sub">No drivers under contract.</td></tr>'}</tbody></table>
     <div class="frow">${files.has('drivers.json') ? sign('drivers', freeD.map(([d, i]) => `<option value="${i}">${esc(d.name)} · ${rating(d)} · ${d.age}</option>`).join('')) : ''}<span class="fhint">${mains} main driver${mains === 1 ? '' : 's'} for ${t.entry_count ?? 2} car${(t.entry_count ?? 2) === 1 ? '' : 's'}</span></div>
     ${nd.length ? `<div class="frow"><span class="flab">Joining next season</span><span>${nd.map(d => link('drivers', tsDrivers(), d)).join(', ')}</span></div>` : ''}
-    <table class="ctab ptab pptab"><thead><tr><th>Staff</th><th colspan="2">Role</th><th>Salary (M)</th><th>Weeks</th><th></th></tr></thead><tbody>${ss.map(srow).join('') || '<tr><td colspan="6" class="sched-sub">No staff under contract.</td></tr>'}</tbody></table>
-    <div class="frow">${files.has('staff.json') ? sign('staff', freeS.map(([s, i]) => `<option value="${i}">${esc(roleName(s.role))} · ${esc(s.name)} · ${staffOv(s) ?? '–'}</option>`).join('')) : ''}<span class="fhint">${Object.keys(STAFF_ROLES).filter(r => !ss.some(s => s.role === r)).map(roleName).join(', ') ? 'Missing: ' + Object.keys(STAFF_ROLES).filter(r => !ss.some(s => s.role === r)).map(roleName).join(', ') : 'Every role filled'}</span></div>
+    <table class="ctab ptab pptab"><thead><tr><th>Staff</th><th colspan="2">Role</th><th>Salary (M)</th><th>Term (weeks)</th></tr></thead><tbody>${ss.map(srow).join('') || '<tr><td colspan="5" class="sched-sub">No staff under contract.</td></tr>'}</tbody></table>
+    <div class="frow">${files.has('staff.json') ? sign('staff', freeS.map(([s, i]) => `<option value="${i}">${esc(roleName(s.role))} · ${esc(s.name)} · ${staffOv(s) ?? '–'}</option>`).join('')) : ''}</div>
     ${ns.length ? `<div class="frow"><span class="flab">Joining next season</span><span>${ns.map(s => link('staff', tsStaff(), s)).join(', ')}</span></div>` : ''}`;
   return box('Drivers and staff', body, { wide: true });
 }
@@ -2213,6 +2261,9 @@ const REG_GROUPS = [['Entries', ['formula_team_entry_cap', 'formula_team_entry_r
 const tsRegs = () => tsD('regulations.json');
 const regCats = () => Array.isArray(tsRegs()?.categories) ? tsRegs().categories : [];
 const regCat = r => regCats().find(c => c.key === r);
+const regEditing = new Set();
+// Every rule's options can be edited except the technical era (its options hold nested settings).
+const regCanEdit = c => c.key !== 'technical_regulation_era' && (c.options || []).length > 0;
 const regCanAdd = c => c.key !== 'technical_regulation_era' && (c.options || []).some(o => Object.entries(o).some(([k, v]) => !['id', 'weight'].includes(k) && (Array.isArray(v) || typeof v === 'number')));
 function regsView() {
   const doc = tsRegs();
@@ -2221,16 +2272,17 @@ function regsView() {
   const chip = (label, cls, attr, title) => `<button type="button" class="reg-o ${cls}" ${attr} title="${esc(title || '')}">${esc(label)}</button>`;
   const card = c => {
     const opts = c.options || [], def = opts.find(o => o.key === c.default);
-    const chips = opts.map(o => `<span class="reg-oc">${chip(o.name || o.key, o.key === c.default ? 'on' : '', `data-rdef="${esc(c.key)}|${esc(o.key)}"`, o.summary)}${o.key !== c.default && opts.length > 2 ? `<button type="button" class="reg-x" data-rdel="${esc(c.key)}|${esc(o.key)}" title="Remove ${esc(o.name || o.key)}" aria-label="Remove ${esc(o.name || o.key)}">×</button>` : ''}</span>`).join('');
-    return `<div class="reg-rule"><div class="reg-rh"><b>${esc(c.label || c.key)}</b>${regCanAdd(c) ? `<button class="reg-add" type="button" data-radd="${esc(c.key)}">+ Add option</button>` : ''}</div>
+    const ing = regEditing.has(c.key);
+    const chips = opts.map(o => `<span class="reg-oc">${chip(o.name || o.key, (o.key === c.default ? 'on' : '') + (ing ? ' ing' : ''), ing ? `data-redit="${esc(c.key)}|${esc(o.key)}"` : `data-rdef="${esc(c.key)}|${esc(o.key)}"`, ing ? 'Edit this option' : o.summary)}${!ing && o.key !== c.default && opts.length > 2 ? `<button type="button" class="reg-x" data-rdel="${esc(c.key)}|${esc(o.key)}" title="Remove ${esc(o.name || o.key)}" aria-label="Remove ${esc(o.name || o.key)}">×</button>` : ''}</span>`).join('');
+    return `<div class="reg-rule"><div class="reg-rh"><b>${esc(c.label || c.key)}</b><span class="reg-rh-r">${regCanEdit(c) ? `<button class="reg-add${ing ? ' on' : ''}" type="button" data-rtog="${esc(c.key)}">${ing ? 'Done editing' : 'Edit options'}</button>` : ''}${regCanAdd(c) ? `<button class="reg-add" type="button" data-radd="${esc(c.key)}">+ Add option</button>` : ''}</span></div>
       <div class="reg-rl">On at game start</div><div class="reg-seg">${chips}</div>
-      <div class="reg-why">${def ? esc(def.summary || '') : `Default "${esc(c.default ?? 'none')}" is not one of the options.`}</div></div>`;
+      <div class="reg-why">${ing ? 'Click an option to edit it.' : def ? esc(def.summary || '') : `Default "${esc(c.default ?? 'none')}" is not one of the options.`}</div></div>`;
   };
   const listed = new Set(REG_GROUPS.flatMap(g => g[1])), other = regCats().filter(c => !listed.has(c.key)).map(c => c.key);
   const groups = [...REG_GROUPS, ...(other.length ? [['Other', other]] : [])].map(([t, rs]) => { const cs = rs.map(regCat).filter(Boolean); return cs.length ? `<h3 class="reg-h">${esc(t)}</h3><div class="reg-grid">${cs.map(card).join('')}</div>` : ''; }).join('');
-  const vote = cc ? box('How rules change in play', choiceRow('Mode', cc, 'mode', [['voting', 'Voting'], ['scripted', 'Scripted']], RF)
-    + (vt ? numRow('Review week', vt, 'review_week', RF, { min: 1, max: 50 }) + numRow('Proposals (min)', vt, 'minimum_proposals_per_season', RF, { min: 1, max: 3 }) + numRow('Proposals (max)', vt, 'maximum_proposals_per_season', RF, { min: 1, max: 3 }) + numRow('Same rule again after (seasons)', vt, 'category_cooldown_seasons', RF, { min: 0 }) : '')
-    + `<div class="frow"><span class="flab"></span><span class="fhint">${cc.mode === 'scripted' ? (Array.isArray(cc.scripted_changes) && cc.scripted_changes.length ? `${cc.scripted_changes.length} scripted change${cc.scripted_changes.length === 1 ? '' : 's'}` : 'No scripted changes: rules never change') : 'Teams vote on proposals at the review week'}</span></div>`, { wide: true }) : '';
+  const vote = cc ? box('How rules change in play', '<div class="hrow">' + choiceRow('Mode', cc, 'mode', [['voting', 'Voting'], ['scripted', 'Scripted']], RF)
+    + (vt ? numRow('Review week', vt, 'review_week', RF, { min: 1, max: 50 }) + numRow('Proposals (min)', vt, 'minimum_proposals_per_season', RF, { min: 1, max: 3 }) + numRow('Proposals (max)', vt, 'maximum_proposals_per_season', RF, { min: 1, max: 3 }) + numRow('Same rule again after (seasons)', vt, 'category_cooldown_seasons', RF, { min: 0 }) : '') + '</div>'
+    + `<div class="frow"><span class="flab"></span><span class="fhint">${cc.mode === 'scripted' ? (Array.isArray(cc.scripted_changes) && cc.scripted_changes.length ? `${cc.scripted_changes.length} scripted change${cc.scripted_changes.length === 1 ? '' : 's'}` : 'No scripted changes: rules never change') : 'Teams vote on proposals at the review week'}</span></div>`.replace('<span class="flab"></span>', ''), { wide: true }) : '';
   const warn = [];
   if (vt && vt.minimum_proposals_per_season > vt.maximum_proposals_per_season) warn.push('Minimum proposals is above the maximum.');
   return `<div class="ts-ed reg-ed">${warn.length ? `<div class="bar sched-warn">${warn.map(esc).join('<br>')}</div>` : ''}<div class="tboxes">${vote}</div>${groups}<div id="tsCats"></div></div>`;
@@ -2245,12 +2297,16 @@ function bindRegs(host) {
     toast(`Removed ${k} from ${c.label || r}.`); tsCommit(RF);
   }));
   host.querySelectorAll('[data-radd]').forEach(b => b.addEventListener('click', () => regAddOption(b.dataset.radd)));
+  host.querySelectorAll('[data-rtog]').forEach(b => b.addEventListener('click', () => { const r = b.dataset.rtog; regEditing.has(r) ? regEditing.delete(r) : regEditing.add(r); renderTS(); }));
+  host.querySelectorAll('[data-redit]').forEach(b => b.addEventListener('click', () => { const [r, k] = b.dataset.redit.split('|'); regAddOption(r, k); }));
 }
 // Add-option window, as in the Save Lab: starts from the rule's most complete option with new values
 // (a number continues the rule's own spacing above its highest value, a list of places is scaled up).
-function regAddOption(r) {
+// With editKey it edits that option in place instead; its key stays, since the default and neighbours refer to it.
+function regAddOption(r, editKey) {
   const d = regCat(r); if (!d || !(d.options || []).length) return;
-  const opts = d.options, mk = Math.max(...opts.map(o => Object.keys(o).length)), tpl = opts.find(o => o.key === d.default && Object.keys(o).length === mk) || opts.filter(o => Object.keys(o).length === mk).at(-1);
+  const editing = editKey != null, orig = editing ? d.options.find(o => o.key === editKey) : null; if (editing && !orig) return;
+  const opts = d.options, mk = Math.max(...opts.map(o => Object.keys(o).length)), tpl = orig || opts.find(o => o.key === d.default && Object.keys(o).length === mk) || opts.filter(o => Object.keys(o).length === mk).at(-1);
   const hasId = opts.some(o => 'id' in o), nid = Math.max(0, ...opts.map(o => +o.id || 0)) + 1;
   const fields = Object.keys(tpl).filter(k => !['id', 'key', 'name', 'summary', 'description'].includes(k) && !(tpl[k] && typeof tpl[k] === 'object' && !Array.isArray(tpl[k])));
   const all = k => opts.map(o => o[k]).filter(v => v !== undefined);
@@ -2262,21 +2318,22 @@ function regAddOption(r) {
   const val = {}; for (const k of fields) val[k] = Array.isArray(tpl[k]) ? tpl[k].slice() : tpl[k];
   const rnd = (x, k) => { const p = Math.pow(10, k ? dpOf(k) : 4); return Math.round((x + Number.EPSILON) * p) / p; };
   const inName = k => new RegExp('(^|[^0-9.])' + String(tpl[k]).replace('.', '\\.') + '([^0-9]|$)').test(tpl.name + ' ' + tpl.key);
-  for (const k of fields) {
+  if (!editing) for (const k of fields) {
     const kd = kind(k);
     if (kd === 'num' && k !== 'weight') { const u = [...new Set(all(k).filter(x => typeof x === 'number'))].sort((p, q) => p - q), df = u.slice(1).map((x, i) => x - u[i]).filter(x => x > 0).sort((p, q) => p - q), gap = df.length ? df[Math.floor(df.length / 2)] : stepOf(k); if (u.length > 1 || inName(k)) val[k] = rnd(u[u.length - 1] + gap, k); }
     else if (kd === 'nums') val[k] = val[k].map(x => Math.max(x > 0 ? 1 : 0, Math.round(x * 1.2)));
   }
   const numFields = fields.filter(k => kind(k) === 'num' && k !== 'weight');
   const escRe = t => String(t).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const swapNum = (t, from, to) => from === to ? t : String(t).replace(new RegExp('(^|[^0-9.])' + escRe(from) + '(?![0-9.]*[0-9])', 'g'), (m, p) => p + to).replace(new RegExp('(^|[^0-9.])' + escRe(rnd(from * 100)) + '(?=%)', 'g'), (m, p) => p + rnd(to * 100));
+  // A whole number may be written with decimals in the text (620.0 kg): those keep their decimals.
+  const swapNum = (t, from, to) => from === to ? t : String(t).replace(new RegExp('(^|[^0-9.])' + escRe(from) + '\\.(0+)(?![0-9])', 'g'), (m, p, z) => p + Number(to).toFixed(z.length)).replace(new RegExp('(^|[^0-9.])' + escRe(from) + '(?![0-9.]*[0-9])', 'g'), (m, p) => p + to).replace(new RegExp('(^|[^0-9.])' + escRe(rnd(from * 100)) + '(?=%)', 'g'), (m, p) => p + rnd(to * 100));
   const recompute = t => { let x = String(t || ''); for (const k of numFields) x = swapNum(x, tpl[k], val[k]);
     for (const k of fields) if (kind(k) === 'nums') { const o = tpl[k].join('-'), n = val[k].join('-'); x = x.split(o).join(n).replace(/\(\d+(?:-\d+)+\)/g, '(' + n + ')'); if (tpl[k].length !== val[k].length) x = x.replace(new RegExp('(top\\s*)' + tpl[k].length, 'ig'), (m, p) => p + val[k].length); }
     return x; };
   let nameEdited = false, sumEdited = false, name = '', summary = '', desc = '', keyEdited = false, keyText = '';
-  const autoText = () => { if (!nameEdited) { name = recompute(tpl.name); if (name === tpl.name) name = tpl.name + ' 2'; } if (!sumEdited) { summary = recompute(tpl.summary); desc = recompute(tpl.description); } };
+  const autoText = () => { if (!nameEdited) { name = recompute(tpl.name); if (!editing && name === tpl.name) name = tpl.name + ' 2'; } if (!sumEdited) { summary = recompute(tpl.summary); desc = recompute(tpl.description); } };
   const mainK = fields.find(k => kind(k) === 'num' && k !== 'weight' && inName(k));
-  const keyOf = () => { if (keyEdited) return keyText;
+  const keyOf = () => { if (editing) return editKey; if (keyEdited) return keyText;
     if (mainK != null) { const m = String(tpl.key).match(/^(.*?)([0-9.]+)(.*)$/); if (m && +m[2] === +tpl[mainK]) return m[1] + val[mainK] + m[3]; }
     return String(name).toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '') || (hasId ? 'option_' + nid : 'option'); };
   const dlg = document.createElement('dialog'); dlg.className = 'reg-dlg';
@@ -2287,20 +2344,20 @@ function regAddOption(r) {
       if (kd === 'bool') return `<tr><th>${L}</th><td><span class="fchoice">${[[true, 'Yes'], [false, 'No']].map(([b, t]) => `<button type="button" class="btn ${val[k] === b ? 'on' : ''}" data-f-bool="${k}|${b}">${t}</button>`).join('')}</span></td></tr>`;
       if (kd === 'str') return `<tr><th>${L}</th><td><input class="ftext" data-f-str="${k}" value="${esc(val[k])}"></td></tr>`;
       if (kd === 'tags') return `<tr><th>${L}</th><td><span class="pchips">${vocab(k).map(t => `<button type="button" class="pchip ${(val[k] || []).includes(t) ? 'on' : ''}" data-f-tag="${k}|${esc(t)}">${esc(tok(t))}</button>`).join('')}</span></td></tr>`;
-      if (kd === 'nums') return `<tr><th>${L}</th><td><div class="reg-places">${val[k].map((x, i) => `<div class="reg-pl"><span>${i + 1}</span><input class="fnum" data-f-pl="${k}|${i}" value="${x}" inputmode="decimal"><span class="reg-pl-s"><button type="button" class="plus" data-f-pls="${k}|${i}|1" aria-label="Raise">+</button><button type="button" class="minus" data-f-pls="${k}|${i}|-1" aria-label="Lower">−</button></span></div>`).join('')}<div class="reg-pl-act"><button type="button" class="btn" data-f-pladd="${k}">+ place</button><button type="button" class="btn" data-f-pldel="${k}" ${val[k].length < 2 ? 'disabled' : ''}>− place</button></div></div></td></tr>`;
+      if (kd === 'nums') return `<tr><th>${L}</th><td><input class="ftext csvlist" data-f-csv="${k}" value="${esc(val[k].join(', '))}" spellcheck="false"><div class="reg-csv-n">${val[k].length} place${val[k].length === 1 ? '' : 's'}</div></td></tr>`;
       if (kd === 'nullnum') return `<tr><th>${L}</th><td><span class="reg-null">${stepper(k, val[k], val[k] === null)}<button type="button" class="btn ${val[k] === null ? 'on' : ''}" data-f-null="${k}">None</button></span></td></tr>`;
       if (kd === 'keep') return '';
       return `<tr><th>${L}</th><td>${stepper(k, String(Math.round(val[k] * 1e4) / 1e4), false)}</td></tr>`;
     }).join('');
-    return `<div class="reg-dlg-h"><div><div class="reg-dlg-e">${esc(d.label || r)}</div><b>Add option</b></div><button type="button" class="reg-dlg-x" data-f-cancel aria-label="Close">×</button></div>
+    return `<div class="reg-dlg-h"><div><div class="reg-dlg-e">${esc(d.label || r)}</div><b>${editing ? 'Edit option' : 'Add option'}</b></div><button type="button" class="reg-dlg-x" data-f-cancel aria-label="Close">×</button></div>
     <table class="reg-dlg-t"><tbody>
     <tr><th>Name</th><td><input class="ftext" data-f-name value="${esc(name)}"></td></tr>
     ${rowsH}
     <tr><th>Summary</th><td><input class="ftext" data-f-sum value="${esc(summary)}"></td></tr>
     ${'description' in tpl ? `<tr><th>Description</th><td><input class="ftext" data-f-desc value="${esc(desc)}"></td></tr>` : ''}
-    <tr><th>Key</th><td><input class="ftext" data-f-key value="${esc(keyOf())}" spellcheck="false"></td></tr>
+    <tr><th>Key</th><td><input class="ftext" data-f-key value="${esc(keyOf())}" spellcheck="false"${editing ? ' readonly title="The key stays: the default and other options refer to it"' : ''}></td></tr>
     </tbody></table><div class="reg-err" data-f-err></div>
-    <div class="reg-dlg-a"><button type="button" class="btn" data-f-cancel>Cancel</button><button type="button" class="btn primary" data-f-ok>Add option</button></div>`;
+    <div class="reg-dlg-a"><button type="button" class="btn" data-f-cancel>Cancel</button><button type="button" class="btn primary" data-f-ok>${editing ? 'Apply' : 'Add option'}</button></div>`;
   };
   const paint = () => { const a = document.activeElement, sel = a && a.matches && a.matches('input') ? [...a.attributes].find(x => x.name.startsWith('data-f-')) : null, sv = sel && `[${sel.name}="${sel.value}"]`.replace('=""', ''); dlg.innerHTML = html(); wire(); if (sv) { const el = dlg.querySelector(sv); if (el) { el.focus(); try { el.setSelectionRange(el.value.length, el.value.length); } catch (_) {} } } };
   const setNum = (k, x) => { x = Number(String(x).replace(',', '.')); if (!Number.isFinite(x) || x < 0) { paint(); return; } val[k] = rnd(x, k); autoText(); paint(); };
@@ -2315,9 +2372,10 @@ function regAddOption(r) {
     q('[data-f-null]', b => b.onclick = () => { const k = b.dataset.fNull; val[k] = val[k] === null ? (all(k).find(x => typeof x === 'number') ?? 1) : null; paint(); });
     q('[data-f-pl]', i => i.onchange = () => { const [k, n] = i.dataset.fPl.split('|'), x = Number(String(i.value).replace(',', '.')); if (Number.isFinite(x) && x >= 0) val[k][+n] = rnd(x); autoText(); paint(); });
     q('[data-f-pls]', b => b.onclick = () => { const [k, n, sg] = b.dataset.fPls.split('|'); val[k][+n] = Math.max(0, rnd(val[k][+n] + sg * stepOf(k))); autoText(); paint(); });
+    q('[data-f-csv]', i => i.onchange = () => { const a = parseCsvNums(i.value); if (a) { val[i.dataset.fCsv] = a.map(x => rnd(x)); autoText(); } paint(); });
     q('[data-f-pladd]', b => b.onclick = () => { const a = val[b.dataset.fPladd]; a.push(a[a.length - 1]); autoText(); paint(); });
     q('[data-f-pldel]', b => b.onclick = () => { val[b.dataset.fPldel].pop(); autoText(); paint(); });
-    const check = () => { const k = String(keyOf()).trim().toLowerCase(), dup = k && opts.some(o => String(o.key).toLowerCase() === k); dlg.querySelector('[data-f-err]').textContent = dup ? `This rule already has an option with key ${String(keyOf()).trim()}. Change the key.` : ''; dlg.querySelector('[data-f-key]').classList.toggle('bad', !!dup); dlg.querySelector('[data-f-ok]').disabled = !!dup; };
+    const check = () => { const k = String(keyOf()).trim().toLowerCase(), dup = !editing && k && opts.some(o => String(o.key).toLowerCase() === k); dlg.querySelector('[data-f-err]').textContent = dup ? `This rule already has an option with key ${String(keyOf()).trim()}. Change the key.` : ''; dlg.querySelector('[data-f-key]').classList.toggle('bad', !!dup); dlg.querySelector('[data-f-ok]').disabled = !!dup; };
     dlg.querySelector('[data-f-name]').oninput = e => { name = e.target.value; nameEdited = true; if (!keyEdited) dlg.querySelector('[data-f-key]').value = keyOf(); check(); };
     dlg.querySelector('[data-f-key]').oninput = e => { keyText = e.target.value; keyEdited = true; check(); };
     dlg.querySelector('[data-f-sum]').oninput = e => { summary = e.target.value; sumEdited = true; };
@@ -2327,9 +2385,10 @@ function regAddOption(r) {
       const err = dlg.querySelector('[data-f-err]'), key = String(keyOf()).trim();
       if (!key) { err.textContent = 'Give the option a key.'; return; }
       if (!String(name).trim()) { err.textContent = 'Give the option a name.'; return; }
-      if (opts.some(o => String(o.key).toLowerCase() === key.toLowerCase())) { err.textContent = `This rule already has an option with key ${key}.`; return; }
-      const opt = {}; if (hasId) opt.id = nid; opt.key = key; opt.name = String(name).trim();
+      if (!editing && opts.some(o => String(o.key).toLowerCase() === key.toLowerCase())) { err.textContent = `This rule already has an option with key ${key}.`; return; }
+      const opt = {}; if (hasId && (!editing || 'id' in orig)) opt.id = editing ? orig.id : nid; opt.key = key; opt.name = String(name).trim();
       for (const k of Object.keys(tpl)) { if (k === 'id' || k === 'key' || k === 'name') continue; opt[k] = k === 'summary' ? summary : k === 'description' ? desc : (k in val ? val[k] : structuredClone(tpl[k])); }
+      if (editing) { dlg.close(); if (JSON.stringify(opt) === JSON.stringify(orig)) return; opts[opts.indexOf(orig)] = opt; toast(`Edited ${opt.name} in ${d.label || r}.`); tsCommit(RF); return; }
       opts.push(opt);
       // Rules with neighbours (which options a vote can move to): the new option gets the template's neighbours, and they get it.
       if (d.neighbours && typeof d.neighbours === 'object') { const nb = d.neighbours[tpl.key]; d.neighbours[key] = [tpl.key, ...(Array.isArray(nb) ? nb : [])].filter(x => x !== key); if (Array.isArray(nb)) nb.push(key); else d.neighbours[tpl.key] = [key]; }
@@ -2641,7 +2700,7 @@ function juniorView() {
     + box('Rules', numRow('Tier', s, 'tier', F, { min: 1 }) + numRow('Minimum age', s, 'minimum_driver_age', F, { min: 10 }) + numRow('Maximum age', s, 'maximum_driver_age', F, { min: 10 })
       + numRow('Drivers per team', s, 'drivers_per_team', F, { min: 1, max: 4 }) + numRow('DNF rate (%)', s, 'dnf_rate_percent', F, { min: 0, max: 100 }));
   const pts = s.points_format && Array.isArray(s.points_format.points) ? s.points_format.points : null;
-  const ptsBox = pts ? box('Points per place', `<div class="jpts">${pts.map((p, k) => `<div class="jpl"><span>${k + 1}</span>${intCell(pts, k, F, { min: 0 })}</div>`).join('')}<div class="jpl-act"><button class="btn" type="button" data-act="j:ptAdd">+ place</button><button class="btn" type="button" data-act="j:ptDel" ${pts.length < 2 ? 'disabled' : ''}>− place</button></div></div>`, { wide: true }) : '';
+  const ptsBox = pts ? box('Points per place', `<div class="frow"><input class="ftext csvlist" data-b="${bind(() => pts.join(', '), v => { const a = parseCsvNums(v); if (!a) { toast('Write the points as numbers separated by commas, like 10, 8, 6.'); return false; } s.points_format.points = a; }, F)}" value="${esc(pts.join(', '))}" spellcheck="false" aria-label="Points per place"><span class="fhint">${pts.length} place${pts.length === 1 ? '' : 's'} score</span></div>`, { wide: true }) : '';
   const taken = new Set(L.flatMap(x => (x.teams || []).flatMap(t => t.drivers || [])));
   const pool = tsDrivers().filter(d => !taken.has(d.name) && !curTeam(d) && !d.retired && !d.deceased).sort((a, b) => (a.age - b.age) || a.name.localeCompare(b.name));
   const inAge = d => d.age >= s.minimum_driver_age && d.age <= s.maximum_driver_age;
@@ -2973,6 +3032,7 @@ function relView() {
 // ---- actions ----
 function xAct(a, arg) {
   if (/^s[ps][A-Z]/.test(a)) return spAct(a, arg);
+  if (/^(pk|spr)[A-Z]/.test(a)) return sprAct(a, arg);
   if (a === 'trkOpen') { tsSel.trk = +arg; tsView = 'trk'; return renderTS(); }
   if (a === 'ltAdd') { const x = LT[+arg]; x.arr.push(structuredClone(x.arr[x.arr.length - 1] ?? {})); return tsCommit(x.files); }
   if (a === 'ltDel') { const [i, j] = arg.split(':').map(Number), x = LT[i]; x.arr.splice(j, 1); return tsCommit(x.files); }
@@ -3142,9 +3202,98 @@ function trkView() {
   return listHtml(items, String(i), `<b>Tracks</b><span class="sched-sub">${L.length}${L.some(x => x.edited) ? ` · ${L.filter(x => x.edited).length} edited` : ''}</span>`) + ed;
 }
 
+// ---------- car overall: live pecking order and field spread ----------
+// Overall is Save Lab's calcOverall: (100 + pace + slow + medium + fast + straights + acceleration + braking + tyre management) / 9
+// minus (car mass - regulation minimum) / 27. The engine is left out.
+const OV_KEYS = [['team_pace', 'Pace'], ['slow', 'Slow corners'], ['med', 'Medium corners'], ['high', 'Fast corners'], ['straight', 'Straights'], ['acceleration', 'Acceleration'], ['braking', 'Braking'], ['tyre_management', 'Tyre management']];
+const ATTR_KEYS = new Set(['slow', 'med', 'high', 'straight']);
+const carObj = (t, k) => ATTR_KEYS.has(k) ? t.attr : t;
+const carStat = (t, k, pot) => { const o = pot ? t.chassis_starting_potential : carObj(t, k); const v = o?.[k]; return typeof v === 'number' ? v : NaN; };
+function regMinMass() {
+  // The default option of chassis_minimum_weight in regulations.json, else Save Lab's 600 kg fallback.
+  const R = objD('regulations.json'); let rule = null;
+  const walk = o => { if (rule || !o || typeof o !== 'object') return; if (o.key === 'chassis_minimum_weight' && Array.isArray(o.options)) { rule = o; return; } for (const v of Object.values(o)) walk(v); };
+  walk(R);
+  const opt = rule?.options.find(x => x.key === rule.default), m = +opt?.min_car_mass_kg;
+  return Number.isFinite(m) ? m : 600;
+}
+function carOverall(t, pot, vals) {
+  const s = OV_KEYS.map(([k]) => vals ? vals[k] : carStat(t, k, pot));
+  if (s.some(x => !Number.isFinite(x))) return NaN;
+  const p = (100 + s.reduce((a, x) => a + x, 0)) / 9, m = +t.car_mass_kg;
+  return Number.isFinite(m) ? p - (m - regMinMass()) / 27 : p;
+}
+let pkPot = false;
+function pkPanel(sel) {
+  const rows = tsTeams().map((t, i) => ({ t, i, ov: carOverall(t, pkPot) })).filter(x => Number.isFinite(x.ov)).sort((a, b) => b.ov - a.ov);
+  if (!rows.length) return '';
+  const hi = rows[0].ov, lo = Math.min(...rows.map(x => x.ov)) - 3;
+  const txt = a => { const [r, g, b] = Array.isArray(a) ? a : [0, 0, 0]; return r * 0.299 + g * 0.587 + b * 0.114 > 150 ? '#111' : '#fff'; };
+  return `<aside class="pk-panel panel"><div class="pk-h"><b>Performance overall</b><span class="fchoice">${[[false, 'Now'], [true, 'Potential']].map(([v, l]) => `<button class="btn${pkPot === v ? ' on' : ''}" type="button" data-act="x:pkMode" data-arg="${v ? 1 : 0}">${l}</button>`).join('')}</span></div>
+    ${rows.map((x, n) => `<button type="button" class="pk-row${x.t === sel ? ' sel' : ''}${x.t.active ? '' : ' ina'}" data-act="x:pkSel" data-arg="${x.i}" title="${esc(x.t.name)}: ${x.ov.toFixed(2)}${x.t.active ? '' : ' (inactive)'}"><span class="pk-n">${n + 1}</span><span class="pk-team" style="background:${rgbHex(x.t.color_rgb)};color:${txt(x.t.color_rgb)}">${esc(x.t.name)}</span><span class="pk-bar"><i style="width:${Math.max(2, (x.ov - lo) / (hi - lo || 1) * 100).toFixed(1)}%"></i></span><span class="pk-v">${x.ov.toFixed(1)}</span></button>`).join('')}</aside>`;
+}
+// Field spread: every team's car stats moved together. Each stat is pulled toward or pushed away from the field average
+// (spread), then shifted, then each team's own offset is added.
+const SPR = { k: 1, shift: 0, target: 'now', all: false, off: {} };
+function sprTeams() { return tsTeams().filter(t => (SPR.all || t.active) && Number.isFinite(carOverall(t, false))); }
+function sprPreview() {
+  const T = sprTeams(), out = new Map(), pots = SPR.target !== 'now', nows = SPR.target !== 'pot';
+  const mean = (k, pot) => { const v = T.map(t => carStat(t, k, pot)).filter(Number.isFinite); return v.reduce((a, x) => a + x, 0) / (v.length || 1); };
+  const f = (v, m, t) => Math.max(0, Math.min(100, +(m + (v - m) * SPR.k + SPR.shift + (SPR.off[t.name] || 0)).toFixed(1)));
+  for (const t of T) {
+    const now = {}, pot = {};
+    for (const [k] of OV_KEYS) { const a = carStat(t, k, false), b = carStat(t, k, true); now[k] = nows && Number.isFinite(a) ? f(a, mean(k, false), t) : a; pot[k] = pots && Number.isFinite(b) ? f(b, mean(k, true), t) : b; }
+    out.set(t, { now, pot });
+  }
+  return out;
+}
+const sprChanged = () => SPR.k !== 1 || SPR.shift !== 0 || Object.values(SPR.off).some(v => v);
+function spreadView() {
+  const T = sprTeams(); if (!tsTeams().length) return '<div class="panel empty">Load teams.json to edit the field spread.</div>';
+  if (!T.length) return '<div class="panel empty">No team has car stats.</div>';
+  const P = sprPreview(), pot = SPR.target === 'pot';
+  const rows = T.map(t => { const a = carOverall(t, pot), b = carOverall(t, pot, P.get(t)[pot ? 'pot' : 'now']); return { t, a, b }; }).sort((x, y) => y.b - x.b);
+  const all = rows.flatMap(r => [r.a, r.b]), hi = Math.max(...all), lo = Math.min(...all) - 3, w = v => Math.max(1, (v - lo) / (hi - lo || 1) * 100).toFixed(1);
+  const gap = k => (Math.max(...rows.map(r => r[k])) - Math.min(...rows.map(r => r[k]))).toFixed(1);
+  const below = [...P].filter(([, v]) => OV_KEYS.some(([k]) => Number.isFinite(v.pot[k]) && v.now[k] > v.pot[k])).map(([t]) => t.name);
+  const st = (act, val, unit = '') => `<span class="stepper"><button class="minus" type="button" data-act="x:${act}" data-arg="-1" aria-label="Lower">−</button><span class="spr-val">${val}${unit}</span><button class="plus" type="button" data-act="x:${act}" data-arg="1" aria-label="Raise">+</button></span>`;
+  const ctl = `<div class="spr-ctl">
+      <div class="spr-c"><span class="flab">Spread</span>${st('sprK', '×' + SPR.k.toFixed(2))}<span class="fhint">below 1 closes the field up, above 1 spreads it out</span></div>
+      <div class="spr-c"><span class="flab">Shift all</span>${st('sprS', (SPR.shift > 0 ? '+' : '') + fmt(SPR.shift))}<span class="fhint">added to every stat</span></div>
+      <div class="spr-c"><span class="flab">Apply to</span><span class="fchoice">${[['now', 'Now'], ['pot', 'Potential'], ['both', 'Both']].map(([v, l]) => `<button class="btn${SPR.target === v ? ' on' : ''}" type="button" data-act="x:sprT" data-arg="${v}">${l}</button>`).join('')}</span>
+        <span class="flab spr-l2">Teams</span><span class="fchoice">${[[false, 'Active'], [true, 'All with car stats']].map(([v, l]) => `<button class="btn${SPR.all === v ? ' on' : ''}" type="button" data-act="x:sprA" data-arg="${v ? 1 : 0}">${l}</button>`).join('')}</span></div>
+      <div class="spr-c"><button class="btn primary" type="button" data-act="x:sprApply"${sprChanged() ? '' : ' disabled'}>Apply to teams.json</button><button class="btn" type="button" data-act="x:sprReset"${sprChanged() ? '' : ' disabled'}>Reset</button>
+        <span class="fhint">Gap first to last: ${gap('a')} → <b>${gap('b')}</b></span></div></div>`;
+  const tab = `<table class="trk-tab spr-tab"><thead><tr><th>Team</th><th>Overall ${pot ? 'potential' : 'now'}</th><th>Preview</th><th>Change</th><th>Team offset</th><th class="spr-barh">Before and after</th></tr></thead><tbody>
+    ${rows.map(r => { const d = r.b - r.a; return `<tr><td class="trk-name" data-act="x:pkSel" data-arg="${tsTeams().indexOf(r.t)}">${dot(r.t.color_rgb)}<b>${esc(r.t.name)}</b>${r.t.active ? '' : '<small>inactive</small>'}</td><td>${r.a.toFixed(2)}</td><td><b>${r.b.toFixed(2)}</b></td><td class="${Math.abs(d) < 5e-3 ? '' : d > 0 ? 'trk-lo' : 'trk-hi'}">${Math.abs(d) < 5e-3 ? '–' : (d > 0 ? '+' : '') + d.toFixed(2)}</td>
+      <td>${st('sprO', (SPR.off[r.t.name] > 0 ? '+' : '') + fmt(SPR.off[r.t.name] || 0)).replace(/data-arg="(-?1)"/g, `data-arg="$1|${esc(r.t.name)}"`)}</td>
+      <td class="spr-bars"><span class="pk-bar spr-old"><i style="width:${w(r.a)}%"></i></span><span class="pk-bar"><i style="width:${w(r.b)}%;background:${rgbHex(r.t.color_rgb)}"></i></span></td></tr>`; }).join('')}</tbody></table>`;
+  return `<div class="ts-ed ev-ed">${below.length ? `<div class="bar sched-warn">After this change some stats would be above the starting potential for ${below.map(esc).join(', ')}.</div>` : ''}<div class="tboxes">${box('Field spread', ctl + tab + `<div class="fhint lt-foot">Moves the 8 stats that make up the car overall (pace, the four corner and straight speeds, acceleration, braking, tyre management) for every team at once. Each stat is pulled toward or pushed away from the field average, then shifted, then the team offset is added; results are rounded to 0.1 and kept between 0 and 100. Reliability, dirty air, aero and car mass are not changed. Nothing is written until you press Apply.</div>`, { wide: true })}</div></div>`;
+}
+function sprAct(a, arg) {
+  if (a === 'pkMode') { pkPot = arg === '1'; return renderTS(); }
+  if (a === 'pkSel') { tsSel.teams = +arg; tsView = 'teams'; return renderTS(); }
+  if (a === 'sprK') { SPR.k = Math.max(0, +(SPR.k + 0.05 * +arg).toFixed(2)); return renderTS(); }
+  if (a === 'sprS') { SPR.shift = +(SPR.shift + 0.5 * +arg).toFixed(1); return renderTS(); }
+  if (a === 'sprO') { const [d, n] = arg.split('|'); SPR.off[n] = +((SPR.off[n] || 0) + 0.5 * +d).toFixed(1); return renderTS(); }
+  if (a === 'sprT') { SPR.target = arg; return renderTS(); }
+  if (a === 'sprA') { SPR.all = arg === '1'; return renderTS(); }
+  if (a === 'sprReset') { Object.assign(SPR, { k: 1, shift: 0, off: {} }); return renderTS(); }
+  if (a === 'sprApply') {
+    for (const [t, v] of sprPreview()) for (const [k] of OV_KEYS) {
+      if (SPR.target !== 'pot' && Number.isFinite(v.now[k]) && carObj(t, k)) carObj(t, k)[k] = v.now[k];
+      if (SPR.target !== 'now' && Number.isFinite(v.pot[k]) && t.chassis_starting_potential) t.chassis_starting_potential[k] = v.pot[k];
+    }
+    Object.assign(SPR, { k: 1, shift: 0, off: {} });
+    return tsCommit(['teams.json']);
+  }
+}
+
 function renderWorkshops() {
   if (!TS) tsLoad();
-  const have = new Set(rows.map(r => CAT_MOD[r.cat])); have.add('schedule');
+  const have = new Set(rows.map(r => CAT_MOD[r.cat]));
+  // The Schedule creator opens once a schedule is read: the pack schedule, a save, or a junior series' schedule.
+  if (scheds.some(x => x.pack || x.save || x.junior != null)) have.add('schedule');
   if (['teams.json', 'engines.json', 'parts.json', 'tyre_suppliers.json', 'team_ownership.json', 'team_histories.json'].some(n => files.has(n) && !files.get(n).error)) have.add('teams');
   if (['drivers.json', 'staff.json', 'relationships.json'].some(n => files.has(n) && !files.get(n).error) || ddev() || pneg()) have.add('people');
   if (files.has('regulations.json') && !files.get('regulations.json').error) have.add('regs');
@@ -3153,6 +3302,7 @@ function renderWorkshops() {
   if (['events.json', 'tyre_suppliers.json', BUY_FILE].some(n => n && files.has(n) && !files.get(n).error)) have.add('events');
   if (files.has(JF) && !files.get(JF).error) have.add('junior');
   if (['tracks', 'teams', 'people', 'sponsors', 'regs', 'events', 'junior'].some(k => have.has(k)) && !TS) tsLoad();
+  if (!have.has(mod)) { const f = WORKSHOPS.find(([k]) => have.has(k)); if (f) mod = f[0]; }
   const count = k => k === 'tracks' ? `${trkList().length} tracks${trkList().some(t => t.edited) ? ` · ${trkList().filter(t => t.edited).length} edited` : ''}` : k === 'sponsors' ? `${(spList() || []).length} sponsors` : k === 'general' ? 'career' : k === 'junior' ? `${(jrList() || []).length} series` : k === 'events' ? `${(evList() || []).length + (buyList() || []).filter(e => e.team).length} events` : k === 'regs' ? `${regCats().length} rules` : k === 'people' ? (tsDrivers().length || tsStaff().length ? `${tsDrivers().length} drivers · ${tsStaff().length} staff` : 'growth · contract market') : k === 'teams' ? `${tsTeams().length} teams · ${Object.keys(tsEng() || {}).length} engines` : k === 'schedule' ? `${sched.filter(v => v && !SPECIAL[v]).length} races · ${tracks.size} tracks` : `${rows.filter(r => CAT_MOD[r.cat] === k).reduce((a, r) => a + r.leaves.length, 0)} values`;
   $('workshops').innerHTML = '<span class="bar-label">Workshop</span>' + WORKSHOPS.map(([k, n]) => `<button class="ws${k === mod ? ' on' : ''}" type="button" data-w="${k}"${have.has(k) ? '' : ' disabled title="Load the file this workshop edits"'}>${n}<small>${count(k)}</small></button>`).join('');
   $('workshops').querySelectorAll('.ws').forEach(b => b.addEventListener('click', () => { mod = b.dataset.w; persist(); renderWorkshops(); renderCats(); update(); if (mod === 'schedule') renderSchedule(); if (['tracks', 'teams', 'people', 'sponsors', 'regs', 'events', 'junior'].includes(mod)) renderTS(); }));
