@@ -149,6 +149,8 @@ table.race button{width:100%;padding:5px 4px;font-size:10px;display:flex;align-i
 .chart[hidden]{display:none}
 .edhead{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-top:8px}.edhead .sect{margin-top:0}
 #wetTable[hidden],#wetHead[hidden]{display:none}
+table.cmp input.cname{font-family:var(--mono);font-size:11px;text-transform:none}
+table.cmp .cop{display:flex;gap:4px}table.cmp .cop button{padding:3px 6px;font-size:9px;flex:1}table.cmp .cop button[data-del]{flex:0 0 auto;color:#ff8a8a}table.cmp .cop button:disabled{opacity:.3;cursor:default}
 table.cmp td#tyreInfoCell{padding:6px 0 10px;font-family:var(--body);font-size:13px;white-space:normal;overflow:visible;color:inherit}#tyreInfoCell label.f{margin-bottom:6px}
 table.race button.on{background:#15181d;color:#fff;border-color:var(--accent);box-shadow:inset 0 -2px 0 var(--accent)}
 
@@ -355,11 +357,8 @@ a.tool-card.blue:hover,a.tool-card.blue:focus-visible{box-shadow:inset 3px 0 0 #
         <label class="f"><span>tyre_wear_mult</span><input type="number" data-dec="2" id="twm" step="0.01"></label>
         <label class="f"><span>fuel_consumption</span><input type="number" data-dec="2" id="tfc" step="0.01"></label>
         <label class="f"><span>Pit lane loss (s)</span><input type="number" data-dec="1" id="pit" step="0.1"></label>
-        <!-- track water and wet states, hidden for now (Bruno 2026-10-27); water stays 0 mm, a dry race -->
-        <div style="display:none">
         <label class="f"><span>Track water (mm), whole race</span><input type="number" data-dec="1" id="water" step="0.1" min="0" max="5"></label>
         <div class="note" id="waterOut"></div>
-        </div>
         <div class="sect">Derived from the track file and game code</div>
         <label class="f"><span>Lap time, 50-rated car at 800 kg, grip 1.00 (s)</span><input type="number" data-dec="2" id="base" step="0.01" readonly tabindex="-1" class="ro"></label>
         <label class="f"><span>1-stop stint fuel vs empty, new tyre (s)</span><input type="number" data-dec="2" id="fuelGap" step="0.01" readonly tabindex="-1" class="ro"></label>
@@ -381,11 +380,12 @@ a.tool-card.blue:hover,a.tool-card.blue:focus-visible{box-shadow:inset 3px 0 0 #
         <div class="note" id="fplOut"></div>
         <div class="btnrow" id="constRow" hidden><button id="dlConst">Download constants.py</button></div>
         <label class="chk"><input type="checkbox" id="refuel"><span class="ck"></span><span>Refuelling allowed</span></label>
-        <label class="f"><span>Refuel time per 10 kg (s), game value</span><input type="number" data-dec="1" id="ref" step="0.1" readonly tabindex="-1" class="ro"></label>
+        <label class="f"><span>Refuel time per 10 kg (s)</span><input type="number" data-dec="1" id="ref" step="0.1"></label>
         <label class="f"><span>Chief mechanic pit-stop skill (1-20)</span><input type="number" id="mech" step="1" min="1" max="20"></label>
         <div class="note" id="pitOut"></div>
         <label class="f"><span>Car faster than a 50-rated car by (s per lap)</span><input type="number" data-dec="2" id="pace" step="0.1"></label>
         <label class="f"><span>AI pits at wear</span><input type="number" data-dec="2" id="th" step="0.05"></label>
+        <label class="chk"><input type="checkbox" id="overTh"><span class="ck"></span><span>Stints may run past the AI pit wear</span></label>
         <label class="f"><span>tyre_profile wear multiplier</span><input type="number" data-dec="2" id="prof" step="0.1"></label>
         <label class="f"><span>Stint lengths</span><select id="split"><option value="opt">Optimal split</option><option value="eq">Equal stints</option></select></label>
       </details>
@@ -467,6 +467,9 @@ const BUILTIN=[
 const VAN_WS={soft:[["dry",0.0,0.3,1.0,1.0,1.0],["moist",0.3,0.8,0.96,0.95,1.04],["damp",0.8,1.5,0.88,0.84,1.06],["wet",1.5,3.0,0.72,0.68,1.08],["very_wet",3.0,5.0,0.56,0.52,1.12]],medium:[["dry",0.0,0.3,1.0,1.0,1.0],["moist",0.3,0.8,0.97,0.96,1.03],["damp",0.8,1.5,0.9,0.87,1.04],["wet",1.5,3.0,0.76,0.72,1.06],["very_wet",3.0,5.0,0.62,0.58,1.09]],hard:[["dry",0.0,0.3,1.0,1.0,1.0],["moist",0.3,0.8,0.98,0.97,1.02],["damp",0.8,1.5,0.92,0.89,1.03],["wet",1.5,3.0,0.8,0.76,1.05],["very_wet",3.0,5.0,0.66,0.62,1.07]],intermediate:[["dry",0.0,0.25,0.9,0.88,1.16],["moist",0.25,0.8,0.96,0.95,1.08],["crossover",0.8,1.8,1.03,1.02,1.0],["wet",1.8,3.2,1.0,0.99,0.98],["very_wet",3.2,5.0,0.9,0.88,1.04]],wet:[["dry",0.0,0.25,0.75,0.72,1.24],["moist",0.25,0.8,0.84,0.82,1.14],["damp",0.8,2.0,0.95,0.94,1.04],["wet",2.0,4.0,1.04,1.03,0.98],["very_wet",4.0,5.0,1.08,1.06,0.96]]};
 for(const c of Object.keys(BUILTIN[0].compounds))BUILTIN[0].compounds[c].cat=c==="intermediate"?"inter":c==="wet"?"wet":"dry";
 for(const [c,a] of Object.entries(VAN_WS))BUILTIN[0].compounds[c].ws=a.map(([name,min_mm,max_mm,lat_mult,long_mult,wear_mult])=>({name,min_mm,max_mm,lat_mult,long_mult,wear_mult}));
+// The vanilla pack's tyremodel.json (0.99.5), the base file for downloads of the built-in model: enabled, temperatures and the game's key order come from it.
+const VAN_FILE={"enabled":true,"default_compound":"medium","mandatory_compound_count":2,"wear_quantum":0.02,"start_probabilities":{"soft":0.35,"medium":0.4,"hard":0.2,"intermediate":0.04,"wet":0.01},"compounds":{"soft":{"category":"dry","lat_grip_base":1.0175,"long_grip_base":1.0165,"wear_rate_base":0.036,"wear_grip_loss_lat":0.06,"wear_grip_loss_long":0.1,"wear_cliff_onset_pct":35,"wear_cliff_mult_lat":2.0,"wear_cliff_mult_long":2.0,"warmup_rate":1.1,"cool_rate":0.95,"start_temp_c":70.0,"pit_out_temp_c":75.0,"temp_window_c":[85.0,105.0],"wetness_states":[{"name":"dry","min_mm":0.0,"max_mm":0.3,"lat_mult":1.0,"long_mult":1.0,"wear_mult":1.0},{"name":"moist","min_mm":0.3,"max_mm":0.8,"lat_mult":0.96,"long_mult":0.95,"wear_mult":1.04},{"name":"damp","min_mm":0.8,"max_mm":1.5,"lat_mult":0.88,"long_mult":0.84,"wear_mult":1.06},{"name":"wet","min_mm":1.5,"max_mm":3.0,"lat_mult":0.72,"long_mult":0.68,"wear_mult":1.08},{"name":"very_wet","min_mm":3.0,"max_mm":5.0,"lat_mult":0.56,"long_mult":0.52,"wear_mult":1.12}]},"medium":{"category":"dry","lat_grip_base":1.01,"long_grip_base":1.01,"wear_rate_base":0.025,"wear_grip_loss_lat":0.055,"wear_grip_loss_long":0.085,"wear_cliff_onset_pct":45,"wear_cliff_mult_lat":1.85,"wear_cliff_mult_long":1.85,"warmup_rate":1.0,"cool_rate":1.0,"start_temp_c":65.0,"pit_out_temp_c":70.0,"temp_window_c":[88.0,108.0],"wetness_states":[{"name":"dry","min_mm":0.0,"max_mm":0.3,"lat_mult":1.0,"long_mult":1.0,"wear_mult":1.0},{"name":"moist","min_mm":0.3,"max_mm":0.8,"lat_mult":0.97,"long_mult":0.96,"wear_mult":1.03},{"name":"damp","min_mm":0.8,"max_mm":1.5,"lat_mult":0.9,"long_mult":0.87,"wear_mult":1.04},{"name":"wet","min_mm":1.5,"max_mm":3.0,"lat_mult":0.76,"long_mult":0.72,"wear_mult":1.06},{"name":"very_wet","min_mm":3.0,"max_mm":5.0,"lat_mult":0.62,"long_mult":0.58,"wear_mult":1.09}]},"hard":{"category":"dry","lat_grip_base":1.002,"long_grip_base":1.002,"wear_rate_base":0.018,"wear_grip_loss_lat":0.05,"wear_grip_loss_long":0.075,"wear_cliff_onset_pct":65,"wear_cliff_mult_lat":1.6,"wear_cliff_mult_long":1.6,"warmup_rate":0.92,"cool_rate":1.05,"start_temp_c":60.0,"pit_out_temp_c":65.0,"temp_window_c":[92.0,112.0],"wetness_states":[{"name":"dry","min_mm":0.0,"max_mm":0.3,"lat_mult":1.0,"long_mult":1.0,"wear_mult":1.0},{"name":"moist","min_mm":0.3,"max_mm":0.8,"lat_mult":0.98,"long_mult":0.97,"wear_mult":1.02},{"name":"damp","min_mm":0.8,"max_mm":1.5,"lat_mult":0.92,"long_mult":0.89,"wear_mult":1.03},{"name":"wet","min_mm":1.5,"max_mm":3.0,"lat_mult":0.8,"long_mult":0.76,"wear_mult":1.05},{"name":"very_wet","min_mm":3.0,"max_mm":5.0,"lat_mult":0.66,"long_mult":0.62,"wear_mult":1.07}]},"intermediate":{"category":"inter","lat_grip_base":0.9,"long_grip_base":0.9,"wear_rate_base":0.026,"wear_grip_loss_lat":0.13,"wear_grip_loss_long":0.16,"warmup_rate":1.02,"cool_rate":1.02,"temp_window_c":[82.0,102.0],"wetness_states":[{"name":"dry","min_mm":0.0,"max_mm":0.25,"lat_mult":0.9,"long_mult":0.88,"wear_mult":1.16},{"name":"moist","min_mm":0.25,"max_mm":0.8,"lat_mult":0.96,"long_mult":0.95,"wear_mult":1.08},{"name":"crossover","min_mm":0.8,"max_mm":1.8,"lat_mult":1.03,"long_mult":1.02,"wear_mult":1.0},{"name":"wet","min_mm":1.8,"max_mm":3.2,"lat_mult":1.0,"long_mult":0.99,"wear_mult":0.98},{"name":"very_wet","min_mm":3.2,"max_mm":5.0,"lat_mult":0.9,"long_mult":0.88,"wear_mult":1.04}]},"wet":{"category":"wet","lat_grip_base":0.84,"long_grip_base":0.84,"wear_rate_base":0.03,"wear_grip_loss_lat":0.12,"wear_grip_loss_long":0.14,"warmup_rate":0.98,"cool_rate":1.08,"temp_window_c":[78.0,98.0],"wetness_states":[{"name":"dry","min_mm":0.0,"max_mm":0.25,"lat_mult":0.75,"long_mult":0.72,"wear_mult":1.24},{"name":"moist","min_mm":0.25,"max_mm":0.8,"lat_mult":0.84,"long_mult":0.82,"wear_mult":1.14},{"name":"damp","min_mm":0.8,"max_mm":2.0,"lat_mult":0.95,"long_mult":0.94,"wear_mult":1.04},{"name":"wet","min_mm":2.0,"max_mm":4.0,"lat_mult":1.04,"long_mult":1.03,"wear_mult":0.98},{"name":"very_wet","min_mm":4.0,"max_mm":5.0,"lat_mult":1.08,"long_mult":1.06,"wear_mult":0.96}]}}};
+BUILTIN[0].raw=VAN_FILE;
 // Generic 5 km layout used until a track file is loaded.
 const AVG_MS=[["straight",12,300],["low",3,100],["straight",10,260],["med",4,160],["straight",8,250],["high",5,220],["straight",10,280],["low",3,90],["straight",9,240],["med",5,170],["high",6,230],["straight",12,300],["low",3,110],["med",4,150],["straight",6,230]].map(([type,length_pct,target_speed_kmh])=>({type,length_pct,target_speed_kmh}));
 const AVG={name:"No track file loaded: using a generic 5 km layout",laps:60,len:5,twm:1,tfc:1,pit:20,ms:AVG_MS};
@@ -529,7 +532,7 @@ function fmtDec(){document.querySelectorAll("input[data-dec]").forEach(el=>{if(e
 document.addEventListener("change",e=>{const el=e.target;if(el.dataset&&el.dataset.dec&&el.value!=="")el.value=(+el.value).toFixed(+el.dataset.dec)});
 function defaults(){
   setTrack(AVG);
-  $("chassis").value=600;$("engine").value=115;$("fpc").value=100;$("fre").value=50;$("refuel").checked=false;$("ref").value=1.5;$("tank").value=120;$("th").value=0.75;$("prof").value=1.0;$("mech").value=10;$("pace").value=0;$("water").value=0;
+  $("chassis").value=600;$("engine").value=115;$("fpc").value=180;$("fre").value=50;$("refuel").checked=true;$("ref").value=0.8;$("tank").value=160;$("th").value=0.75;$("overTh").checked=true;$("prof").value=1.0;$("mech").value=10;$("pace").value=0;$("water").value=0;
 }
 
 /* ---------- uploads ---------- */
@@ -627,6 +630,11 @@ const restoreCliff=(s,c,onset)=>{const o=s.compounds[c],st=s.cliffStash?.[c]||DE
   o.wear_cliff_onset_pct=onset??st[0];if(o.wear_cliff_mult_lat==null)o.wear_cliff_mult_lat=st[1];if(o.wear_cliff_mult_long==null)o.wear_cliff_mult_long=st[2]};
 const clearCliff=(s,c)=>{stashCliff(s,c);for(const f of CLIFF)s.compounds[c][f]=null};
 let TYREINFO=null;
+// Compound name (editable) and Copy / remove buttons for each column. Copy adds a duplicate right after it; the last dry compound can't be removed.
+function compRows(s,list,cols){
+  const pad="<td></td>".repeat(cols-list.length),lastDry=dryNames(s).length<2;
+  return `<tr class="cops"><td>name</td>`+list.map(c=>`<td><input type="text" class="cname" data-ren="${c}" value="${c}" spellcheck="false" aria-label="${c} name"></td>`).join("")+pad+"</tr>"+
+    `<tr class="cops"><td></td>`+list.map(c=>`<td><div class="cop"><button type="button" data-dup="${c}" title="Duplicate ${c}">+ Copy</button><button type="button" data-del="${c}" title="Remove ${c}" ${!isWet(s,c)&&lastDry?"disabled":""}>✕</button></div></td>`).join("")+pad+"</tr>"}
 function renderTable(){
   const s=sets[active],cs=dryNames(s),wc=wetNames(s),all=allNames(s),mm=WATER,cols=Math.max(3,cs.length,wc.length);
   const head=list=>list.map(c=>`<th><span class="dot" style="background:${col(c)}"></span>${short(c)}</th>`).join("")+"<th></th>".repeat(cols-list.length);
@@ -637,7 +645,7 @@ function renderTable(){
   document.querySelectorAll("#tyreView button").forEach(b=>{b.classList.toggle("on",b.dataset.tv===(wet?"wet":"dry"));if(b.dataset.tv==="wet")b.disabled=!wc.length});
   // the tyre gap and loss lines sit above the Tyre cliff row; the node is kept across re-renders
   TYREINFO=TYREINFO||$("tyreInfo");TYREINFO.remove();
-  $("cmpTable").innerHTML=`<colgroup><col class="k">${"<col>".repeat(cols)}</colgroup><thead><tr><th></th>${head(wet?wc:cs)}</tr></thead><tbody>`+rows(wet?wc:cs,true)+"</tbody>";
+  $("cmpTable").innerHTML=`<colgroup><col class="k">${"<col>".repeat(cols)}</colgroup><thead><tr><th></th>${head(wet?wc:cs)}</tr></thead><tbody>`+compRows(s,wet?wc:cs,cols)+rows(wet?wc:cs,true)+"</tbody>";
   $("tyreInfoCell").appendChild(TYREINFO);
   // wetness_states: the state each compound is in at the race's track water, editable
   $("wetHead").textContent=`Wetness at ${mm.toFixed(1)} mm track water`;
@@ -717,6 +725,29 @@ $("dupSet").addEventListener("click",()=>{
   const c=structuredClone(sets[active]);c.name=c.name+" (copy)";delete c.builtin;sets.push(c);if(sets.length>SET_COLORS.length)sets.shift();
   active=sets.length-1;renderSets();renderTable();update();
 });
+// Compound add (by copy), rename and remove. The uploaded file (raw) changes with them, so the download keeps temperatures and wetness states of each compound.
+const reKey=(o,a,b)=>o&&a in o?Object.fromEntries(Object.entries(o).map(([k,v])=>[k===a?b:k,v])):o;
+const addAfter=(o,a,b,v)=>Object.fromEntries(Object.entries(o).flatMap(([k,x])=>k===a?[[k,x],[b,v]]:[[k,x]]));
+const dropKey=(o,a)=>{if(o)delete o[a];return o};
+function eachMap(s,f){ // the set's own maps plus the matching maps of the uploaded file
+  s.compounds=f(s.compounds);if(s.startProb)s.startProb=f(s.startProb);if(s.cliffStash)s.cliffStash=f(s.cliffStash);
+  if(s.raw){if(s.raw.compounds)s.raw.compounds=f(s.raw.compounds);else s.raw=f(s.raw);if(s.raw.start_probabilities)s.raw.start_probabilities=f(s.raw.start_probabilities)}}
+function compoundsChanged(s){delete s.colors;delete s.codes;renderTable();renderRace();update()}
+const okName=(s,n)=>/^[a-z0-9_]+$/.test(n)&&!(n in s.compounds)&&!(s.raw&&!s.raw.compounds&&n in s.raw);
+$("cmpTable").addEventListener("change",e=>{const t=e.target;if(!t.dataset.ren)return;const s=sets[active],a=t.dataset.ren,b=t.value.trim().toLowerCase().replace(/\s+/g,"_");
+  if(b===a){t.value=a;return}
+  if(!okName(s,b)){flash(t);t.value=a;return}
+  eachMap(s,o=>reKey(o,a,b));if(s.defaultCompound===a)s.defaultCompound=b;if(s.raw?.default_compound===a)s.raw.default_compound=b;compoundsChanged(s)});
+$("cmpTable").addEventListener("keydown",e=>{if(e.target.dataset?.ren&&e.key==="Enter")e.target.blur()});
+$("cmpTable").addEventListener("click",e=>{const b=e.target.closest("button");if(!b||!(b.dataset.dup||b.dataset.del))return;const s=sets[active];
+  if(b.dataset.dup){const a=b.dataset.dup;let n=a+"_2",i=2;while(!okName(s,n))n=a+"_"+(++i);
+    const rc=s.raw?(s.raw.compounds||s.raw)[a]:null;
+    s.compounds=addAfter(s.compounds,a,n,structuredClone(s.compounds[a]));
+    if(s.raw){if(s.raw.compounds)s.raw.compounds=addAfter(s.raw.compounds,a,n,structuredClone(rc));else s.raw=addAfter(s.raw,a,n,structuredClone(rc))}
+    (s.startProb=s.startProb||{})[n]=0}
+  else{const a=b.dataset.del;eachMap(s,o=>dropKey(o,a));
+    if(s.defaultCompound===a){const h=byGrip(s);s.defaultCompound=h[h.length-1]??null}}
+  compoundsChanged(s)});
 // Full tyremodel.json: the uploaded file with the edited dry-compound values written back.
 // A value set to none removes that line; everything else in the file (wet tyres, temperatures, wetness states) is kept.
 function exportModel(s){
@@ -735,7 +766,7 @@ function exportModel(s){
 }
 $("dlJson").addEventListener("click",()=>{
   const s=sets[active],txt=JSON.stringify(exportModel(s),null,2)+"\n";
-  const done=()=>msg($("copyMsg"),s.raw?"Downloaded. Every other part of the uploaded file is unchanged.":"Downloaded. Built-in model: the file holds grip, wear and wetness values; start from an uploaded tyremodel.json to keep temperatures.");
+  const done=()=>msg($("copyMsg"),s.builtin?"Downloaded. A complete game file: the vanilla pack's tyremodel.json with your edits.":s.raw?"Downloaded. Every other part of the uploaded file is unchanged.":"Downloaded. Built-in model: the file holds grip, wear and wetness values; start from an uploaded tyremodel.json to keep temperatures.");
   // Inside claude.ai the viewer saves through the downloads capability; on a plain web page (GitHub) a normal download link is used.
   if(window.claude?.use){
     if(!dlCap){msg($("copyMsg"),"Download is not available in this view.");return}
@@ -781,7 +812,7 @@ function S(){
   $("fplOut").textContent=`= ${fpl.toFixed(2)} kg per lap, ${(fpl*laps).toFixed(0)} kg per race (engine efficiency 50)`;
   const dryKg=+$("chassis").value+ +$("engine").value,tankKg=+$("tank").value,startKg=dryKg+($("refuel").checked?tankKg:fpl*laps),pc=x=>(x>=1?"+":"")+((x-1)*100).toFixed(1)+"%";
   $("massOut").innerHTML=`Empty, ${dryKg} kg: acceleration ${pc(accelMult(dryKg))}, corner speed ${pc(cornerMult(dryKg))}<br>${$("refuel").checked?"Full tank":"Race start, full race fuel"}, ${startKg.toFixed(0)} kg: acceleration ${pc(accelMult(startKg))}, corner speed ${pc(cornerMult(startKg))}`;
-  $("tank").disabled=!$("refuel").checked; // without refuelling the tank size is ignored
+  $("tank").disabled=$("ref").disabled=!$("refuel").checked; // without refuelling the tank size is ignored
   const mech=clamp(Math.round(+$("mech").value||10),1,20),service=5.0-(mech-1)*0.13157894736842105;
   $("pitOut").textContent=`= ${service.toFixed(2)} s tyre service on average, ${(+$("pit").value+service).toFixed(1)} s per stop with the pit lane`;
   const chassisKg=+$("chassis").value,engineKg=+$("engine").value;
@@ -789,7 +820,7 @@ function S(){
   WATER=clamp(+$("water").value||0,0,5);
   return {laps,fpl,len,chassisKg,engineKg,pace:+$("pace").value||0,water:WATER,
     dry:chassisKg+engineKg,refuel:$("refuel").checked,ref:+$("ref").value/10,tank:+$("tank").value,pit:+$("pit").value+service,
-    th:+$("th").value,optimal:$("split").value==="opt",wm:(+$("twm").value||1)*(+$("prof").value||1)};
+    th:+$("th").value,lim:$("overTh").checked?1:+$("th").value,optimal:$("split").value==="opt",wm:(+$("twm").value||1)*(+$("prof").value||1)};
 }
 // q = the model's wear_quantum (game tyre_model.py: default 0.02, lowest 0.001).
 function prep(cname,c,P,q){
@@ -905,7 +936,7 @@ function evalSplit(cs,seq,L,P){
   L.forEach((sl,si)=>{
     const c=cs[seq[si]];
     if(sl<1){ok=false;why.add("empty stint")}
-    if(sl*c.rate>P.th+1e-9){ok=false;why.add("wear")}
+    if(sl*c.rate>P.lim+1e-9){ok=false;why.add("wear")}
     const f=P.refuel?sl*P.fpl:total-done*P.fpl;
     if(P.refuel&&f>P.tank+1e-9){ok=false;why.add("tank")} // without refuelling the car starts with the race fuel, whatever the tank size
     const stop=si>0?P.pit+(P.refuel?P.ref*f:0):0;t+=stop;
@@ -916,7 +947,7 @@ function evalSplit(cs,seq,L,P){
 }
 // Legal stint costs for one compound: run(start,len) = driving time, stop(len) = pit cost before the stint. Infinity past wear or tank.
 function stintCosts(c,P){
-  const N=P.laps,total=N*P.fpl,maxLen=Math.min(N,Math.floor((P.th+1e-9)/c.rate));
+  const N=P.laps,total=N*P.fpl,maxLen=Math.min(N,Math.floor((P.lim+1e-9)/c.rate));
   if(P.refuel){
     const arr=new Float64Array(N+1).fill(Infinity);
     for(let len=1;len<=maxLen;len++){const f=len*P.fpl;if(f>P.tank+1e-9)break;let s=0;for(let i=0;i<len;i++)s+=lapTime(c,i,f-i*P.fpl-P.fpl/2,P);arr[len]=s}
@@ -1096,7 +1127,7 @@ function simPlan(s,P,plan){
       t+=lapTime(c,i,Math.max(0,fuel-P.fpl/2),P);fuel=Math.max(0,fuel-P.fpl);lap++;
       const w=Math.min(1,(i+1)*c.rate);pts.push({x:lap,y:+(100*(1-w)).toFixed(2),w});fpts.push({x:lap,y:+fuel.toFixed(2)});
     }
-    if(sl*c.rate>P.th+1e-9)warn.add("WEAR");
+    if(sl*c.rate>P.lim+1e-9)warn.add("WEAR");
     life.push({c:plan.seq[si],pts,si});
   });
   if(out!=null)warn.add("OUT OF FUEL LAP "+out);
